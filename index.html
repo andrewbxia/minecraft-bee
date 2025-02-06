@@ -1,43 +1,152 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link ref="stylesheet" href="style.css"/>
-    <!-- <script type="module" src="./files/color.js"></script> -->
+    <title>thing</title>
     <style>
+        :root {
+            --play-button-size: 100px;
+        }
+        body{
+            /* z-index: -1; */
+            background: blue;
+            padding: 0;
+            margin: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #main{
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            z-index: -1;
+            transition: transform 1s ease-in;
+        }
+    </style>
+    <script src="./files/animation3.js"></script>
+    <script src="main.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+    <style id="play-button-styles">        
+        #before-screen{
+            position: absolute;
+            background-color: black;
+            width: 100%;
+            height: 100%;
+            
+        }
+        #play-button-container{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        #play-button{
+            font-size: 100px;
+            aspect-ratio: 1/1;
+            background: none;
+            border: white 3px solid;
+            padding: 25px;
+            min-height: var(--play-button-size);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-shadow: white 0px 0px 10px;
+            box-shadow: white 0px 0px 10px;
+            cursor: progress;
+            transition-property: rotate, background-color, color, text-shadow;
+            transition-duration: 0.5s;
+        }
+        #play-button:hover{
+            /* todo: use ::before and ::after to fill in white rather than just using background color */
+            p{
+                rotate: 360deg;
+            }
+            background-color: white;
+            color: black;
+            text-shadow: black 0px 0px 10px;
+        }
+        #play-button-text{
+            pointer-events: none;
+            transition-property: rotate;
+            transition-duration: 0.5s;
+        }
+        #anim-link{
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            opacity: 0;
+        }
+
+    </style>
+    <style id="animation-styles">
+        @keyframes collapse{
+            0%{
+                left: 100%;
+            }
+            100%{
+                left: 0%;
+            }
+        }
+        #play{
+            overflow: hidden;
+            z-index: 2;
+        }
+        .collapse{
+            z-index: inherit;
+            position: absolute;
+            width: 1000%;
+            height: 1000%;
+            background-color: white;
+            left: 100%;
+            bottom: 0;
+            z-index: 0;
+            transform-origin: 0% 100%;
+            transform: rotate(0deg);
+            transition: transform 1s linear;
+        }
+        .filter{
+            background-color: black;
+            filter: invert(1);
+            mix-blend-mode: difference;
+        }
     </style>
 </head>
-<body id="sa-bg">
-    <div id="log">
+<body>
+    <div id="before-screen">
+        <div id="play-button-container">
+            <button id="play-button" style="rotate: 0deg;">
+                <p id="play-button-text">
+                    ▶
+                </p>
+            </button>
+        </div>
+        <a href="./files/animation3.js" id="anim-link">
+            the bad js library used for this
+        </a>
         
     </div>
-    <header>
-        <div class="nav-container">
-            <div class="top-nav-wrap">
-                <nav>
-                    <button id="mode-swap"> 
-                        <svg xmlns="http://www.w3.org/2000/svg" id="moon-svg"> 
-                            <path d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243 0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224zm-2.772 4.301a7.947 7.947 0 0 1-5.656 2.343 7.953 7.953 0 0 1-5.658-2.344c-3.118-3.119-3.118-8.195 0-11.314a7.923 7.923 0 0 1 2.06-1.483 10.027 10.027 0 0 0 2.89 7.848 9.972 9.972 0 0 0 7.848 2.891 8.036 8.036 0 0 1-1.484 2.059z"></path> 
-                        </svg> 
-                        <svg xmlns="http://www.w3.org/2000/svg" id="sun-svg"> 
-                            <path d="M6.993 12c0 2.761 2.246 5.007 5.007 5.007s5.007-2.246 5.007-5.007S14.761 6.993 12 6.993 6.993 9.239 6.993 12zM12 8.993c1.658 0 3.007 1.349 3.007 3.007S13.658 15.007 12 15.007 8.993 13.658 8.993 12 10.342 8.993 12 8.993zM10.998 19h2v3h-2zm0-17h2v3h-2zm-9 9h3v2h-3zm17 0h3v2h-3zM4.219 18.363l2.12-2.122 1.415 1.414-2.12 2.122zM16.24 6.344l2.122-2.122 1.414 1.414-2.122 2.122zM6.342 7.759 4.22 5.637l1.415-1.414 2.12 2.122zm13.434 10.605-1.414 1.414-2.122-2.122 1.414-1.414z"></path> 
-                        </svg>
-                    </button>
-                </nav>
-            </div>
-        </div>
-    </header>
-    <main id="main-content">
-        <p id="para">
-            what
-        </p>
-    </main>
-    <footer>
-
-    </footer> 
-    <script type="module" src="main.js" defer></script>
-
+    <div id="play">
+        <!-- diff animations -->
+        <div class="collapse filter"></div>
+        <div class="slide-in"></div>
+    </div>
+    
+    <div id="main">
+        
+        <header>
+    hed
+        </header>
+        <main>
+    main
+        </main>
+        <footer>
+    footer
+        </footer>
+    </div>
 </body>
 </html>

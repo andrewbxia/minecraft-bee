@@ -1,10 +1,11 @@
-export class Ani{
+class Ani{
     #mode = "none";
     #next = Promise.resolve();
     #done = false;
     #query = "";
     #start = 0;
     #curr = 0;
+    #anikeys = [];
     #querycnt = Infinity;
     static #counter = 0;
     static #animations = new Map(); // failed system to keep track of animations gonna fix latr
@@ -40,11 +41,14 @@ export class Ani{
     }
 
     #rmvani(id){
-        Ani.#animations.get(id)?.cancel();
+        id--;
+        // console.log(id, Ani.#animations.get(id));
+        // Ani.#animations.get(id)?.cancel();
         Ani.#animations.delete(id);
+        console.log(Ani.#animations.size);
     }
 
-    #clearani(){
+    #cleanupcleanupeverybodyeverywherecleanupcleanupeverybodydoyourshare(){
         Ani.#animations.forEach((ani, id) => {
             ani.cancel();
             Ani.#animations.delete(id);
@@ -60,9 +64,17 @@ export class Ani{
         }
 
         const [, num, unit] = match;
-        const newValue = Math.max(0.0, parseFloat(num) + addition);
+        const newValue = Math.max(parseFloat(num) + addition);
+        // console.log(num, unit, addition, newValue);
 
         return `${newValue}${unit}`;
+    }
+
+    contif(condition){
+        return this.#queuePromise(() => {
+            console.log(condition());   
+            this.#done = this.#done || !condition();
+        });
     }
 
     delay(duration = 1000){
@@ -78,43 +90,57 @@ export class Ani{
     finish() {
         return this.#queuePromise(() => {
             this.#done = true;
-            this.#clearani();
+            // this.#cleanupcleanupeverybodyeverywherecleanupcleanupeverybodydoyourshare();
         });
     }
 
     rule(obj) {
         // TODO: prevent rule interference across ani instances
-        console.error("rule");
         // ignore obj mode
         if (this.#mode == "obj") {
             return this;
         }
         if (this.#done) {
+            console.error("Animation already finished");
             return this;
         }
-        console.error(obj.duration);
         const duration = obj.duration || 1000;
         const easing = obj.easing || "linear";
         const forwards = obj.forwards || false;
         const additive = obj.additive || [false, false];
         const from = obj.from || [];
         const to = obj.to || [];
+        const otherignore = obj.otherignore || false;
         const elements = document.querySelectorAll(this.#query);
         // const id = this.#increment(); // do this in the loop
         let idx = 0;
+        let keys = [];
+        while (idx < Math.min(this.#querycnt, elements.length)) {
+            keys.push(this.#increment());
+            idx++;
+        }
+        idx = 0;
 
         return this.#queuePromise(() => {
+            if (this.#done) {
+                console.error("Animation already finished");
+                return this;
+            }
             for (const el of elements) {
                 if (idx >= this.#querycnt) {
                     break;
                 }
                 idx++;
-                if (el.dataset.ani) {
+
+                const key = keys.shift();
+                if (!otherignore && el.dataset.ani) {
+                    if(key < el.dataset.ani)
+                        continue;
                     this.#rmvani(el.dataset.ani);
                 }
-
-                const key = this.#increment();
-                el.dataset.ani = key;
+                // const key = performance.now();
+                if(!otherignore)
+                    el.dataset.ani = key;
                 const frames = [{}, {}];
 
                 from.forEach((item) => {
@@ -134,7 +160,6 @@ export class Ani{
                             : val;
                     }
                 });
-                console.error(frames, additive);
 
                 Ani.#animations.set(
                     key,
@@ -144,13 +169,15 @@ export class Ani{
                         fill: forwards ? "forwards" : "none"
                     })
                 );
+                console.log(this.#query, Ani.#animations.get(key));
+                Ani.#animations.get(key).onfinish = () => Ani.#animations.delete(key);
             }
         }, duration);
     }
 }
 
 /*
-
+///use case
 new Ani(query).rule({// adds three and 49 
     from:[
         width: "50px",

@@ -1,94 +1,124 @@
-import { Color } from "./files/color.js";
-import { Ani } from "./files/animation3.js";
-
-function log(str){
-    const e = document.createElement("p");
-    e.innerHTML = str;
-    document.getElementById("log").appendChild(e);
+console.log(document.getElementById("before-screen"));
+function eid(id) {
+    return document.getElementById(id);
+}
+function eq(query) {
+    return document.querySelector(query);
+}
+function eqa(query) {
+    return document.querySelectorAll(query);
 }
 
-const button = document.getElementById("mode-swap");
-button.style.rotate = "0deg";
-document.querySelectorAll("div").forEach((div) => {
-    div.style.rotate = "0deg";
-    console.error("yay")
-});
+function clearPlayScreen(){
+    eid("before-screen").remove();
+    document.body.style.zIndex = 1;
+    eid("main").style.zIndex = 1;
+}
+function clearPlay(){
+    eid("play").remove();
+    // eid("before-screen").remove();
+}
 
-button.addEventListener("click", () => {
-    new Ani("svg").then(()=>{
-        document.querySelectorAll("svg").forEach((svg) => {
-            svg.style.rotate = "0deg";
-        });
-    }).rule({
-        from: [{rotate: "0deg"}],
-        to: [{rotate: "1000deg"}],
-        duration: 300,
+const main = eid("main");
+
+const buttonflicker = () => {
+    const el = eid("play-button");
+    if (!el || el.disabled) return;
+    const duration = 50;
+    new Ani("#play-button").rule({
+        from: [{ opacity: 0 }],
+        to: [{ opacity: 1 }],
+        duration: 100 + Math.random() * 100,
         easing: "ease-out",
         forwards: true,
-        additive: [true, true],
-    }).then(() => {
-        // button.style.rotate = "180deg";
-    }, 0).rule({
-        from:[{rotate: "0deg"}],
-        to:[{rotate: "0deg"}],
-        duration: 600,
-        easing: "ease-in-out",
-        forwards: true,
-        additive: [true, false],
+        additive: [false, false],
+        otherignore: true,
     });
+    setTimeout(buttonflicker, 15 + ((Math.random() < .75) ? Math.random() * 25 : 300 + Math.random() * 3000));
+};
+setTimeout(buttonflicker, 1000);
 
-});
+const playAnimations = [
+    collapse = () => {
+        new Ani("#anim-link").then(() => {
+            eq("#anim-link").style.display = "block";
+        }).rule({
+            from: [{opacity: "0"}],
+            to: [{opacity: "1"}],
+            duration: 500,
+            easing: "ease-out",
+            forwards: true,
+            additive: [false, false],
+        });
 
 
-// button.addEventListener("click", () => {
-//     new Ani("#mode-swap").then(()=>{
-//         button.style.rotate = "1987983deg";
-//         console.error("HEY")
-//     }).rule({
-//         from: [{rotate: "0deg", height: "0px", width: "0px"}],
-//         to: [{rotate: "180deg", height: "0px", width: "0px"}],
-//         duration: 300,
-//         easing: "ease-out",
-//         forwards: true,
-//         additive: [true, true],
-//     }).then(() => {
-//         // log("WOO");
-//     }, 0).rule({
-//         from:[{rotate: "0deg"}],
-//         to:[{rotate: "0deg"}],
-//         duration: 600,
-//         easing: "ease-in-out",
-//         forwards: false,
-//         additive: [true, false],
-//     }).finish();
-// });
-    // .rule({
-    //     from: [{rotate: "0deg"}],
-    //     to: [{rotate: "0deg"}],
-    //     duration: 600,
-    //     easing: "ease-in-out",
-    //     forwards: false,
-    //     additive: [true, false],
-    // })
+        new Ani("#play-button")
+        .rule({
+            from: [{rotate: "0deg"}],
+            to: [{rotate: "-15deg"}],
+            duration: 150,
+            easing: "ease-out",
+            forwards: true,
+            additive: [false, false],
+        })
+        .rule({
+            from:[{rotate: "0deg", opacity: "1", marginTop: "0px"}],
+            to:[{rotate: "700deg", opacity: "0", marginTop: "100px"}],
+            duration: 700,
+            easing: "ease-in",
+            forwards: true,
+            additive: [true, false],
+        }).then(() => {
+            eid("play-button").style.display = "none";
+        });
+
+        new Ani(".collapse").rule({
+            from: [{rotate: "0deg"}],
+            to: [{rotate: "-90deg"}],
+            duration: 700,
+            easing: "ease-in",
+            forwards: true,
+            additive: [false, false],
+        })       
+        .rule({
+            from: [{rotate: "0deg"}],
+            to: [{rotate: "15deg"}],
+            duration: 300,
+            easing: "ease-out",
+            forwards: true,
+            additive: [true, true],
+        })
+        .rule({
+            from: [{rotate: "0deg"}],
+            to: [{rotate: "-90deg"}],
+            duration: 400,
+            easing: "ease-in",
+            forwards: true,
+            additive: [true, false],
+        })
+        .then(() => {
+            eq(".collapse").classList.remove("filter");
+            clearPlayScreen();
+            document.body.style.transform = "translateX(0)";
+        })
+        .rule({
+            from: [{rotate: "0deg"}],
+            to: [{rotate: "-200deg"}], // push a little extra to end
+            duration: 700,
+            easing: "ease-in",
+            forwards: true,
+            additive: [true, false],
+        })
+        .then(() => {
+            clearPlay();
+        });
+    }
+]
+
+
+
+eid("play-button").onclick = (e) => {
+    e.target.disabled = true;
+    playAnimations[Math.floor(Math.random() * playAnimations.length)]();
     
-// new Ani("div").rule({
-//     from: [{rotate: "0deg"}],
-//     to: [{rotate: "180deg"}],
-//     duration: 0,
-//     easing: "ease-in-out",
-//     forwards: true,
-//     additive: [true, true],
-// }).rule({
-//     from: [{rotate: "1803deg"}],
-//     to: [{rotate: "0deg"}],
-//     duration: 1000,
-//     easing: "ease-in-out",
-//     additive: [true, true],
-// }).rule({
-//     from:[{rotate: "11deg"}],
-//     to:[{rotate: "0deg"}],
-//     duration: 3000,
-//     easing: "ease-in-out",
-//     forwards: true,
-//     additive: [true, false],
-// })
+}
