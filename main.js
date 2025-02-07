@@ -54,18 +54,18 @@ const playAnimations = [
 
         new Ani("#play-button")
         .rule({
-            from: [{rotate: "0deg"}],
-            to: [{rotate: "-15deg"}],
+            from: [{rotate: "0deg", marginTop: "0px", marginLeft: "0px"}],
+            to: [{rotate: "-30deg", marginTop: "-50px" , marginLeft: "0px"}],
             duration: 150,
             easing: "ease-out",
             forwards: true,
             additive: [false, false],
         })
         .rule({
-            from:[{rotate: "0deg", opacity: "1", marginTop: "0px"}],
-            to:[{rotate: "700deg", opacity: "0", marginTop: "100px"}],
+            from:[{rotate: "0deg", opacity: "1", marginTop: "0px", marginLeft: "0px"}],
+            to:[{rotate: "700deg", opacity: "0", marginTop: "100px", marginLeft: "0px"}],
             duration: 700,
-            easing: "ease-in",
+            easing: "ease-in-out",
             forwards: true,
             additive: [true, false],
         }).then(() => {

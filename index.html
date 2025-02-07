@@ -10,12 +10,13 @@
         }
         body{
             /* z-index: -1; */
-            background: blue;
+            background: aliceblue;
             padding: 0;
             margin: 0;
             width: 100vw;
             height: 100vh;
-            overflow: hidden;
+            overflow-y: scroll;
+            overflow-x: hidden;
         }
         #main{
             width: 100%;
@@ -41,7 +42,16 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            
         }
+        /* #play-button-container::after{
+            content: "";
+            top: 0;
+            left: 0;
+            width: 100%;
+            position: absolute;
+            background-color: white;
+        } */
         #play-button{
             font-size: 100px;
             aspect-ratio: 1/1;
@@ -58,15 +68,58 @@
             cursor: progress;
             transition-property: rotate, background-color, color, text-shadow;
             transition-duration: 0.5s;
+            &::after,&::before{
+                content: "";
+                background-color: black;
+                filter: invert(1);
+                mix-blend-mode: difference;
+                position: absolute;
+                width: 0%;
+                height: 0%;
+                transition-property: width, height, top, left, bottom, right;
+                transition-duration: 0.5s;
+            }
+            &::before{
+                top: 0;
+                left: inherit;
+                bottom: inherit;
+                right: 0;
+                width: 0%;
+            }
+            &::after{
+                top: inherit;
+                left: 0;
+                bottom: 0;
+                right: inherit;
+                height: 0%;
+            }
         }
         #play-button:hover{
             /* todo: use ::before and ::after to fill in white rather than just using background color */
             p{
                 rotate: 360deg;
             }
-            background-color: white;
+            /* background-color: white; */
             color: black;
             text-shadow: black 0px 0px 10px;
+            &::before{
+                top: inherit;
+                left: 0;
+                bottom: 0;
+                right: inherit;
+                width: 100%;
+            }
+            &::after{
+                top: 0;
+                left: inherit;
+                bottom: inherit;
+                right: 0;
+                height: 100%;
+            }
+        }
+        #play-button:hover::after,
+        #play-button:hover::before{
+            height: 100%;
         }
         #play-button-text{
             pointer-events: none;
@@ -93,7 +146,7 @@
             }
         }
         #play{
-            overflow: hidden;
+            /* overflow: ; */
             z-index: 2;
         }
         .collapse{
@@ -102,6 +155,7 @@
             width: 1000%;
             height: 1000%;
             background-color: white;
+            box-sizing: border-box;
             left: 100%;
             bottom: 0;
             z-index: 0;
@@ -132,7 +186,7 @@
     </div>
     <div id="play">
         <!-- diff animations -->
-        <div class="collapse filter"></div>
+        <div class="collapse filter" style=""></div>
         <div class="slide-in"></div>
     </div>
     

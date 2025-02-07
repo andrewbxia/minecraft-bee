@@ -1,0 +1,8 @@
+extra idea: have back option once click on play button to have closing animation 
+	shutting animation
+
+
+_
+
+      ->       =>
+_
