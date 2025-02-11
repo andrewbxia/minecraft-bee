@@ -7,9 +7,36 @@ class Ani{
     #curr = 0;
     #anikeys = [];
     #querycnt = Infinity;
+    #changedproperties = new Set();
     static #counter = 0;
     static #animations = new Map(); // failed system to keep track of animations gonna fix latr
 
+    static #defaultvalues = {
+        margin: "0px",
+        padding: "0px",
+        width: "0px",
+        height: "0px",
+        top: "0px",
+        left: "0px",
+        right: "0px",
+        bottom: "0px",
+        opacity: "1",
+        rotate: "0deg",
+        scale: "1",
+        skew: "0deg",
+        marginTop: "0px",
+        marginLeft: "0px",
+        marginRight: "0px",
+        marginBottom: "0px",
+        paddingTop: "0px",
+        paddingLeft: "0px",
+        paddingRight: "0px",
+        paddingBottom: "0px",
+
+        // transform: "none", not supported
+        // color: "transparent",
+        // fontSize: "0px",
+    };
 
     constructor(query, params = {}){
         if (!query) {
@@ -24,7 +51,7 @@ class Ani{
         this.#curr = this.#start;
         this.#mode = "query";
     }
-    
+    // function handler
     #queuePromise(action, duration = 0) {
         this.#next = this.#next.then(() => new Promise((resolve) => {
             action();
@@ -32,7 +59,12 @@ class Ani{
                 resolve();
             }, duration);
         }));
+        // this.#curr = performance.now();
         return this;
+    }
+    
+    #updatecurr(duration){
+        this.#curr += duration;
     }
 
     #increment(){
@@ -57,15 +89,19 @@ class Ani{
 
     #addunit(value, addition) { // ripped from chatgpt
         const regex = /^(-?\d*\.?\d+)([a-z%]*)$/i;
-        const match = value.match(regex);
+        let match = value.match(regex);
+        const defultvalue = Ani.#defaultvalues[value];
 
         if (!match) {
-            throw new Error(`this value is likely |none| but still poopoo: ${value}. For values like rotate, set them to a defulat value like 0deg`);
+            if(!defultvalue)
+                throw new Error(`this value is likely |none| but still poopoo: ${value}. For values like rotate, set them to a defulat value like 0deg`);
+            console.warn(`Value ${value} not recognized, using default value ${Ani.#defaultvalues[value]}`);
+            match = defaultvalue.match(regex);
         }
 
         const [, num, unit] = match;
         const newValue = Math.max(parseFloat(num) + addition);
-        // console.log(num, unit, addition, newValue);
+        console.log(this.#query, value,unit);
 
         return `${newValue}${unit}`;
     }
@@ -78,13 +114,35 @@ class Ani{
     }
 
     delay(duration = 1000){
+        this.#updatecurr(duration);
         return this.#queuePromise(() => {}, duration);
     }
 
     then(callback, duration = 0) {
+        this.#updatecurr(duration);
         return this.#queuePromise(() => {
             callback(this);
         }, duration);
+    }
+
+    reset(overwrite = {}){
+        return this.#queuePromise(() => {
+            
+            let props = {};
+            for(const prop of this.#changedproperties){
+                if(overwrite[prop] !== undefined) props[prop] = overwrite[prop];
+                else props[prop] = Ani.#defaultvalues[prop];
+            }
+            document.querySelectorAll(this.#query).forEach((el) => {
+                console.log(el.animate(props, { duration: 0, fill: "forwards" }));
+            });
+            this.#changedproperties.clear();
+        });
+    }
+
+    whendone(){
+        console.log(this.#curr - performance.now());
+        return this.#curr - performance.now(); // usually this.#start, but could be innacurate due if code is slow (probably will be lol)
     }
 
     finish() {
@@ -113,6 +171,7 @@ class Ani{
         const otherignore = obj.otherignore || false;
         const elements = document.querySelectorAll(this.#query);
         // const id = this.#increment(); // do this in the loop
+        this.#updatecurr(duration);
         let idx = 0;
         let keys = [];
         while (idx < Math.min(this.#querycnt, elements.length)) {
@@ -120,6 +179,18 @@ class Ani{
             idx++;
         }
         idx = 0;
+        from.forEach((item) => {
+            for (const prop in item) {
+                this.#changedproperties.add(prop);
+            }
+        });
+        to.forEach((item) => {
+            for (const prop in item) {
+                this.#changedproperties.add(prop);
+            }
+        });
+        
+
 
         return this.#queuePromise(() => {
             if (this.#done) {
@@ -173,6 +244,7 @@ class Ani{
                 Ani.#animations.get(key).onfinish = () => Ani.#animations.delete(key);
             }
         }, duration);
+        
     }
 }
 

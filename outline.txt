@@ -6,3 +6,13 @@ _
 
       ->       =>
 _
+
+possible domain names:
+!!!
+axia.cafe
+axia.sh
+
+axia.zip
+axia.nexus
+axia.cx
+axia.fm

@@ -4,169 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>thing</title>
-    <style>
-        :root {
-            --play-button-size: 100px;
+    <script>
+        let pageentered = false;
+    </script>
+    <script src="./scripts/dev-detect.js"></script>
+    <script src="./scripts/animation3.js"></script>
+    <script src="./scripts/oneko.js" defer data-cat="./assets/oneko.gif"></script>
+    <script src="./scripts/preview-page.js" defer></script>
+    <script src="./scripts/main.js" defer></script>
+    <link rel="stylesheet" href="./styles/style.css">
+    <link rel="stylesheet" href="./styles/preview-page.css">
+    <style id="scrollbar-css">
+        ::-webkit-scrollbar{
+            width: 15px;
         }
-        body{
-            /* z-index: -1; */
-            background: aliceblue;
-            padding: 0;
-            margin: 0;
-            width: 100vw;
-            height: 100vh;
-            overflow-y: scroll;
-            overflow-x: hidden;
+        ::-webkit-scrollbar-track {
+            background: var(--theme-primary);
+            border-radius: 4px;
+            border: 3px var(--theme-orange) dashed;
         }
-        #main{
-            width: 100%;
-            height: 100%;
-            background: inherit;
-            z-index: -1;
-            transition: transform 1s ease-in;
+        ::-webkit-scrollbar-thumb{
+            background: var(--theme-secondary);
+            border: 3px var(--theme-pink) dashed;
+            /* border-radius: 4px; */
         }
     </style>
-    <script src="./files/animation3.js"></script>
-    <script src="main.js" defer></script>
-    <link rel="stylesheet" href="style.css">
-    <style id="play-button-styles">        
-        #before-screen{
+    <style id="shooting-bar-css">
+        #shooting-bars {
+            --shooting-duration: 3s;
             position: absolute;
-            background-color: black;
-            width: 100%;
-            height: 100%;
-            
-        }
-        #play-button-container{
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            
-        }
-        /* #play-button-container::after{
-            content: "";
+            rotate: 35deg;
+            transform-origin: 50% 0%;
+            width: 2000px;
+            height: 300px;
             top: 0;
-            left: 0;
-            width: 100%;
+            right: calc(-.5 * 2000px);
+            /* border: 2px black solid; */
+            /* animation: rotateinf 10s linear infinite; */
+        }
+        .shooting-bar{
             position: absolute;
-            background-color: white;
-        } */
-        #play-button{
-            font-size: 100px;
-            aspect-ratio: 1/1;
-            background: none;
-            border: white 3px solid;
-            padding: 25px;
-            min-height: var(--play-button-size);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-shadow: white 0px 0px 10px;
-            box-shadow: white 0px 0px 10px;
-            cursor: progress;
-            transition-property: rotate, background-color, color, text-shadow;
-            transition-duration: 0.5s;
-            &::after,&::before{
-                content: "";
-                background-color: black;
-                filter: invert(1);
-                mix-blend-mode: difference;
-                position: absolute;
-                width: 0%;
-                height: 0%;
-                transition-property: width, height, top, left, bottom, right;
-                transition-duration: 0.5s;
-            }
-            &::before{
-                top: 0;
-                left: inherit;
-                bottom: inherit;
-                right: 0;
-                width: 0%;
-            }
-            &::after{
-                top: inherit;
-                left: 0;
-                bottom: 0;
-                right: inherit;
-                height: 0%;
-            }
+            left: 0;
+            animation-timing-function:  ease, ease-out;
+            animation-iteration-count: 1, infinite;
+            animation-name: shootright, blink;
+            animation-fill-mode: forwards, none;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 2em;
         }
-        #play-button:hover{
-            /* todo: use ::before and ::after to fill in white rather than just using background color */
-            p{
-                rotate: 360deg;
+        @keyframes blink{
+            0%, 100%{
+                filter: brightness(100%);
             }
-            /* background-color: white; */
-            color: black;
-            text-shadow: black 0px 0px 10px;
-            &::before{
-                top: inherit;
-                left: 0;
-                bottom: 0;
-                right: inherit;
-                width: 100%;
+            50%{
+                filter: brightness(115%);
             }
-            &::after{
-                top: 0;
-                left: inherit;
-                bottom: inherit;
-                right: 0;
-                height: 100%;
-            }
-        }
-        #play-button:hover::after,
-        #play-button:hover::before{
-            height: 100%;
-        }
-        #play-button-text{
-            pointer-events: none;
-            transition-property: rotate;
-            transition-duration: 0.5s;
-        }
-        #anim-link{
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            display: none;
-            opacity: 0;
         }
 
-    </style>
-    <style id="animation-styles">
-        @keyframes collapse{
-            0%{
+        @keyframes shootright{
+            from{
+                left: -100%;
+            }
+            to{
                 left: 100%;
-            }
-            100%{
-                left: 0%;
+                /* display: none; */
             }
         }
-        #play{
-            /* overflow: ; */
-            z-index: 2;
-        }
-        .collapse{
-            z-index: inherit;
-            position: absolute;
-            width: 1000%;
-            height: 1000%;
-            background-color: white;
-            box-sizing: border-box;
-            left: 100%;
-            bottom: 0;
-            z-index: 0;
-            transform-origin: 0% 100%;
-            transform: rotate(0deg);
-            transition: transform 1s linear;
-        }
-        .filter{
-            background-color: black;
-            filter: invert(1);
-            mix-blend-mode: difference;
+
+        @keyframes rotateinf {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
@@ -178,17 +90,34 @@
                     ▶
                 </p>
             </button>
+            <p class="hey-text">Hey Hey!</p>
         </div>
-        <a href="./files/animation3.js" id="anim-link">
-            the bad js library used for this
+        <a href="./scripts/animation3.js" id="anim-link">
+            my bad js library used for this
         </a>
         
     </div>
     <div id="play">
+        
         <!-- diff animations -->
-        <div class="collapse filter" style=""></div>
+        <div class="collapse filter">
+            <div style="
+            position: absolute;
+            transform-origin: 50% 100%;
+            rotate: 180deg;
+            left: 0;
+            bottom: 0;">
+                <img src="./assets/ab.gif">
+            </div>
+            
+        </div>
         <div class="slide-in"></div>
     </div>
+    <div id="again-menu">
+        <button id="again-button" onclick="resetPlay()">
+        </button>
+    </div>
+    <div id="shooting-bars"></div>
     
     <div id="main">
         

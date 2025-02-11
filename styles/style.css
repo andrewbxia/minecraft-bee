@@ -1,0 +1,78 @@
+@font-face {
+    font-family: dos;
+    src: url("../assets/Web437_DOS-V_re_JPN16.woff");
+	font-display: block;
+}
+@font-face{
+    font-family: snapit;
+    src: url("../assets/Snap-itmono.woff2");
+}
+@font-face{
+    font-family: atrament;
+    src: url("../assets/Atrament-Regular.otf");
+    font-weight: normal;
+}
+@font-face {
+    font-family: atrament;
+    src: url("../assets/Atrament-Italic.otf");
+    font-style: italic;
+}
+@font-face {
+    font-family: atrament;
+    src: url("../assets/Atrament-Semibold.otf");
+    font-weight: bold;
+}
+@font-face {
+    font-family: atrament;
+    src: url("../assets/Atrament-SemiboldItalic.otf");
+    font-weight: bold;
+    font-style: italic;
+}
+:root {
+    --theme-primary: rgb(255, 241, 124);
+    --theme-secondary: rgb(245, 52, 133);
+    --theme-tertiary: rgb(85, 153, 255);
+    --theme-green: rgb(54, 224, 153);
+    --theme-purple: rgb(136, 99, 223);
+    --theme-orange: rgb(231, 190, 75);
+    --theme-pink: rgb(245, 96, 158);
+}
+html{
+    height: 100%;
+}
+body{
+    background: var(--theme-primary);
+    color: var(--theme-secondary);
+    font-family: 'atrament', Courier, monospace;
+    font-size: 2em;
+    font-weight: normal;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 10000px;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    padding: 0 500px;
+
+}
+#main{
+    /* display: flex;
+    align-self: center; */
+    width: 100%;
+    height: 100%;
+    background: inherit;
+}
+
+#again-menu{
+    position: fixed;
+    display: none;
+    top: 0;
+    right: 0;
+    z-index: 0;
+    button{
+        width: 100px;
+        height: 100px;
+    }
+}
+
+/* shooting bars */
