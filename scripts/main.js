@@ -1,7 +1,6 @@
 // const eid = id => document.getElementById(id);
 // const eq = query => document.querySelector(query);
 // const eqa = query => document.querySelectorAll(query);
-const hostname = window.location.origin;
 const randarridx = arr => Math.floor(Math.random() * arr.length);
 const randarrchoose = arr => arr[randarridx(arr)];
 const shootingbars = eid("shooting-bars");
@@ -65,7 +64,7 @@ function shootbars(){
 // cd stuff
 
 const cds = [ // implement artist and desc and source laterz
-    ['bee-minecraft.jpg', 'palescreen.wav'],
+    ['bee-minecraft.jpg', 'palescreen.mp3'],
     ["snacko-cover.jpg", "dancefloor journey.mp3"],
     ["snacko-cover.jpg", "game time.mp3"],
     ["snacko-cover.jpg", "glittering seasons.mp3"],
@@ -74,7 +73,7 @@ const cds = [ // implement artist and desc and source laterz
     ["snacko-cover.jpg", "snacko island party.mp3"],
     ["snacko-cover.jpg", "sunlight memories.mp3"],
 ];
-const cdimgpath = hostname + "/assets/imgs/cds/", cdaudiopath = hostname + "/assets/audios/cds/";
+const cdimgpath = "./assets/imgs/cds/", cdaudiopath = "./assets/audios/cds/";
 
 const cdplayer = eid("cd-player");
 const cdplay = eid("cd-play");
@@ -90,6 +89,7 @@ function placecd(){
     const selectedcd = randarrchoose(cds);
     cdimg.src = cdimgpath + selectedcd[0];
     cd.dataset.audio = cdaudiopath + selectedcd[1];
+    cd.dataset.audioname = selectedcd[1];
     cd.appendChild(cdimg);
     cdplayer.appendChild(cd);
 
@@ -111,7 +111,8 @@ function playcd(){
     const cd = cdplayer.querySelector(".cd");
     if(cdanimation.playState === "running") return;
     cdanimation.play();
-    if(decodeURIComponent(cdaudio.src) != cd.dataset.audio){ cdaudio.src = cd.dataset.audio; console.log(cdaudio.src , cd.dataset.audio)}
+    console.log(decodeURIComponent(cdaudio.src),cd.dataset.audioname)
+    if(decodeURIComponent(cdaudio.src).indexOf(cd.dataset.audioname) === -1) cdaudio.src = cd.dataset.audio;
     // console.log(cdaudio.currentTime);
     cdaudio.play();
 }
