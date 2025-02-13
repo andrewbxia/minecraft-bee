@@ -77,7 +77,7 @@ class Ani{
         // console.log(id, Ani.#animations.get(id));
         // Ani.#animations.get(id)?.cancel();
         Ani.#animations.delete(id);
-        console.log(Ani.#animations.size);
+        // console.log(Ani.#animations.size);
     }
 
     #cleanupcleanupeverybodyeverywherecleanupcleanupeverybodydoyourshare(){
@@ -101,7 +101,7 @@ class Ani{
 
         const [, num, unit] = match;
         const newValue = Math.max(parseFloat(num) + addition);
-        console.log(this.#query, value,unit);
+        // console.log(this.#query, value,unit);
 
         return `${newValue}${unit}`;
     }
@@ -217,6 +217,7 @@ class Ani{
                 from.forEach((item) => {
                     for (const prop in item) {
                         const val = item[prop];
+
                         frames[0][prop] = additive[0]
                             ? this.#addunit(getComputedStyle(el)[prop], parseFloat(val))
                             : val;
@@ -240,7 +241,7 @@ class Ani{
                         fill: forwards ? "forwards" : "none"
                     })
                 );
-                console.log(this.#query, Ani.#animations.get(key));
+                // console.log(this.#query, Ani.#animations.get(key));
                 Ani.#animations.get(key).onfinish = () => Ani.#animations.delete(key);
             }
         }, duration);

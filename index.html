@@ -7,9 +7,41 @@
     <script>
         let pageentered = false;
     </script>
+    <style id="font-faces">
+        @font-face {
+    font-family: dos;
+    src: url("../assets/fonts/Web437_DOS-V_re_JPN16.woff");
+	font-display: block;
+}
+@font-face{
+    font-family: snapit;
+    src: url("../assets/fonts/Snap-itmono.woff2");
+}
+@font-face{
+    font-family: atrament;
+    src: url("../assets/fonts/Atrament-Regular.otf");
+    font-weight: normal;
+}
+@font-face {
+    font-family: atrament;
+    src: url("../assets/fonts/Atrament-Italic.otf");
+    font-style: italic;
+}
+@font-face {
+    font-family: atrament;
+    src: url("../assets/fonts/Atrament-Semibold.otf");
+    font-weight: bold;
+}
+@font-face {
+    font-family: atrament;
+    src: url("../assets/fonts/Atrament-SemiboldItalic.otf");
+    font-weight: bold;
+    font-style: italic;
+}
+    </style>
     <script src="./scripts/dev-detect.js"></script>
     <script src="./scripts/animation3.js"></script>
-    <script src="./scripts/oneko.js" defer data-cat="./assets/oneko.gif"></script>
+    <script src="./scripts/oneko.js" defer data-cat="./assets/imgs/oneko.gif"></script>
     <script src="./scripts/preview-page.js" defer></script>
     <script src="./scripts/main.js" defer></script>
     <link rel="stylesheet" href="./styles/style.css">
@@ -42,6 +74,12 @@
             /* border: 2px black solid; */
             /* animation: rotateinf 10s linear infinite; */
         }
+        @media (max-width: 800px){
+            #shooting-bars{
+                height: 150px;
+            }
+        }
+        
         .shooting-bar{
             position: absolute;
             left: 0;
@@ -107,7 +145,7 @@
             rotate: 180deg;
             left: 0;
             bottom: 0;">
-                <img src="./assets/ab.gif">
+                <img src="./assets/imgs/ab.gif">
             </div>
             
         </div>
@@ -117,19 +155,63 @@
         <button id="again-button" onclick="resetPlay()">
         </button>
     </div>
-    <div id="shooting-bars"></div>
+    <div id="shooting-bars" onclick="new Ani('#shooting-bars').rule({from: [{rotate: '0deg'}], to: [{rotate: '700deg'}], forwards: false, additive: [true, true]})"></div>
     
-    <div id="main">
-        
-        <header>
-    hed
-        </header>
-        <main>
-    main
-        </main>
-        <footer>
-    footer
-        </footer>
+
+
+    <div id="container">
+        <div id="off-left">
+            <section>
+                wh
+            </section>
+        </div>
+        <div id="main">
+            <section id="me-section">
+                <div id="me-img">
+                    <img src="./assets/imgs/bee-minecraft.jpg">
+                </div>
+                <div id="cd-player">
+                    <div id="cd-cover"></div>
+                    <div id="cd-controls">
+                        <button id="cd-play" onclick="playcd()">
+                            <p>▶</p>
+                        </button>
+                        <button id="cd-stop" onclick="stopcd()">
+                            <p>■</p>
+                        </button>
+                        <button id="cd-next" onclick="nextcdthisonesucks()">
+                            <!-- wow u really hate this one!!! or just wanna see the animations -->
+                            <p>nxt</p>
+                        </button>
+                    </div>
+
+                    
+                </div>
+                <div id="me-text">
+                    <h1>hey</h1>
+                    lsdkfjdkl heuihe hiughfhf
+                </div>
+            </section>
+            <section id="blog-section">
+                <h2>bloggies</h2>
+                <ul id="blogs">
+                    <li>
+                        <a href="./blog/1.html">blog 1</a>
+                    </li>
+                </ul>
+            </section>
+            <section id="art-section">
+                <h2>artz</h2>
+                <div id="arts"></div>
+            </section>
+            <section id="other-section">
+                <h2>others</h2>
+            </section>
+        </div>
+        <div id="off-right">
+            <section style="margin-top: 600px; pointer-events: none;" id="cd-offset"></section>
+            <section></section>
+        </div>
     </div>
 </body>
 </html>

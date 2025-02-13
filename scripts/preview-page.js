@@ -27,8 +27,8 @@ function clearPlay(){
     pageentered = true;
 }   
 function resetPlay(){
-    eid("before-screen").style.display = "initial";
-    eid("play").style.display = "initial";
+    eid("before-screen").style.display = "block";
+    eid("play").style.display = "block";
     eid("play-button").disabled = false;
     eid("play-button").style.opacity = 1;
     document.body.style.overflowY = "hidden";
@@ -37,7 +37,6 @@ function resetPlay(){
 
 
 
-const main = eid("main");
 const buttonflicker = () => {
     const el = eid("play-button");
     if (!el || el.disabled){
@@ -162,7 +161,7 @@ const playAnimations = [
         // before-screen slides in
         
         const beforescreendelay = new Ani("#before-screen").then(() => {
-            eq("#before-screen").style.left = "unset";
+            eq("#before-screen").style.left = "initial";
         })
         .rule({
             from: [{right: "0vw"}],
@@ -176,7 +175,7 @@ const playAnimations = [
         // slide-in slides in
         const slideindelay = new Ani(".slide-in").delay(beforescreendelay.whendone() - 100)
         .rule({
-            from: [{left: "0%"}],
+            from: [{left: "100%"}],
             to: [{left: "50%"}],
             duration: slideduration,
             easing: "ease-in",
@@ -242,5 +241,5 @@ eid("play-button").onmouseout = (e) => {
     e.target.classList.remove("play-button-hover");
 }
 resetPlay();
-// clearPlay();
-// clearPlayScreen();
+clearPlay();
+clearPlayScreen();
