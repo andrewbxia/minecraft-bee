@@ -166,12 +166,13 @@ class Ani{
         const easing = obj.easing || "linear";
         const forwards = obj.forwards || false;
         const additive = obj.additive || [false, false];
+        const iterations = obj.iterations || 1;
         const from = obj.from || [];
         const to = obj.to || [];
         const otherignore = obj.otherignore || false;
         const elements = document.querySelectorAll(this.#query);
         // const id = this.#increment(); // do this in the loop
-        this.#updatecurr(duration);
+        this.#updatecurr(duration * iterations);
         let idx = 0;
         let keys = [];
         while (idx < Math.min(this.#querycnt, elements.length)) {
@@ -238,6 +239,7 @@ class Ani{
                     el.animate(frames, {
                         duration,
                         easing,
+                        iterations,
                         fill: forwards ? "forwards" : "none"
                     })
                 );

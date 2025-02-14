@@ -21,8 +21,8 @@ body{
     width: 100%;
     height: 10000px;
     overflow-y: scroll;
-    overflow-x: hidden;
-    image-rendering: pixelated;
+    overflow-x: scroll;
+    image-rendering: auto;
 
 }
 img{
@@ -58,6 +58,7 @@ h1, h2, h3, h4, h5, h6{
             min-height: fit-content;
             /* clear: both; */
             margin: 5px;
+            background-color: var(--theme-primary);
             
         }
         >section::after{
@@ -129,6 +130,9 @@ h1, h2, h3, h4, h5, h6{
 }
 
 #cd-cover{
+    &::before{
+        content: "sigma cd industries™™™";
+    }
     background-color: black;
     width: 100%;
     height: 100%;
@@ -141,7 +145,8 @@ h1, h2, h3, h4, h5, h6{
     height: 338px;
     position: absolute;
     top: 0;
-    left: 0;
+    /* left: 0; */
+    right: -100%;
     >img{
         width: 100%;
         height: 100%;
@@ -177,3 +182,13 @@ h1, h2, h3, h4, h5, h6{
 
 /* blog section */
 
+#blog-section{
+
+}
+#blog-editor{
+    width: 100%;
+    height: 500px;  
+}
+#editor-output{
+    border: 3px solid var(--theme-purple);
+}
