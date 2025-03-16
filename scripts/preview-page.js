@@ -1,21 +1,21 @@
 
 window.addEventListener('devtoolschange', event => {
     if (event.detail.isOpen) {
-        console.log('DevTools is open');
+        console.log('omG DevTools is open');
     } else {
-        console.log('DevTools is closed');
+        console.log('zzz DevTools is closed');
     }
 });
 console.log(document.getElementById("before-screen"));
-function eid(id) {
-    return document.getElementById(id);
-}
-function eq(query) {
-    return document.querySelector(query);
-}
-function eqa(query) {
-    return document.querySelectorAll(query);
-}
+// function eid(id) {
+//     return document.getElementById(id);
+// }
+// function eq(query) {
+//     return document.querySelector(query);
+// }
+// function eqa(query) {
+//     return document.querySelectorAll(query);
+// }
 // play screen animations
 
 function clearPlayScreen(){

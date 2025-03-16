@@ -1,79 +1,103 @@
-const supaurl = "https://rvlvbcvqtwmliwwrgqjg.supabase.co";
-// i have rls policies enabled, we should be goog goog
-const apikey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2bHZiY3ZxdHdtbGl3d3JncWpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk1MDU3MjcsImV4cCI6MjA1NTA4MTcyN30.oysqGbhO9qgDl9RogWjpwAkgY7-letEY_sIR0WYIP4s";
+const blogcontent = eq("#main-content .blog-content");
+const onekosrc = `../scripts/oneko.js`;
 
-async function getpostsoverview(){
-    const response = await fetch(`${supaurl}/rest/v1/posts?select=title,id,description,tags,cover_url&order=created_at.desc&limit=5`, {        headers: {
-            apikey: apikey,
-            "Authorization": `Bearer ${apikey}`,
-            "Content-Type": "application/json"
-        }
-    });
-    const data = await response.json();
-    console.log(data);
-    return data;
+function todate(date){
+    return new Date(date).toUTCString().substring(0, 16);
 }
 
-getpostsoverview().then(posts => {
-    console.log(posts);
-});
-
-const samplepost = `
-<!--
-<h1>Sample Blog Post</h1>
-<h2>Introduction</h2>
-<p>This is a sample blog post to demonstrate various HTML tags.</p>
-<h2>Content</h2>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. <abbr title="Hypertext Markup Language">HTML</abbr> is the standard markup language for creating web pages.</p>
-<h3>Subheading</h3>
-<p>Here is a list of items:</p>
-<ul>
-    <li>Item 1</li>
-    <li>Item 2</li>
-    <li>Item 3</li>
-</ul>
-<p>Here is a link to <a href="https://www.example.com">example.com</a>.</p>
-<h2>Conclusion</h2>
-<p>Thank you for reading this sample post. Feel free to use these tags in your own posts.</p>
-
--->
-
-.
-`;
-
-ace.require("ace/ext/language_tools");
-ace.require("ace/ext/spellcheck");
-const beautify = ace.require("ace/ext/beautify");
-const editor = ace.edit("blog-editor");
-editor.setOptions({
-    enableBasicAutocompletion: true,
-    enableSnippets: true,
-    enableLiveAutocompletion: true,
-    useSoftTabs: true,
-    fontSize: "24px",
-    spellcheck: true,
-    tabSize: 8,
-});
-const editorspace = eid("editor-output");
-editor.setTheme("ace/theme/monokai");
-editor.session.setMode("ace/mode/html");
-editor.setValue(samplepost);
-beautify.beautify(editor.session);
-
-const doc = editor.session.getDocument();
-doc.on("change", () => {
-    editorspace.innerHTML = editor.getValue();
-});
-
-// extra commands curated by chatgpt :)
-editor.commands.addCommand({
-    name: "instBrEnter",
-    bindKey: { win: "Ctrl+Enter" },
-    exec: function(editor) {
-        const session = editor.getSession();
-        const cursor = editor.getCursorPosition();
-        const line = session.getLine(cursor.row);
-        const indentation = line.match(/^\s*/)[0]; // Get leading whitespace
-        editor.insert(`\n${indentation}<br>\n${indentation}`);
+if(params.has("id")){
+    const script = document.createElement("script");
+    script.src = onekosrc;
+    script.setAttribute("data-cat", "../assets/imgs/oneko.gif");
+    document.body.appendChild(script);
+    const postid = params.get("id");
+    if(!postid){
+        window.location.href = "/blog";
     }
-});
+
+    function disperror(errmsg){
+        blogcontent.innerHTML = `<h1>woops</h1>
+        <p>${errmsg}</p>`;
+    }
+
+    async function getpost(){
+        const response = await fetch(`${supaurl}/rest/v1/posts?id=eq.${postid}`, {
+            headers: {
+                apikey: publicanonkey,
+                "Authorization": `Bearer ${publicanonkey}`,
+                "Content-Type": "application/json"
+        }
+        })
+        .then(res => res.json())
+        .catch(err => {
+            console.error(err);
+            disperror(err.message);
+            return null;
+        });
+        console.log(response);
+        return response;
+    }
+    getpost().then(post=>{
+        if(post === null || post.length === 0){
+            disperror("cant find post of id "+postid);
+            return;
+        }
+        post = post[0];
+        console.log(post);
+        const id = post.id;
+        const createdat = post.created_at;
+        const editedat = post.edited_at;
+        const content = post.content;
+        const coverurl = post.cover_url;
+        const title = post.title;
+        const tags = post.tags;
+        const description = post.description;
+        
+        blogcontent.innerHTML = content;
+        // console.log(blogcontent);
+        document.dispatchEvent(new Event("req_resize"));
+    });
+    
+    
+}
+else{
+    getpostsoverview().then(posts => {
+        blogcontent.innerHTML = "";
+        posts.forEach(post => {
+            const id = post.id;
+            let createdat = post.created_at;
+            let editedat = post.edited_at;
+            const content = post.content;
+            const coverurl = post.cover_url;
+            const title = post.title;
+            const tags = post.tags;
+            const desc = post.description;
+
+            const edited = editedat > createdat;
+
+            createdat = todate(createdat);
+            editedat = todate(editedat);
+
+
+            const blog = document.createElement("div");
+            blog.className = "b-entry";
+
+            blog.innerHTML = `
+            <span class="b-head">
+                <a href="/blog?id=${id}" target="_top">${title}</a>
+                <p class="b-date">posted ${createdat}</p>
+            </span>
+            <ul>
+                ${desc ? `<li>${desc}</li>` : ""}
+                ${tags.length != 0 ? `<li class="b-tags">${tags.join(', ')}</li>` : ""}
+            </ul>
+            `;
+            console.log(blog.innerHTML);
+            blogcontent.appendChild(blog);
+        });
+        // blogcontent.appendChild(ul);
+        document.dispatchEvent(new Event("googies_loaed"));
+
+    });
+
+}

@@ -141,7 +141,7 @@ class Ani{
     }
 
     whendone(){
-        console.log(this.#curr - performance.now());
+        // console.log(this.#curr - performance.now());
         return this.#curr - performance.now(); // usually this.#start, but could be innacurate due if code is slow (probably will be lol)
     }
 

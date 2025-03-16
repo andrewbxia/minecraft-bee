@@ -39,17 +39,19 @@
             font-style: italic;
         }
     </style>
+    <script src="./scripts/helper.js"></script>
     <script src="./scripts/dev-detect.js"></script>
     <script src="./scripts/animation3.js"></script>
     <script src="./scripts/oneko.js" defer data-cat="./assets/imgs/oneko.gif"></script>
     <script src="./scripts/preview-page.js" defer></script>
     <script src="./scripts/main.js" defer></script>
-    <script src="./scripts/ace-min-noconflict/ace.js"></script>
+    <!-- <script src="./scripts/ace-min-noconflict/ace.js"></script>
     <script src="./scripts/ace-min-noconflict/ext-language_tools.js"></script>
     <script src="./scripts/ace-min-noconflict/ext-spellcheck.js"></script>
-    <script src="./scripts/ace-min-noconflict/ext-beautify.js"></script>
-    <script src="./scripts/blog.js" defer></script>
-    <link rel="stylesheet" href="./styles/style.css">
+    <script src="./scripts/ace-min-noconflict/ext-beautify.js"></script> -->
+    <script src="./scripts/blog-overview.js" defer></script>
+    <link rel="stylesheet" href="./styles/theme.css">
+    <link rel="stylesheet" href="./styles/main.css">
     <link rel="stylesheet" href="./styles/preview-page.css">
     <style id="scrollbar-css">
         ::-webkit-scrollbar{
@@ -163,7 +165,7 @@
         <button id="again-button" onclick="resetPlay()">
         </button>
     </div>
-    <div id="shooting-bars" onclick="new Ani('#shooting-bars').rule({from: [{rotate: '0deg'}], to: [{rotate: '700deg'}], forwards: false, additive: [true, true]})"></div>
+    <div id="shooting-bars"></div>
     
 
 
@@ -181,10 +183,19 @@
                 <div id="cd-player">
                     <div id="cd-cover"></div>
                     <div id="cd-controls">
+                        <p style="margin: 0; color: var(--theme-primary)">bee cd industries™™™</p>
+                        <input type="range" id="cd-progress" value="0" min="0" max="100" step="1" 
+                        oninput="cdprogress(event)">
+                        <input type="range" id="cd-volume" value="100" min="0" max="100" step="1" 
+                        oninput="cdvolume(event)" orient="vertical"
+                        style="position: absolute; right: 0; bottom: 0;"
+                        >
+                        <input type="checkbox" id="cd-autoplay" name="autoplay" 
+                        oninput="cdautoplay(event)">
                         <button id="cd-play" onclick="playcd()">
                             <p>▶</p>
                         </button>
-                        <button id="cd-stop" onclick="stopcd()">
+                        <button id="cd-reset" onclick="resetcd()">
                             <p>■</p>
                         </button>
                         <button id="cd-next" onclick="nextcdthisonesucks(event)">
@@ -192,29 +203,54 @@
                             <p>nxt</p>
                         </button>
                     </div>
-
-                    
                 </div>
                 <div id="me-text">
-                    <h1>hey</h1>
-                    lsdkfjdkl heuihe hiughfhf
+                    <h1 class="link">axia.sh</h1>
+                    <p>
+                        ello! 
+                    </p>
+                    <p>
+                        also, I like coding in pure vanilla HTML CSS and JS instead of using a framework to do stuff. 
+                        Whether that is a product of laziness to learn such tools or my desire for spiritual independence is a question 
+                        not even I know the answer to. :p
+                    </p>
                 </div>
             </section>
             <section id="blog-section">
-                <div id="blog-editor"></div>
-                <div id="editor-output"></div>
-                <h2>bloggies</h2>
-                <ul id="blogs">
-                    <li>
-                        <a href="./blog/1.html">blog 1</a>
-                    </li>
-                </ul>
+                <div id="blog-writing" style="display: none;">
+                    <div id="blog-editor"></div>
+                    <div id="editor-output"></div>
+                </div>
+                <iframe src="./blog/index.html" style="border: none; width: 100%; "></iframe>
+                
             </section>
-            <section id="art-section">
-                <h2>artz</h2>
-                <div id="arts"></div>
+            <section id="artz-section">
+                <h2>notebook lined artz
+                    <span style="font-size: 0.25em; font-weight: normal;">
+                        (roughly in order of recency <span class="shade" style="font-size: 0.5em;">(and quality)</span>)
+                    </span>
+                </h2>
+                <p class="halffont">click/clickout to enlarge!</p>
+                <div id="artz-nav-t">
+                    <button class="artz-prev" onclick="prevartz()">
+                        <p>&lt;</p>
+                    </button>
+                    <span id="artz-nav-t-page">1</span>
+                    <button class="artz-next" onclick="nextartz()">
+                        <p>&gt;</p>
+                    </button>
+                </div>
+                <div id="artz"></div>
+                <div id="artz-nav-b">
+                    <button class="artz-prev" onclick="prevartz()">
+                        <p>&lt;</p>
+                    </button>
+                    <button class="artz-next" onclick="nextartz()">
+                        <p>&gt;</p>
+                    </button>
+                </div>
             </section>
-            <section id="other-section">
+            <section id="other-section" style="min-height: 500px;">
                 <h2>others</h2>
             </section>
         </div>

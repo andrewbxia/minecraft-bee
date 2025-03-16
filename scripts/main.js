@@ -50,7 +50,7 @@ function shootbar(color, width, height){
 function shootbars(){
     const density = 3;
     shootingbarsheight = shootingbars.clientHeight;
-    console.log(shootingbarsheight);
+    log(shootingbarsheight);
     for(const color of shootingbarcolors){
         if(!pageentered) break;
         for(let i = 0; i < density; i++){
@@ -82,10 +82,20 @@ const cdstop = eid("cd-stop");
 const cdnext = eid("cd-next");
 const cdaudio = new Audio();
 const bonk = new Audio("./assets/audios/bonk.mp3");
+let autoplay = false;
+cdaudio.preload = "auto";
 bonk.preload = "auto";
 const cddim = 338;
 let cdanimation = null;
 const reverteasing = "cubic-bezier(0.5,0,0.25,1.5)";
+
+const progressinterval = setInterval(() => {   
+    let progress = cdaudio.currentTime / cdaudio.duration * 100;
+    if(isNaN(progress)) progress = 0;
+    eid("cd-progress").value = progress;
+    eid("cd-progress").style.backgroundSize = progress + "% 100%";
+}, 100);
+
 function placecd(){
     if(cdplayer.querySelector(".cd")) throw new Error("cd already placed");
     const cd = document.createElement("div");
@@ -95,12 +105,14 @@ function placecd(){
     cdimg.src = cdimgpath + selectedcd[0];
     cd.dataset.audio = cdaudiopath + selectedcd[1];
     cd.dataset.audioname = selectedcd[1];
+    cdaudio.src = cd.dataset.audio;
     cd.appendChild(cdimg);
     cdplayer.appendChild(cd);
-
     const rotation = Math.random() * 360 + "deg";
     cd.style.rotate = rotation;
     cd.dataset.rotation = rotation;
+    
+    if(autoplay) playcd();
     cd.animate([
         {left: -cddim + "px", rotate: 0 + "deg", width: "0px"},
         {left: "0px", rotate: rotation, width: cddim + "px"},
@@ -111,8 +123,15 @@ function placecd(){
     });
 }
 placecd();
-
-cdaudio.addEventListener("ended", stopcd);
+cdaudio.onended = () => {
+    log("ended");
+    if(autoplay){
+        nextcdthisonesucks();
+    }
+    else stopcd();
+};
+// cdaudio.addEventListener("ended", stopcd);
+const cdplaytext = "▶", cdstoptext = "❚❚";
 
 function playcd(){
     const cd = cdplayer.querySelector(".cd");
@@ -127,14 +146,16 @@ function playcd(){
         iterations: Infinity,
     });
 
-    console.log(decodeURIComponent(cdaudio.src),cd.dataset.audioname)
+    // log(decodeURIComponent(cdaudio.src),cd.dataset.audioname)
     if(decodeURIComponent(cdaudio.src).indexOf(cd.dataset.audioname) === -1) cdaudio.src = cd.dataset.audio;
-    // console.log(cdaudio.currentTime);
+    // log(cdaudio.currentTime);
+    eid("cd-play").setAttribute("onclick", "stopcd()");
+    eid("cd-play").innerText = cdstoptext;
     cdaudio.play();
 }
 function stopcd(full = false, out = false){
     const cd = cdplayer.querySelector(".cd");
-    if(!full && cdaudio.paused) return 0;
+    if(!full && cdaudio.paused && !cdaudio.ended) return 0;
 
     // hacky
     const from2 = [{rotate: "0deg"}]; if(out) from2[0].right = 0 + "px";
@@ -158,20 +179,44 @@ function stopcd(full = false, out = false){
         additive: [true, false],
     }).whendone();
     cdaudio.pause();
+    eid("cd-play").setAttribute("onclick", "playcd()");
+    eid("cd-play").innerText = cdplaytext;
     // cdaudio.currentTime = 0;
     
     return delay;
 }
-function nextcdthisonesucks(event){
-    const button = event.currentTarget;
-    button.disabled = true;
+
+function resetcd(){
+    stopcd(false, false);
+    cdaudio.currentTime = 0;
+}
+
+function cdprogress(event){
+    const newprogress = event.currentTarget.value;
+    let newtime = cdaudio.duration * newprogress / 100;
+    // if(isNaN(newtime)) newtime = 0;
+    cdaudio.currentTime = newtime;
+}
+function cdvolume(event){
+    cdaudio.volume = event.currentTarget.value / 100;
+}
+function cdautoplay(event){
+    const value = event.currentTarget.checked;
+    log(value);
+    autoplay = value;
+    // cdaudio.onended();
+}
+
+function nextcdthisonesucks(){
+    // button.disabled = true;
+    eqa("#cd-controls button").forEach(b => b.disabled = true);
     const delay = stopcd(true, true);
     const cd = eq(".cd");
     // do the animation here later of it dropping and colliding with the bottom screen or someth
     // and a funny one where it shoots off violently lol
 
     const hoffset = cdplayer.getBoundingClientRect().bottom;
-    console.log(hoffset);
+    log(hoffset);
 
     // use #cd-player as the reference point, since .cd element spins
     // new Ani(".cd").delay(delay + 100)
@@ -196,12 +241,12 @@ function nextcdthisonesucks(event){
     //     additive: [true, true],
     // }).then(() => {
     //     const rect = cdplayer.getBoundingClientRect();
-    //     console.log(rect.left, rect.top)
+    //     log(rect.left, rect.top)
     //     cd.style.position = "fixed";
     //     document.body.before(cd);
     //     cd.style.top = `${rect.top}px`;
     //     cd.style.left = `${rect.right - cddim / 2}px`;
-    //     console.log(cd.getBoundingClientRect().left);
+    //     log(cd.getBoundingClientRect().left);
     // })
     // .rule({
     //     from: [{top: "0px"}],
@@ -229,7 +274,7 @@ function nextcdthisonesucks(event){
     
     
     // .then(() => {
-    //     console.log(cd.getBoundingClientRect().left);
+    //     log(cd.getBoundingClientRect().left);
     //     cd.remove();
     //     placecd();
     // });
@@ -246,12 +291,12 @@ function nextcdthisonesucks(event){
     })
     .then(() => {
         const rect = cdplayer.getBoundingClientRect();
-        console.log(rect.right + cddim)
+        log(rect.right + cddim)
         cd.style.position = "fixed";
         document.body.before(cd);
         cd.style.top = `${rect.top}px`;
         cd.style.left = `${rect.right}px`;
-        console.log(document.body.getBoundingClientRect().width - (rect.right),cd.getBoundingClientRect().right);
+        log(document.body.getBoundingClientRect().width - (rect.right),cd.getBoundingClientRect().right);
     })
     .rule({
         from: [{rotate: "0deg", left: "0px", top: "0px"}],
@@ -262,7 +307,9 @@ function nextcdthisonesucks(event){
         additive: [true, false],
     })
     .then(() => {
-        bonk.play();
+        if (document.visibilityState === "visible") {
+            bonk.play();
+        }
         cd.style.zIndex = 1000;
     })
     
@@ -276,7 +323,9 @@ function nextcdthisonesucks(event){
     }).then(() => {
         cd.remove();
         placecd();
-        button.disabled = false;
+        // button.disabled = false;
+        eqa("#cd-controls button").forEach(b => b.disabled = false);
+
     });
 
 
@@ -301,3 +350,130 @@ function nextcdthisonesucks(event){
     // }, 1000);
     // placecd();
 }
+// blog
+
+eid("blog-writing").style.display = params.has("b-edit") ? "block" : "none";
+
+
+// artz
+
+let artzpageidx = 0;
+const displaylimit = 4;
+const baseartzlink = "./assets/imgs/artz/";
+const nexthtml = `
+<div class="artz-nav">
+    <button onclick="nextartz()">Next</button>
+</div>
+`, prevhtml = `
+<div class="artz-nav">
+    <button onclick="prevartz()">Previous</button>
+</div>
+`;
+
+
+
+
+
+
+
+
+
+
+
+const imginfo = [
+    ["IMG_1106.jpg", `old ahh 60 second drawing of me`],
+    ["IMG_1366.jpg", `doodle for irl friend madeleine !!`],
+    ["IMG_1378.jpg", `ORIIIIIIIIIIIIIIIIIIII`],
+    ["IMG_1698.jpg", `${link("https://www.youtube.com/@RandomCatOnRoblox", "randomcat")} fanart`],
+    ["IMG_1795.jpg", `rainstorm sh4rk doodle (saltwater boi)`],
+    ["IMG_1853.jpg", `half merc fleet doodle half learning impact frames also i think the gun is pretty cool beans`],
+    ["IMG_1861.jpg", `yveltal slurp(ee)`],
+    ["IMG_2119.jpg", `vandalizing my own ${link(baseartzlink + "IMG_2119_og.jpg", "vandalized","_blank", {title: "trust me"})} ap chem booklet (jk thx alx and rachel i like it lol)`],
+    ["IMG_2231.jpg", `christmas doodle 4 online kiddos`],
+    ["IMG_2380.jpg", `ap chemistry collab`],
+    // "IMG_.jpg",
+    // "IMG_.jpg",
+    // "IMG_.jpg",
+    // "IMG_.jpg",
+];
+function shufflearr(arr) {
+    /// shuffles in place
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+// shuffle(imginfo);
+imginfo.sort((a,b) => {
+    // highest IMG number first, latest always displayed
+    return a < b ? 1 : -1;
+});
+
+function nextartz(){
+    artzpageidx++;
+    displayartz();
+}
+function prevartz(){
+    artzpageidx--;
+    displayartz();
+}
+function displayartz(){
+    const endpageidx = Math.ceil(imginfo.length / displaylimit) - 1;    
+    artzpageidx = max(0, min(artzpageidx, endpageidx));
+
+    const artz = eid("artz");
+    const prevheight = artz.clientHeight;
+    artz.style.minHeight = prevheight + "px";
+    artz.innerHTML = "";
+
+    // setting nav icons displaies
+    eq("#artz-nav-t .artz-prev").style.display = (artzpageidx > 0) ? "block" : "none";
+    eq("#artz-nav-t .artz-next").style.display = (artzpageidx < endpageidx) ? "block" : "none";
+    eq("#artz-nav-b .artz-prev").style.display = (artzpageidx > 0) ? "block" : "none";
+    eq("#artz-nav-b .artz-next").style.display = (artzpageidx < endpageidx) ? "block" : "none";
+    eid("artz-nav-t-page").innerText = artzpageidx + 1;
+    
+    const start = artzpageidx * displaylimit;
+    const loadcnt = min(displaylimit, imginfo.length - start);
+    let imgidx = start;
+    let imgloaded = 0;
+
+    while(imgidx < imginfo.length && imgidx - start < displaylimit){
+        const button = document.createElement("button");
+        // button.onfocus = function(){
+        //     this.style.outline = "none";
+        // }
+        
+        const imgcontainer = document.createElement("div");
+        
+        const img = document.createElement("img");
+        img.draggable = false;
+
+        img.onload = function(){
+            imgloaded++;
+            if(imgloaded === loadcnt){
+                artz.style.minHeight = "auto";
+            }
+        }
+
+        img.src = baseartzlink + imginfo[imgidx][0];
+
+        const caption = document.createElement("p");
+        caption.classList.add("caption");
+        caption.innerHTML = "-- " + imginfo[imgidx][1];
+        img.title = caption.innerText;
+
+        imgcontainer.appendChild(img);
+        imgcontainer.appendChild(caption);
+        button.appendChild(imgcontainer);
+        artz.appendChild(button);
+        imgidx++;
+    }
+    // artz.style.height = "auto";
+}
+
+log(imginfo);
+
+displayartz();
