@@ -442,9 +442,11 @@ function displayartz(){
 
     while(imgidx < imginfo.length && imgidx - start < displaylimit){
         const button = document.createElement("button");
+        button.tabIndex = 0;
         // button.onfocus = function(){
         //     this.style.outline = "none";
         // }
+        
         
         const imgcontainer = document.createElement("div");
         
