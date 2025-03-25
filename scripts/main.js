@@ -88,6 +88,27 @@ bonk.preload = "auto";
 const cddim = 338;
 let cdanimation = null;
 const reverteasing = "cubic-bezier(0.5,0,0.25,1.5)";
+let cdok = false;
+let cdtitleframe = 0;
+const cdframes = [
+    "d(-w-)b",
+    "d(-wo)b",
+    "d(owo)b",
+    "d(owo)b",
+    "d(owo)b",
+    "d(owo)b",
+    "dc(owo)ↄb",
+    "d^∩(owo)ↄ",
+    "d^bc(owo)",
+];
+const cdtitleinterval = setInterval(() => {
+    if(!cdaudio.paused) cdtitleframe = max(0, cdtitleframe - 1);
+    else cdtitleframe = min(cdframes.length - 1, cdtitleframe + 1);
+    if(cdtitleframe === 0 && eid("cd-status").innerText[0] !== '♪'){
+        eid("cd-status").innerText = "♪" + cdframes[cdtitleframe] + "♪";
+    }
+    else eid("cd-status").innerText = cdframes[cdtitleframe];
+}, 300);
 
 const progressinterval = setInterval(() => {   
     let progress = cdaudio.currentTime / cdaudio.duration * 100;
@@ -95,6 +116,32 @@ const progressinterval = setInterval(() => {
     eid("cd-progress").value = progress;
     eid("cd-progress").style.backgroundSize = progress + "% 100%";
 }, 100);
+
+const cdaudiocontext = new AudioContext();
+const analyser = cdaudiocontext.createAnalyser();
+analyser.fftSize = Math.pow(2, 6);
+let audioarray = new Uint8Array(analyser.frequencyBinCount);
+const source = cdaudiocontext.createMediaElementSource(cdaudio);
+source.connect(analyser);
+source.connect(cdaudiocontext.destination);
+function getVolume() {
+    analyser.getByteTimeDomainData(audioarray);
+    let sum = 0, maxvol = 0;
+    for (let i = 0; i < audioarray.length; i++) {
+        const value = audioarray[i] / 128 - 1;
+        maxvol = max(maxvol, audioarray[i]);
+         // bass multiplier
+         sum += value * value * (audioarray[i] < 128 ? 2 : 1);
+    }
+    const volume = Math.sqrt(sum / audioarray.length);
+    // return maxvol / 128 - 1;
+    return volume;
+}
+
+setInterval(() => {
+    const volume = getVolume();
+    eid("cd-cover").style.filter = `brightness(${1 + (volume) * 2})`;
+}, 1000/60);
 
 function placecd(){
     if(cdplayer.querySelector(".cd")) throw new Error("cd already placed");
@@ -106,6 +153,7 @@ function placecd(){
     cd.dataset.audio = cdaudiopath + selectedcd[1];
     cd.dataset.audioname = selectedcd[1];
     cdaudio.src = cd.dataset.audio;
+    // loadAudio(cd.dataset.audio);
     cd.appendChild(cdimg);
     cdplayer.appendChild(cd);
     const rotation = Math.random() * 360 + "deg";
@@ -120,7 +168,9 @@ function placecd(){
         duration: 800,
         easing: "ease-in-out",
         // fill: "forwards"
-    });
+    }).onfinish = () => {
+        cdok = true;
+    };
 }
 placecd();
 cdaudio.onended = () => {
@@ -152,9 +202,9 @@ function playcd(){
     eid("cd-play").setAttribute("onclick", "stopcd()");
     eid("cd-play").innerText = cdstoptext;
     cdaudio.play();
+    cdok = true;
 }
 function stopcd(full = false, out = false){
-    const cd = cdplayer.querySelector(".cd");
     if(!full && cdaudio.paused && !cdaudio.ended) return 0;
 
     // hacky
@@ -162,6 +212,7 @@ function stopcd(full = false, out = false){
     const to2 = [{rotate: full ? "0deg" : eq(".cd").dataset.rotation}]; 
     if(out) to2[0].right = -cddim + "px";
 
+    // cdok = false;
 
     const delay = new Ani(".cd").rule({
         from: [{rotate: "0deg"}],
@@ -190,6 +241,30 @@ function resetcd(){
     stopcd(false, false);
     cdaudio.currentTime = 0;
 }
+
+// const cdsliderspin = new MeteredTrigger(100, (progress) => {
+//     eq(".cd").getAnimations().forEach(ani => {
+//         ani.cancel();
+//     });
+//     eq(".cd").style.rotate = progress*3.6 + "deg";
+// });
+
+// let cdspinspeed = 0;
+// const cdspingravity = 0.5;
+// const cdspininterval = setInterval(() => {
+//     const cd = eq(".cd");
+//     if(cd && cdok){
+//         const currrotation = parseInt(cd.style.rotate) || 0;
+//         const target = parseInt(eid("cd-progress").value || 0) * 3.6;
+//         const diff = target - currrotation;
+//         if(abs(diff) < 1) return;
+//         cdspinspeed += cdspingravity * (target - currrotation);
+//         //log(`${currrotation + cdspinspeed}deg`);
+//         cd.style.rotate = `${currrotation + cdspinspeed}deg`;
+//         cdspinspeed *= (1 - cdspingravity);
+//     }
+//     else{} // probably loading another cd
+// }, 100);
 
 function cdprogress(event){
     const newprogress = event.currentTarget.value;
@@ -280,7 +355,9 @@ function nextcdthisonesucks(){
     // });
     const bodywidth = document.body.getBoundingClientRect().width;
 
-    new Ani(".cd").delay(delay + 100)
+    new Ani(".cd").delay(delay + 100).then(() => {
+        cdok = false;
+    })
     .rule({
         from: [{rotate: "0deg"}],
         to: [{rotate: "-30deg"}],
@@ -312,7 +389,6 @@ function nextcdthisonesucks(){
         }
         cd.style.zIndex = 1000;
     })
-    
     .rule({
         from: [{left: "0px", top: "0px", rotate: "0deg"}],
         to: [{left: `${cddim}px`, top: `${window.innerHeight * (Math.random() * 2 + 1)}px`, rotate: "9000deg"}],
@@ -325,7 +401,6 @@ function nextcdthisonesucks(){
         placecd();
         // button.disabled = false;
         eqa("#cd-controls button").forEach(b => b.disabled = false);
-
     });
 
 
@@ -371,24 +446,15 @@ const nexthtml = `
 `;
 
 
-
-
-
-
-
-
-
-
-
 const imginfo = [
     ["IMG_1106.jpg", `old ahh 60 second drawing of me`],
     ["IMG_1366.jpg", `doodle for irl friend madeleine !!`],
     ["IMG_1378.jpg", `ORIIIIIIIIIIIIIIIIIIII`],
-    ["IMG_1698.jpg", `${link("https://www.youtube.com/@RandomCatOnRoblox", "randomcat")} fanart`],
+    ["IMG_1698.jpg", `${linkhtml("https://www.youtube.com/@RandomCatOnRoblox", "randomcat")} fanart while i still thought he was cool`],
     ["IMG_1795.jpg", `rainstorm sh4rk doodle (saltwater boi)`],
     ["IMG_1853.jpg", `half merc fleet doodle half learning impact frames also i think the gun is pretty cool beans`],
     ["IMG_1861.jpg", `yveltal slurp(ee)`],
-    ["IMG_2119.jpg", `vandalizing my own ${link(baseartzlink + "IMG_2119_og.jpg", "vandalized","_blank", {title: "trust me"})} ap chem booklet (jk thx alx and rachel i like it lol)`],
+    ["IMG_2119.jpg", `vandalizing my own <i>${linkhtml(baseartzlink + "IMG_2119_og.jpg", "vandalized","_blank", {title: "trust me"})}</i> ap chem booklet (jk thx alx and rachel i like it lol)`],
     ["IMG_2231.jpg", `christmas doodle 4 online kiddos`],
     ["IMG_2380.jpg", `ap chemistry collab`],
     // "IMG_.jpg",
@@ -442,7 +508,7 @@ function displayartz(){
 
     while(imgidx < imginfo.length && imgidx - start < displaylimit){
         const button = document.createElement("button");
-        button.tabIndex = 0;
+        button.tabIndex = 0; // allow :focus-within to work on mobile
         // button.onfocus = function(){
         //     this.style.outline = "none";
         // }
@@ -455,6 +521,7 @@ function displayartz(){
 
         img.onload = function(){
             imgloaded++;
+            img.style.aspectRatio = `${this.width}/${this.height}`;
             if(imgloaded === loadcnt){
                 artz.style.minHeight = "auto";
             }
@@ -479,3 +546,148 @@ function displayartz(){
 log(imginfo);
 
 displayartz();
+
+// 88x31 buttons
+
+const buttonspath = "./88x31/";
+const ctn8831 = eid("container-88-31");
+
+const buttons = {
+    hotlinked:[
+        `<a href="https://nekoweb.org/"><img src="https://nekoweb.org/assets/buttons/button11.gif"></a><!-- button by milkyway.moe -->`,
+
+    ],
+    filed:[
+        ["firefox.gif", "https://www.mozilla.org/en-US/firefox/new/"],
+    ]
+};
+buttons.filed.forEach(button => {
+    ctn8831.appendChild(app(link(button[1] || ""), img(buttonspath + button[0])));
+});
+buttons.hotlinked.forEach(button => {
+    ctn8831.innerHTML += button;
+});
+
+
+// bg bars
+
+
+let currpxl = 0;
+const step = 500;
+
+function bgbars(newheight) {
+    if (!eid("bg-bars")) {
+        log("nope");
+        return;
+    }
+
+    while(currpxl < newheight + step){
+        
+    log("spawning more");
+        for (let depth of [1, 2, 3]) {
+            const invdepth = 4 - depth;
+            for (let cnt = 0; cnt < depth * rand(1); cnt++) {
+                const bar = mk("div", { class: `bg-bar bg-bar-${depth} bg-a-${randint(3, 1)}` });
+                const bgcolor = `hsl(41 ${rand(40, 31)}% ${rand(20, 74.7)}%)`;
+                bar.style.zIndex = -depth;
+                bar.style.height = `${(depth) * rand(5 + depth) + 4}vh`;
+                bar.style.rotate = `${rand(50, -25)}deg`;
+                bar.style.left = `${rand(50, -25)}%`;
+                bar.style.backgroundColor = bgcolor;
+                bar.style.top = `${currpxl - rand(step) / 2}px`;
+                bar.style.filter = `opacity(${(invdepth) * rand(.1 * invdepth, .15)})`;
+                bar.style.boxShadow = `0 0 ${pow((depth - 1), 2) * 10}px ${bgcolor}`;
+                // bar.style.animationDelay = `${rand(0.5)}s`;
+                bar.style.animationDuration = `${rand(1, 0.5)}s`;
+                app(eq("#bg-bars .c-" + depth), bar);
+            }
+        }
+        currpxl += step;
+    }
+}
+/**
+ * 
+ * 
+ * 
+let currpxl = 0;
+const step = 500;
+
+function bgbars(newheight) {
+    if (!eid("bg-bars")) {
+        log("nope");
+        return;
+    }
+
+    while(currpxl < newheight + step){
+        
+    log("spawning more");
+        for (let depth of [1, 2, 3]) {
+            for (let cnt = 0; cnt < depth * rand(1); cnt++) {
+                const bar = mk("div", { class: `bg-bar bg-bar-${depth}` });
+                const bgcolor = `hsl(41 ${rand(40, 31)}% ${rand(20, 74.7)}%)`;
+                log(bgcolor);
+                bar.style.zIndex = -depth;
+                bar.style.height = `${(4 - depth) * rand(5) + 4}vh`;
+                bar.style.rotate = `${Math.random() * 50 - 25}deg`;
+                bar.style.left = `${Math.random() * 100}%`;
+                bar.style.backgroundColor = bgcolor;
+                bar.style.top = `${currpxl - rand(step) / 2}px`;
+                bar.style.filter = `opacity(${depth * 0.25})`;
+                bar.style.boxShadow = `0 0 ${pow((depth - 1), 2) * 10}px ${bgcolor}`;
+                app(eq("#bg-bars .c-" + depth), bar);
+            }
+        }
+        currpxl += step;
+    }
+}
+
+
+
+window.addEventListener("scroll", () => {
+    const scroll = window.innerHeight + window.scrollY;
+    if(currpxl < eid("container").offsetHeight) {
+        
+    bgbars(scroll);
+    }
+
+    if(window.scrollY + window.innerHeight >= eid("container").offsetHeight){
+        return;
+    }
+    log(window.scrollY + window.innerHeight, eid("container").offsetHeight);
+    const panstrength = 0.1;
+    for(let depth of [1, 2, 3]){
+        eq("#bg-bars .c-" + depth).style.transform = `translateY(${((window.scrollY) * panstrength * pow(4 - depth, 2)) % floor(window.innerHeight)}px)`;
+    }
+    // bgbars(currpxl);
+});
+document.addEventListener("DOMContentLoaded", () => {
+    bgbars(currpxl);
+    window.dispatchEvent(new Event("scroll"));
+    // putheader();
+    // putfooter();
+});
+ */
+
+
+window.addEventListener("scroll", () => {
+    const scroll = window.innerHeight + window.scrollY;
+    if(currpxl < eid("container").offsetHeight) { 
+        bgbars(scroll);
+    }
+
+    if(window.scrollY + window.innerHeight >= eid("container").offsetHeight){
+        return;
+    }
+    // log(window.scrollY + window.innerHeight, eid("container").offsetHeight);
+    const panstrength = 0.15;
+    for(let depth of [1, 2, 3]){
+        eq("#bg-bars .c-" + depth).style.transform = `translateY(${((window.scrollY) * -panstrength * pow(4 - depth, 2)) % floor(window.innerHeight)}px)`;
+    }
+    // bgbars(currpxl);
+});
+document.addEventListener("DOMContentLoaded", () => {
+    bgbars(currpxl);
+    window.dispatchEvent(new Event("scroll"));
+    // putheader();
+    // putfooter();
+});

@@ -1,9 +1,22 @@
+:root{
+    --main-width: 900px;
+}
 body{
     height: max-content;
     background:url("../background.jpg");
+    
 }
+@media (max-width: 899px){
+    #main{
+        font-size: 1.5em;
+    }
+}
+p{
+    font-size: 0.65em;
+}
+
 #main{
-    width: 900px;
+    width: var(--main-width);
     min-height: 100vh;
     backdrop-filter: blur(5px);
     height: fit-content;
@@ -12,9 +25,10 @@ body{
     display: flex;
     /* justify-content: baseline; */
     flex-direction: row;
-    border-width: 0 2px;
-    border-style: solid;
-    border-color: var(--theme-dark);
+    outline-width: 2px;
+    outline-style: solid;
+    outline-color: var(--theme-dark);
+    box-sizing: content-box;
     >section{
         /* border: 2px solid black; */
     }
@@ -36,13 +50,18 @@ body{
     padding: 0 30px;
     padding-top: 40px;
 }
+#blog-editor{
+    height: 100%;
+    max-height: 100vh;
+    width: 100%;
+}
 #editor-output{
     text-wrap: wrap;
     word-wrap: break-word;
 }
 
 .b-entry{
-    width: 90%;
+    width: 100%;
     margin-bottom: 30px;
     >span{
         display: flex;
@@ -53,24 +72,46 @@ body{
         font-size: 0.75em;
         margin: 0;
     }
-    li::marker{
+    .b-title{
+        color: var(--theme-blue);
+        /* transition: color 0.2s; */
+    }
+    .b-title:hover{
+        color: var(--theme-dark);
+    }
+    .b-title:hover::before{
+        content: '>';
+        margin-right: -1ch;
+        position: relative;
+        left: -1ch;
+    }
+    .b-desc::marker{
         content: '>> ';
         font-size: 1.2em;
     }
-    li[class="b-tags"]::marker{
-        content: '- ';
-
+    .b-tags::marker{
+        content: '#';
     }
+    .b-info{
+        font-size: 0.75em;
+        .b-desc{}
+        .b-tags{
+            font-size: 0.85em;
+            margin-left: 30px;
+        }
+    }
+    
+
 }
 
-.b-entry-date{
+.date-desc{
     margin-left: 20px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.blog-content{
+#blog-content{
 
 
 
@@ -89,4 +130,3 @@ body{
     >a{}
 
 }
-

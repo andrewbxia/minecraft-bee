@@ -1,17 +1,55 @@
-const blogcontent = eq("#main-content .blog-content");
+const blogcontent = eq("#main-content #blog-content");
 const onekosrc = `../scripts/oneko.js`;
+
+function loadoneko(){
+    const script = document.createElement("script");
+    script.src = onekosrc;
+    script.setAttribute("data-cat", "../assets/imgs/oneko.gif");
+    document.body.appendChild(script);
+}
 
 function todate(date){
     return new Date(date).toUTCString().substring(0, 16);
 }
 
-if(params.has("id")){
-    const script = document.createElement("script");
-    script.src = onekosrc;
-    script.setAttribute("data-cat", "../assets/imgs/oneko.gif");
-    document.body.appendChild(script);
+function datedesc(createdat, editedat){
+    return `posted ${createdat} ${editedat > createdat ? `(edited ${editedat})` : ""}`;
+}
+
+function generatedesc(desc, tags, createdat = "", editedat = ""){
+    const container = mk("div");
+    const list = mk("ul", {class: "b-info"});
+
+    if(createdat) app(list, mktxt("li", datedesc(createdat, editedat), {class: "b-date"}));
+    if(desc) app(list, mktxt("li", desc, {class: "b-desc"}));
+    if(tags.length != 0) app(list, mktxt("li", tags.join(", #"), {class: "b-tags"}));
+    
+    app(container, list);
+    return container;
+}
+function generateoverview(title, id, desc, tags, createdat, editedat){
+    const container = mk("div");
+    container.className = "b-entry";
+    title = app(mk("span", {class: "b-main-row"}), app(mk("h2"), link(`/blog?id=${id}`, title, "_top", {class: "b-title"})));
+
+    const date = p(`posted ${createdat}`);
+    if(editedat > createdat) date.innerText+= `(edited ${editedat})`;
+    date.className = "date-desc";
+    app(title, date);
+    app(container, title);
+    
+    
+    //app(container, );
+    app(container, generatedesc(desc, tags, "", ""));
+    return container;
+    // <p class="b-date">posted ${createdat}</p>
+
+}
+
+function loadid(){
+    loadoneko();
     const postid = params.get("id");
-    if(!postid){
+    if(!isnum(postid)){
         window.location.href = "/blog";
     }
 
@@ -29,12 +67,12 @@ if(params.has("id")){
         }
         })
         .then(res => res.json())
-        .catch(err => {
-            console.error(err);
+        .catch(error => {
+            err(error);
             disperror(err.message);
             return null;
         });
-        console.log(response);
+        log(response);
         return response;
     }
     getpost().then(post=>{
@@ -53,14 +91,14 @@ if(params.has("id")){
         const tags = post.tags;
         const description = post.description;
         
+        eid("post-desc").appendChild(generatedesc(description, tags, todate(createdat), todate(editedat)));
         blogcontent.innerHTML = content;
         // console.log(blogcontent);
         document.dispatchEvent(new Event("req_resize"));
     });
-    
-    
 }
-else{
+
+function loadoverview(){
     getpostsoverview().then(posts => {
         blogcontent.innerHTML = "";
         posts.forEach(post => {
@@ -92,12 +130,21 @@ else{
                 ${tags.length != 0 ? `<li class="b-tags">${tags.join(', ')}</li>` : ""}
             </ul>
             `;
-            console.log(blog.innerHTML);
-            blogcontent.appendChild(blog);
+            log(blog.innerHTML);
+            blogcontent.appendChild(generateoverview(title, id, desc, tags, createdat, editedat));
         });
         // blogcontent.appendChild(ul);
         document.dispatchEvent(new Event("googies_loaed"));
 
+    }).catch((error)=>{
+        disperror(error.message);
     });
+}
 
+if(params.has("id")){
+    loadid()
+    
+}
+else{
+    loadoverview();
 }

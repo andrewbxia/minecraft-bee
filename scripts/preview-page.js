@@ -214,32 +214,32 @@ const playAnimations = [
     }
 ]
 
-eid("play-button").onclick = (e) => {
-    e.target.disabled = true;
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-    // playAnimations[1]();
-    playAnimations[Math.floor(Math.random() * playAnimations.length)]();
-}
-eid("play-button").onmouseover = (e) => {
-    setTimeout(() => {
-    }, 1000);
-    e.target.classList.add("play-button-hover");
-    // e.target.animate([
-    //     { boxShadow: '0px 0px 100px white'},
-    //     { boxShadow: '0px 0px 1000px white'},
-    //     { boxShadow: '0px 0px 100px white'},
-    // ], {
-    //     duration: 500,
-    //     iterations: 1,
-    //     delay: 100,
-    //     easing: 'ease-out',
-    //     fill: 'forwards',
-    // });
-}
-eid("play-button").onmouseout = (e) => {
-    e.target.classList.remove("play-button-hover");
-}
-resetPlay();
-clearPlay();
-clearPlayScreen();
+// eid("play-button").onclick = (e) => {
+//     e.target.disabled = true;
+//     document.body.scrollTop = 0;
+//     document.documentElement.scrollTop = 0;
+//     // playAnimations[1]();
+//     playAnimations[Math.floor(Math.random() * playAnimations.length)]();
+// }
+// eid("play-button").onmouseover = (e) => {
+//     setTimeout(() => {
+//     }, 1000);
+//     e.target.classList.add("play-button-hover");
+//     // e.target.animate([
+//     //     { boxShadow: '0px 0px 100px white'},
+//     //     { boxShadow: '0px 0px 1000px white'},
+//     //     { boxShadow: '0px 0px 100px white'},
+//     // ], {
+//     //     duration: 500,
+//     //     iterations: 1,
+//     //     delay: 100,
+//     //     easing: 'ease-out',
+//     //     fill: 'forwards',
+//     // });
+// }
+// eid("play-button").onmouseout = (e) => {
+//     e.target.classList.remove("play-button-hover");
+// }
+// resetPlay();
+// clearPlay();
+// clearPlayScreen();

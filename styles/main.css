@@ -1,13 +1,16 @@
 /* themes for page at theme.css */
 :root{
     --section-border-w: 2px;
+    --offleft-width: 200px;
+    --offright-width: 180px;
+    --main-width: 900px;
 }
 #again-menu{
     /* position: absolute; */
     /* display: none; */
     top: 0;
     left: 0;
-    z-index: 0;
+    z-index: 11;
     button{
         width: 100px;
         height: 100px;
@@ -19,16 +22,21 @@
     /* align-items: center; */
     width: min-content;
     margin: 0 auto;
-    border: var(--section-border-w) var(--theme-dark) solid;
+    /* border: var(--section-border-w) var(--theme-dark) solid; */
+    outline: var(--section-border-w) var(--theme-dark) solid;
+
     padding: 2px;
     #off-left, #off-right, #main{
         >section{
             padding: 0;
-            border: var(--section-border-w) solid var(--theme-dark);
+            /* border: var(--section-border-w) solid var(--theme-dark); */
+            outline: var(--section-border-w) var(--theme-dark) solid;
+
             min-height: fit-content;
-            /* backdrop-filter: blur(5px); */
+            background-color: #d3c6aa7d;
+            backdrop-filter: blur(3px);
             /* clear: both; */
-            margin: 5px;
+            margin: 5px 0;
             /* background-color: var(--theme-light); */
             
         }
@@ -41,16 +49,17 @@
 }
 /* main content */
 #main{
-    width: 900px;
+    width: var(--main-width);
+
     >section{
         /* height: fit-content; */
     }
 }
 #off-left{
-    width: 200px;
+    width: var(--offleft-width);
 }
 #off-right{
-    width: 200px;
+    width: var(--offright-width);
 }
 /* me section */
 #me-img{
@@ -116,12 +125,16 @@
         }
     }
 }
-
+#cd-status{
+    text-align: center;
+    width: 100%;
+}
 #cd-cover{
     &::before{
         /* content: "bee cd industries™™™"; */
     }
-    background-color: black;
+    background-color: var(--theme-dark);
+    transition: filter 0.15s ease-out;
     width: 100%;
     height: 100%;
     /* position: relative; */
@@ -133,6 +146,7 @@
     height: 338px;
     position: absolute;
     top: 0;
+    transition: rotate 0.25s ease-out;
     /* left: 0; */
     right: -100%;
     >img{
@@ -156,7 +170,14 @@
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 1;
+    /* z-index: 1; */
+}
+
+#cd-offset{
+    height: 338px;
+    filter: none;
+    background-color: transparent !important;
+    backdrop-filter: none !important;
 }
 
 @keyframes spin {
@@ -184,13 +205,13 @@
     top: 10px;
     bottom: 10px;
 }
-#blog-editor{
-    width: 100%;
-    height: 500px;  
+/* img track */
+#cool-stuffs{
+    height: 110px;
+
 }
-#editor-output{
-    border: 3px solid var(--theme-purple);
-}
+
+
 
 /* artz */
 @keyframes rainbow-border{
@@ -228,10 +249,10 @@
 }
 @keyframes border-flash-match{
     from{
-        transform: translate(-5px, 0);
+        transform: translate(-4px, 0); /* WHY IS IT 4 PXLS UGU */
     }
     to{
-        transform: translate(0, -5px);
+        transform: translate(0, -4px);
     }
 }
 
@@ -269,6 +290,8 @@
         >img{
             max-height: 80vh;
             max-width: 90vw;
+            height: auto;
+            width: auto;
             box-sizing: content-box;
             /* border: dashed var(--theme-dark) 5px; */
             animation: border-flash 0.5s infinite steps(2), rainbow-border 2.5s infinite linear;
@@ -278,7 +301,7 @@
             border: 10px double var(--theme-blue);
             border-top: 0px;
             background-color: var(--theme-light);
-            margin-left: calc(10px - 0px);
+            /* margin-left: calc(10px - 0px); */
             margin-top: calc(-5px - 0px);
             padding: 0 15px;
             width: max-content;
@@ -310,3 +333,13 @@
     }
 }
 
+#section-88-31{
+    overflow: hidden;
+
+}
+#container-88-31{
+    height: 31px;
+    img{
+        min-width: 88px;
+    }
+}

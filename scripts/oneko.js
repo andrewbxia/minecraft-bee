@@ -19,6 +19,7 @@
   let idleTime = 0;
   let idleAnimation = null;
   let idleAnimationFrame = 0;
+  const clock = 30;
 
   const nekoSpeed = 10;
   const spriteSets = {
@@ -89,7 +90,7 @@
     nekoEl.ariaHidden = true;
     nekoEl.style.width = "32px";
     nekoEl.style.height = "32px";
-    nekoEl.style.position = "fixed";
+    nekoEl.style.position = "absolute";
     nekoEl.style.pointerEvents = "auto";
     nekoEl.style.imageRendering = "pixelated";
     nekoEl.style.left = `${nekoPosX - 16}px`;
@@ -106,8 +107,8 @@
     document.body.appendChild(nekoEl);
 
     document.addEventListener("mousemove", function (event) {
-      mousePosX = event.clientX;
-      mousePosY = event.clientY;
+      mousePosX = event.clientX + window.scrollX;
+      mousePosY = event.clientY + window.scrollY;
     });
 
     window.requestAnimationFrame(onAnimationFrame);
@@ -123,7 +124,7 @@
     if (!lastFrameTimestamp) {
       lastFrameTimestamp = timestamp;
     }
-    if (timestamp - lastFrameTimestamp > 100) {
+    if (timestamp - lastFrameTimestamp > clock) {
       lastFrameTimestamp = timestamp
       frame()
     }
@@ -151,16 +152,16 @@
     ) {
       
       let avalibleIdleAnimations = ["scratchSelf"];
-      if (nekoPosX < 32) {
+      if (nekoPosX < 32 + window.scrollX) {
         avalibleIdleAnimations.push("scratchWallW");
       }
-      if (nekoPosY < 32) {
+      if (nekoPosY < 32 + window.scrollY) {
         avalibleIdleAnimations.push("scratchWallN");
       }
-      if (nekoPosX > window.innerWidth - 32) {
+      if (nekoPosX > window.innerWidth + window.scrollX - 32) {
         avalibleIdleAnimations.push("scratchWallE");
       }
-      if (nekoPosY > window.innerHeight - 32) {
+      if (nekoPosY > window.innerHeight + window.scrollY - 32) {
         avalibleIdleAnimations.push("scratchWallS");
       }
       if(Math.random() < .17) idleAnimation = "sleeping";
@@ -274,8 +275,8 @@
     nekoPosX -= (diffX / distance) * nekoSpeed;
     nekoPosY -= (diffY / distance) * nekoSpeed;
 
-    nekoPosX = Math.min(Math.max(16, nekoPosX), window.innerWidth - 16);
-    nekoPosY = Math.min(Math.max(16, nekoPosY), window.innerHeight - 16);
+    nekoPosX = Math.min(Math.max(16, nekoPosX), window.innerWidth + window.scrollX - 16);
+    nekoPosY = Math.min(Math.max(16, nekoPosY), window.innerHeight + window.scrollY - 16);
 
     nekoEl.style.left = `${nekoPosX - 16}px`;
     nekoEl.style.top = `${nekoPosY - 16}px`;

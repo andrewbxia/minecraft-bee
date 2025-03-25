@@ -29,8 +29,8 @@
     /* --theme-light: #d3d3d3;
     --theme-dark: #030623;
     --theme-tertiary: #fdefcc; */
-    --theme-light: #fefddd;
-    --theme-dark: #030623;
+    --theme-light: #d3c6aa;
+    --theme-dark: #1E2326;
     --theme-tertiary: #d3d3d3;
     --theme-blue: rgb(85, 153, 255);
     --theme-green: rgb(54, 224, 153);
@@ -56,8 +56,8 @@ body{
     padding: 0;
     margin: 0;
     width: 100%;
-    height: 100%;
-    min-height: fit-content;
+    height: fit-content;
+    min-height: max-content;
     /* overflow-y: scroll;
     overflow-x: scroll; */
     image-rendering: auto;
@@ -76,27 +76,73 @@ h1, h2, h3, h4, h5, h6{
 h1, h2, h3, h4, h5, h6, p{
     margin: 0;
 }
+ol, ul{
+    margin: 0;
+    /* padding: 0; */
+}
 p{
     font-size: 0.8em;
 }
 iframe{
     overflow: hidden;
 }
-@keyframes marquee {
-    from {
-        transform: translate(0, 0);
+/* todo: have a 2d marquee array that shows a slice of the buttons as the button array bouces around dvd logo style*/
+@keyframes marquee{
+    from{
+        padding-left: 0;
     }
-    to {
-        transform: translate(-100%, 0);
+    to{
+        padding-left: 100%;
     }
 }
+@keyframes marquee-rev{
+    0%{
+        padding-left: 100%;
+    }
+    50%{
+        padding-left: 0%;
+    }
+    100%{
+        padding-left: 100%;
+    }
+}
+/* @keyframes marquee-rev-full {
+    0% {
+        padding-left: 0;
+    }
+    25% {
+        padding-left: -100%;
+    }
+    50%{
+        padding-left: 0;
+    }
+    75%{
+        padding-left: 100%;
+    }
+    100%{
+        padding-left: 0;
+    }
+} */
 
 .marquee{
-    overflow: hidden;
+    /* overflow: hidden; make sure to apply overflow hidden to this container*/
     white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
     animation: marquee 10s linear infinite;
 }
-.marquee-hovstop:hover{
+.marquee-rev{
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    animation: marquee-rev 20s linear infinite;
+}
+.marquee-rev-full{
+    white-space: nowrap;
+    min-width: 100%;
+    animation: marquee-rev-full 30s linear infinite;
+}
+.marquee-stop:hover{
     animation-play-state: paused;
 }
 .shade{

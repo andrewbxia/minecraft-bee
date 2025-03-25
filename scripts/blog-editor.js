@@ -30,11 +30,12 @@ const editorhtml = `
 `;
 let blogwriting, slider;
 let dragging = false;
-
+let editing = false;
 // const slider = eid("slider");
 // params already defined
 
 if (params.has("b-edit")){
+    editing = true;
     eid("main").style.width = "100%";
     const aceurls = [
         "../scripts/ace-min-noconflict/ace.js",
@@ -49,6 +50,8 @@ if (params.has("b-edit")){
     eid("main").innerHTML = editorhtml + eid("main").innerHTML;
     console.log(eid("main").innerHTML);
     blogwriting = eid("blog-writing");
+    eid("blog-writing").style.flexGrow = 1;
+    eid("main-content").style.flexGrow = 0;
     slider = eid("slider");
     slider.addEventListener("mousedown", (event) => {
         dragging = true;
@@ -57,9 +60,13 @@ if (params.has("b-edit")){
     
     document.addEventListener("mousemove", (event) => {
         if (dragging) {
+            const mainwidth = parseFloat(getComputedStyle(eid("main")).width);
+            // log(mainwidth)
+            
             // console.log(event.clientX)
             // slider.style.left = `${event.clientX}px`;
-            blogwriting.style.width = `${event.clientX-15/2}px`;
+            eid("main-content").style.width = `${mainwidth - (event.clientX - 15/2 + 60)}px`; // 30 padding
+            // blogwriting.style.width = `${event.clientX-15/2}px`;
         }
     });
     
@@ -94,7 +101,7 @@ function initediting() {
         spellcheck: true,
         tabSize: 8,
     });
-    const editorspace = eq(".blog-content");
+    const editorspace = eid("blog-content");
     editor.setTheme("ace/theme/monokai");
     editor.session.setMode("ace/mode/html");
     editor.setValue(samplepost);
@@ -113,10 +120,16 @@ function initediting() {
             const session = editor.getSession();
             const cursor = editor.getCursorPosition();
             const line = session.getLine(cursor.row);
-            const indentation = line.match(/^\s*/)[0]; // Get leading whitespace
+            const indentation = line.match(/^\s*/)[0]; // get leading whitespace
             editor.insert(`\n${indentation}<br>\n${indentation}`);
         }
     });
 }
 
 
+window.addEventListener("beforeunload", (event) => {
+    if(editing){
+        event.returnValue = "SAVE SAVE SAVE";
+        return "SAVE SAVE SAVE";
+    }
+});
