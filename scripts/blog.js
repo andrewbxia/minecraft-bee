@@ -1,13 +1,16 @@
-const blogcontent = eq("#main-content #blog-content");
+const blogcontent = eid("blog-content");
 const onekosrc = `../scripts/oneko.js`;
 
 function loadoneko(){
     const script = document.createElement("script");
     script.src = onekosrc;
-    script.setAttribute("data-cat", "../assets/imgs/oneko.gif");
+    script.setAttribute("data-cat", "../assets/imgs/oneko.png");
     document.body.appendChild(script);
 }
-
+function disperror(errmsg){
+    blogcontent.innerHTML = `<h1>woops</h1>
+    <p>${errmsg}</p>`;
+}
 function todate(date){
     return new Date(date).toUTCString().substring(0, 16);
 }
@@ -53,10 +56,7 @@ function loadid(){
         window.location.href = "/blog";
     }
 
-    function disperror(errmsg){
-        blogcontent.innerHTML = `<h1>woops</h1>
-        <p>${errmsg}</p>`;
-    }
+    
 
     async function getpost(){
         const response = await fetch(`${supaurl}/rest/v1/posts?id=eq.${postid}`, {
@@ -92,14 +92,18 @@ function loadid(){
         const description = post.description;
         
         eid("post-desc").appendChild(generatedesc(description, tags, todate(createdat), todate(editedat)));
-        blogcontent.innerHTML = content;
+        // for some reason i have to keep using eid() or the html wont insert or the event wont fire at all
+        // i love javascrpt
+        eid("blog-content").innerHTML = content;
+        eid("blog-content").dispatchEvent(new Event("loadpost"));
         // console.log(blogcontent);
-        document.dispatchEvent(new Event("req_resize"));
+        document.dispatchEvent(new Event("googies_loaed"));
     });
 }
 
 function loadoverview(){
     getpostsoverview().then(posts => {
+        eid("pls").style.display = "block";
         blogcontent.innerHTML = "";
         posts.forEach(post => {
             const id = post.id;
@@ -141,9 +145,9 @@ function loadoverview(){
     });
 }
 
+if(params.has("b-edit")) loadscript("../scripts/blog-editor.js", true);
 if(params.has("id")){
     loadid()
-    
 }
 else{
     loadoverview();

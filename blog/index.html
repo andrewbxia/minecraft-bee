@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>blog!</title>
-    <script src="../scripts/helper.js" defer></script>
+    <script src="../scripts/helper.js"></script>
+    <script src="../scripts/helper-classes.js"></script>
     <script src="../scripts/dev-detect.js"></script>
     <script src="../scripts/animation3.js"></script>
     <script src="../scripts/ace-min-noconflict/ace.js"></script>
@@ -13,7 +14,6 @@
     <script src="../scripts/ace-min-noconflict/ext-beautify.js"></script>
     <script src="../scripts/blog-overview.js" defer></script>
     <script src="../scripts/blog.js" defer></script>
-    <script src="../scripts/blog-editor.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="../styles/theme.css">
     <link rel="stylesheet" href="../styles/blog.css">
@@ -22,7 +22,7 @@
     <div id="main">
         <section id="main-content">
             <h1 style="margin-bottom: 15px;">blog!</h1>
-            <p>kinda the whole reason I made this website, pls check some posts out (-w-)b</p>
+            <p id="pls" style="display: none;">kinda the whole reason I made this website, pls check some posts out (-w-)b</p>
             <br>
             <div id="post-desc"></div>
             <div id="blog-content">
@@ -36,6 +36,7 @@
             -->
         </section>
     </div>
-    
+    <div id="save-status" data-save="0" style="position: fixed; bottom: 0; right: 0;"></div>
+
 </body>
 </html>

@@ -1,0 +1,71 @@
+html{
+    scroll-behavior: smooth;
+}
+
+
+#page{
+    padding-top: 25px;
+    width: 100%;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    >div{
+
+    }
+}
+
+#page-left{
+    flex-grow: 3;
+}
+#page-right{
+    flex-grow: 5;
+}
+#main{
+    /* background-image: url('../assets/imgs/thing.png');
+    background-size: cover; */
+    width: 1100px;
+    text-shadow: 2px 2px 0px var(--theme-light);
+    background-color: rgba(var(--theme-light-vals), 0);
+    backdrop-filter: blur(16px);
+    /* box-shadow: 0px 5px 10px 5px var(--theme-light); */
+    border: var(--border);
+    border-width: 0 5px;
+    h1{
+        font-size: 2.5em;
+    }
+    
+    /* redo the borders */
+}
+/* cd is 338 px */
+@media screen and (max-width: 1438px){
+    #main{
+        width: 100%;
+        padding: 0 10px;
+        margin: 0 auto;
+    }
+    #cd-player{
+        /* later have a openable side menu for this */
+        display: none;
+    }
+    
+}
+#abt-me, article{
+    p{
+        margin: 1em 10px;
+    }
+}
+
+#blog::before{
+    content: "~~~~~";
+    display: block;
+    text-align: center;
+    font-size: 2em;
+}
+
+#blog{
+
+}
+article{
+    border: var(--border); /*border placeholder*/
+    padding: 0 15px;
+}

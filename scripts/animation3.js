@@ -72,7 +72,7 @@ class Ani{
         return Ani.#counter;
     }
 
-    #rmvani(id){
+    static rmvani(id){
         id--;
         // console.log(id, Ani.#animations.get(id));
         // Ani.#animations.get(id)?.cancel();
@@ -162,7 +162,7 @@ class Ani{
             console.error("Animation already finished");
             return this;
         }
-        const duration = obj.duration || 1000;
+        const duration = (obj.duration >= 0) ? obj.duration: 1000;
         const easing = obj.easing || "linear";
         const forwards = obj.forwards || false;
         const additive = obj.additive || [false, false];
@@ -208,7 +208,7 @@ class Ani{
                 if (!otherignore && el.dataset.ani) {
                     if(key < el.dataset.ani)
                         continue;
-                    this.#rmvani(el.dataset.ani);
+                    Ani.rmvani(el.dataset.ani);
                 }
                 // const key = performance.now();
                 if(!otherignore)

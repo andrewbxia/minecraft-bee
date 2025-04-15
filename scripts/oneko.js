@@ -19,7 +19,8 @@
   let idleTime = 0;
   let idleAnimation = null;
   let idleAnimationFrame = 0;
-  const clock = 30;
+  let runCursor = false;
+  let clock = 30;
 
   const nekoSpeed = 10;
   const spriteSets = {
@@ -151,7 +152,7 @@
       idleAnimation == null
     ) {
       
-      let avalibleIdleAnimations = ["scratchSelf"];
+      let avalibleIdleAnimations = ["runCursor"];//["scratchSelf"];
       if (nekoPosX < 32 + window.scrollX) {
         avalibleIdleAnimations.push("scratchWallW");
       }
@@ -164,7 +165,12 @@
       if (nekoPosY > window.innerHeight + window.scrollY - 32) {
         avalibleIdleAnimations.push("scratchWallS");
       }
-      if(Math.random() < .17) idleAnimation = "sleeping";
+      if(Math.random() < .17) {
+        if(Math.random() < .95) 
+          idleAnimation = "sleeping";
+        else
+          idleAnimation = "runCursor";
+      }
       else idleAnimation =
         avalibleIdleAnimations[
         Math.floor(Math.random() * avalibleIdleAnimations.length)
@@ -187,11 +193,17 @@
       case "scratchWallE":
       case "scratchWallW":
       case "scratchSelf":
+        console.log(idleAnimation)
         setSprite(idleAnimation, idleAnimationFrame);
         if (idleAnimationFrame > 9) {
           resetIdleAnimation();
         }
         break;
+      
+        case "runCursor":
+          runCursor = true;
+          setSprite("idle", 0);
+          break;
       default:
         setSprite("idle", 0);
         return;
@@ -200,7 +212,9 @@
   }
 
   function explodeHearts() {
-
+    if (idleAnimation == "sleeping") {
+      resetIdleAnimation();
+    } // WAKE UP KITTY CAT
     const parent = nekoEl;
     const rect = nekoEl.getBoundingClientRect();
     // const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
@@ -236,6 +250,8 @@
 			  font-size: 2em;
 			  animation: heartBurst 1s ease-out;
 			  animation-fill-mode: forwards;
+        user-select: none;
+        pointer-events: none;
 			  /*color: #ab9df2;*/
 		  }
 	  `;
@@ -243,19 +259,36 @@
   document.head.appendChild(style);
   nekoEl.addEventListener('click', explodeHearts);
 
+  let prevspeed = 0;
+  let speed = 0;
+  let accel = 0;
+  let finalaframe = 0;
+  let accelthresh = 50;
+  let adir = {x: 0, y: 0};
+
   function frame() {
     frameCount += 1;
     const diffX = nekoPosX - mousePosX;
     const diffY = nekoPosY - mousePosY;
     const distance = Math.sqrt(diffX ** 2 + diffY ** 2);
+    speed = distance / clock;
+    accel = speed - prevspeed;
+    if(accel > accelthresh) 
+      runCursor = false;
+    prevspeed = speed;
+    // console.log("speed", speed, "accel", accel);
 
-    if (distance < nekoSpeed || distance < 48) {
+    
+
+    if (distance < nekoSpeed || distance < 48 && !runCursor) {
       idle();
-      return;
+      if(!runCursor){
+        return;
+      }
     }
-
     idleAnimation = null;
     idleAnimationFrame = 0;
+    
 
     if (idleTime > 1) {
       setSprite("alert", 0);
@@ -266,20 +299,33 @@
     }
 
     let direction;
-    direction = diffY / distance > 0.5 ? "N" : "";
-    direction += diffY / distance < -0.5 ? "S" : "";
-    direction += diffX / distance > 0.5 ? "W" : "";
-    direction += diffX / distance < -0.5 ? "E" : "";
+    let aoffsetx = 0, aoffsety = 0;
+    direction = diffY >= distance * 0.5 ? "N" : "";
+    direction += diffY  < distance * -0.5 ? "S" : "";
+    direction += diffX >=  distance * 0.5 ? "W" : "";
+    direction += diffX  < distance * -0.5 ? "E" : "";
+    console.log(distance);
+    console.log(diffX, diffY);
     setSprite(direction, frameCount);
-
-    nekoPosX -= (diffX / distance) * nekoSpeed;
-    nekoPosY -= (diffY / distance) * nekoSpeed;
+    if(runCursor) {
+      clock = 1;
+      console.log("runCursor", runCursor);
+      nekoPosX = mousePosX;
+      nekoPosY = mousePosY;
+    }
+    else{
+      console.error("Ok")
+      clock = 30;
+      nekoPosX -= (diffX / distance) * nekoSpeed;
+      nekoPosY -= (diffY / distance) * nekoSpeed;
+    }
 
     nekoPosX = Math.min(Math.max(16, nekoPosX), window.innerWidth + window.scrollX - 16);
     nekoPosY = Math.min(Math.max(16, nekoPosY), window.innerHeight + window.scrollY - 16);
 
-    nekoEl.style.left = `${nekoPosX - 16}px`;
-    nekoEl.style.top = `${nekoPosY - 16}px`;
+    nekoEl.style.left = `${nekoPosX - 16 + aoffsetx}px`;
+    nekoEl.style.top = `${nekoPosY - 16 + aoffsety}px`;
+    console.log(nekoEl.style.left, nekoEl.style.top);
   }
 
   init();

@@ -1,9 +1,9 @@
 /* themes for page at theme.css */
 :root{
     --section-border-w: 2px;
-    --offleft-width: 200px;
+    --offleft-width: 100px;
     --offright-width: 180px;
-    --main-width: 900px;
+    --main-width: 1000px;
 }
 #again-menu{
     /* position: absolute; */
@@ -20,14 +20,26 @@
     display: flex;
     flex-direction: row;
     /* align-items: center; */
+    
     width: min-content;
     margin: 0 auto;
     /* border: var(--section-border-w) var(--theme-dark) solid; */
     outline: var(--section-border-w) var(--theme-dark) solid;
 
-    padding: 2px;
+    padding: 2px 0;
     #off-left, #off-right, #main{
-        >section{
+        >.c-container{
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            min-height: fit-content;
+            margin: 5px 0;
+            >section{
+                margin: 0 0;
+            }
+        }
+        section{
+            
             padding: 0;
             /* border: var(--section-border-w) solid var(--theme-dark); */
             outline: var(--section-border-w) var(--theme-dark) solid;
@@ -55,9 +67,9 @@
         /* height: fit-content; */
     }
 }
-#off-left{
+/* #off-left{
     width: var(--offleft-width);
-}
+} */
 #off-right{
     width: var(--offright-width);
 }
@@ -69,10 +81,12 @@
 }
 
 #me-text{
+    /* font-size: 1.125em; */
     text-align: right;
     p{
-        font-size: 0.5em;
-        margin: 0.5em 0;
+        font-size: 0.65em;
+        margin:    0.65em 0;
+        padding: 0 10px;
     }
 }
 
@@ -81,112 +95,6 @@
     font-weight: bold;
     font-size: 1.25em;
     /* maybe have special color for this latersz */
-}
-
-/* cd sec */
-#cd-player{
-    width: calc(338px / 2);
-    aspect-ratio: 1/2;
-    margin-left: 10px;
-    float: right;
-    position: relative;
-    >#cd-controls{
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        /* justify-content: end; */
-        justify-content: space-evenly;
-        align-items: first baseline;
-        padding: 0;
-        >button{
-            width: 50px;
-            height: 50px;
-            background-color: var(--theme-light);
-            color: var(--theme-dark);
-            border: none;
-            border-top-right-radius: 50%;
-            border-bottom-right-radius: 50%;
-            margin: 5px;
-            margin-left: 0;
-            margin-bottom: 0;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background-color 0.5s;
-            >p{
-                margin: 0;
-            }
-            &:not(:disabled):hover{
-                background-color: var(--theme-tertiary);
-            }
-        }
-    }
-}
-#cd-status{
-    text-align: center;
-    width: 100%;
-}
-#cd-cover{
-    &::before{
-        /* content: "bee cd industries™™™"; */
-    }
-    background-color: var(--theme-dark);
-    transition: filter 0.15s ease-out;
-    width: 100%;
-    height: 100%;
-    /* position: relative; */
-}
-
-.cd{
-    z-index: -1;
-    width: 338px;
-    height: 338px;
-    position: absolute;
-    top: 0;
-    transition: rotate 0.25s ease-out;
-    /* left: 0; */
-    right: -100%;
-    >img{
-        width: 100%;
-        height: 100%;
-        clip-path: url("../assets/imgs/cd-main.svg#cd-clip");
-        rotate: 0deg;
-        position: relative;
-    }
-    /* &.playing{
-        animation: spin 5s linear infinite forwards;
-    } */
-    
-}
-.cd::before{
-    content: "";
-    display: block;
-    width: 338px;
-    height: 338px;
-    background-image: url("../assets/imgs/cd-overlay.svg");
-    position: absolute;
-    top: 0;
-    left: 0;
-    /* z-index: 1; */
-}
-
-#cd-offset{
-    height: 338px;
-    filter: none;
-    background-color: transparent !important;
-    backdrop-filter: none !important;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }    
 }
 
 /* blog section */
@@ -206,59 +114,56 @@
     bottom: 10px;
 }
 /* img track */
-#cool-stuffs{
-    height: 110px;
-
+#banners{
+    height: 150px;
+    overflow: hidden;
+    img{
+        width: 100%;
+    }
 }
 
 
 
 /* artz */
-@keyframes rainbow-border{
+@keyframes rainbow-outline{
     0% {
-        border-color: var(--theme-red);
+        outline-color: var(--theme-red);
     }
     16.67% {
-        border-color: var(--theme-orange);
+        outline-color: var(--theme-orange);
     }
     33.33% {
-        border-color: var(--theme-yellow);
+        outline-color: var(--theme-yellow);
     }
     51% {
-        border-color: var(--theme-green)
+        outline-color: var(--theme-green)
     }
     66.67% {
-        border-color: var(--theme-blue);
+        outline-color: var(--theme-blue);
     }
     83.33% {
-        border-color: var(--theme-purple);
+        outline-color: var(--theme-purple);
     }
     100% {
-        border-color: var(--theme-pink);
+        outline-color: var(--theme-pink);
     }
 }
-@keyframes border-flash{
+@keyframes outline-flash{
     from{
-        border: 5px dashed;
-        border-width: 5px;
+        outline: 5px dashed;
+        outline-width: 5px;
     }
     to {
-        border: 10px dashed;
-        border-width: 10px;
+        outline: 10px dashed;
+        outline-width: 10px;
     }
 }
-@keyframes border-flash-match{
-    from{
-        transform: translate(-4px, 0); /* WHY IS IT 4 PXLS UGU */
-    }
-    to{
-        transform: translate(0, -4px);
-    }
-}
+
 
 #artz-section{
     padding: 0 15px !important;
     border: calc(4 * var(--section-border-w)) double var(--theme-dark) !important;
+    backdrop-filter: none !important; /* have to use this for fixed positioned element s */
 }
 #artz{
     columns: 2;
@@ -282,32 +187,35 @@
     >button:focus-within >div{
         position: fixed;
         left: 50%;
+        z-index: 1;
         top: 50%;
         transform: translate(-50%, -50%);
         display: flex;
         flex-direction: column;
-
+        align-items: center;
+        width: fit-content;
         >img{
             max-height: 80vh;
             max-width: 90vw;
             height: auto;
             width: auto;
-            box-sizing: content-box;
+            object-fit: contain;
             /* border: dashed var(--theme-dark) 5px; */
-            animation: border-flash 0.5s infinite steps(2), rainbow-border 2.5s infinite linear;
+            animation: outline-flash 0.5s infinite steps(2), rainbow-outline 2.5s infinite linear;
         }
         >.caption{
+            font-family: inherit;
+            z-index: 1;
             display: block;
             border: 10px double var(--theme-blue);
             border-top: 0px;
             background-color: var(--theme-light);
-            /* margin-left: calc(10px - 0px); */
+            text-wrap: wrap;
+            width: fit-content;
             margin-top: calc(-5px - 0px);
             padding: 0 15px;
-            width: max-content;
-            height: max-content;
+            text-align: left;
             font-size: 1.5em;
-            animation: border-flash-match 0.5s infinite steps(2)
         }
     }
 }
@@ -342,4 +250,74 @@
     img{
         min-width: 88px;
     }
+}
+
+/* bg bars */
+
+@keyframes passdown{
+    from{
+        transform: translateY(-100vh) translateX(-50%);
+    }
+    to{
+        transform: translateY(0) translateX(-50%);
+    }
+}
+@keyframes passup{
+    from{
+        transform: translateY(100vh) translateX(-50%);
+    }
+    to{
+        transform: translateY(0) translateX(-50%);
+    }
+}
+@keyframes passright{
+    from{
+        transform: translateX(-150%);
+    }
+    to{
+        transform: translateX(-50%);
+    }
+}
+@keyframes passleft{
+    from{
+        transform: translateX(50%);
+    }
+    to{
+        transform: translateX(-50%);
+    }
+}
+#bg-bars{
+    z-index: -1;
+    position: fixed;
+    /* overflow: hidden; */
+    top: 0;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    >div{
+        position: relative;
+        /* overflow-y: hidden; */
+    }
+}
+.bg-bar{
+    position: absolute;
+    width: 1000vw;
+    left: 50%;
+    transform: translateX(-50%);
+    transform-origin: 0% 50%;
+    animation-timing-function: ease-out;
+
+}
+.bg-a-1{
+    animation-name: passdown;
+}
+.bg-a-2{
+    animation-name: passup;
+}
+.bg-a-3{
+    animation-name: passright;
+}
+.bg-a-4{
+    animation-name: passleft;
 }

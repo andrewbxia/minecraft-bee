@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>axia.sh</title>
+    <script defer src="./scripts/helper.js"></script>
+    <script defer src="./scripts/helper-classes.js"></script>
+    <script defer src="./scripts/main_n.js"></script>
+    <script defer src="./scripts/animation3.js"></script>
+    <script defer src="./scripts/cd.js"></script>
+    <script src="./scripts/blog-overview.js"></script>
+    <link rel="stylesheet" href="./styles/main_n.css">
+    <link rel="stylesheet" href="./styles/theme.css">
+    <style>
+        @keyframes marquee-2{
+            from{
+                margin-left: calc(-50% - 1ch);
+            }
+            to{
+                margin-left: -0%;
+            }
+        }
+        @keyframes background-shift-y{
+            from{
+                background-position-y: -100%;
+            }
+            to{
+                background-position-y: 100%;
+            }
+        }
+        .marquee-100{
+            animation: marquee-2 8.1415926535s infinite linear;
+            display: flex;
+            flex-direction: row;
+            white-space: nowrap;
+        }
+        #main-h{
+            overflow: hidden;
+            width: 100%;
+            font-size: 1.15em;
+            background: linear-gradient(130deg, var(--theme-light) 0%, rgb(227, 200, 252) 50%, rgb(200, 237, 252) 100% );
+            background-size: 200% 200%;
+            background-position-x: 0%;
+            background-position-y: 0%;
+            transition: background-position-x 2s ease-out;
+            animation: background-shift-y 1s infinite ease alternate;
+        }
+        #branding{
+            /* transition: margin-top .1s linear; */
+        }
+        #header-m-c {}
+        #main-h:hover {
+            background-position-x: 500%; 
+        }
+        #header-m{
+            background-color: black;
+            color: white;
+            text-shadow: 6px 5px 0 #797fb68e;
+            mix-blend-mode: multiply;
+        }
+    </style>
+</head>
+<body>
+    <div id="fps" style="position: fixed; bottom: 0; left: 0;"></div>
+    <header id="main-h"></header>
+    <div id="page">
+        <div id="page-left"></div>
+        <div id="main" style="min-height: 15000px;">
+            
+            <section id="abt-me">
+                <h1 id="branding" style="border: solid; border-width: 0 0 5px 0px; width: fit-content;">
+                    axia.sh
+                </h1>
+                <br>
+                <div style="text-align: left;">
+                    <p>
+                        ello! 
+                    </p>
+                    <p>
+                        this will be my land claim of the internet for now,
+                        where I'll do whatevs here i wanna or
+                        something something yadda yatta yabadabadoo
+                    </p>
+                    <p>
+                        also, I like coding in pure vanilla HTML CSS and JS instead of using a framework to do stuff. 
+                        Whether that is a product of laziness to learn such tools or my desire for spiritual independence is a question 
+                        not even I really know the answer to. :p
+                    </p>
+                </div>
+            </section>
+            <section id="blog"></section>
+        </div>
+        <div id="page-right"></div>
+    </div>
+    <div id="cd-player">
+        <div id="cd-cover"></div>
+        <div id="cd-controls">
+            <p id="cd-status" style="margin: 0; color: var(--theme-light)">d(-w-)b</p>
+            <input type="range" id="cd-progress" value="0" min="0" max="100" step="1" 
+            oninput="cdprogress(event)">
+            <input type="range" id="cd-volume" value="100" min="0" max="100" step="1" 
+            oninput="cdvolume(event)" orient="vertical"
+            style="position: absolute; right: 0; bottom: 0;"
+            >
+            <input type="checkbox" id="cd-autoplay" name="autoplay" 
+            oninput="cdautoplay(event)">
+            <button id="cd-play" onclick="playcd(event)">
+                <p>▶</p>
+            </button>
+            <button id="cd-reset" onclick="resetcd(event)">
+                <p>■</p>
+            </button>
+            <button id="cd-next" onclick="nextcdthisonesucks(event)">
+                <!-- wow u really hate this one!!! or just wanna see the animations -->
+                <p>nxt</p>
+            </button>
+        </div>
+    </div>
+    <div id="bg-bars"></div>
+    <div id="yt-music" style="display: none;"></div>
+    <style>
+        
+
+@keyframes passdown{
+    from{
+        transform: translateY(-100vh) translateX(-50%);
+    }
+    to{
+        transform: translateY(0) translateX(-50%);
+    }
+}
+@keyframes passup{
+    from{
+        transform: translateY(100vh) translateX(-50%);
+    }
+    to{
+        transform: translateY(0) translateX(-50%);
+    }
+}
+@keyframes passright{
+    from{
+        transform: translateX(-150%);
+    }
+    to{
+        transform: translateX(-50%);
+    }
+}
+@keyframes passleft{
+    from{
+        transform: translateX(50%);
+    }
+    to{
+        transform: translateX(-50%);
+    }
+}#bg-bars{
+    z-index: -1;
+    position: fixed;
+    /* overflow: hidden; */
+    top: 0;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    >div{
+        position: relative;
+        /* overflow-y: hidden; */
+    }
+}
+.bg-bar{
+    position: absolute;
+    width: 156.25vw; /*calc(2500vw/16);, also not using larger value since it lags like potato chips*/
+    left: 50%;
+    transform: translateX(-50%);
+    transform-origin: 0% 50%;
+    filter: opacity(0.5);
+    animation-timing-function: 
+    /* ease-in-out; */
+    var(--ease-morein-out);
+
+}
+.bg-a-1{
+    animation-name: passdown;
+}
+.bg-a-2{
+    animation-name: passup;
+}
+.bg-a-3{
+    animation-name: passright;
+}
+.bg-a-4{
+    animation-name: passleft;
+}
+
+    </style>
+</body>
+</html>

@@ -29,9 +29,10 @@
     /* --theme-light: #d3d3d3;
     --theme-dark: #030623;
     --theme-tertiary: #fdefcc; */
-    --theme-light: #d3c6aa;
-    --theme-dark: #1E2326;
-    --theme-tertiary: #d3d3d3;
+    --theme-light-vals: 195, 215, 238;
+    --theme-light: rgb(var(--theme-light-vals));
+    --theme-dark: rgb(18, 28, 34);
+    --theme-tertiary: rgb(211, 211, 211);
     --theme-blue: rgb(85, 153, 255);
     --theme-green: rgb(54, 224, 153);
     --theme-purple: rgb(136, 99, 223);
@@ -40,17 +41,18 @@
     --theme-yellow: rgb(255, 255, 119);
     --theme-red: rgb(255, 85, 85);
     --theme-shade: rgba(0, 0, 0, 0.5);
+    --ease-morein-out: cubic-bezier(1, 0, 0.542, 1);
+    --ease-lessout: cubic-bezier(0.36, 1, 0.36, 1);
+    --border: double var(--theme-dark);
 }
 html{
     height: 100%;
 }
 body{
-    /* background: url("../background.jpg"); */
     background-color: var(--theme-light);
-    /* backdrop-filter: blur(5px); */
     color: var(--theme-dark);
     font-family:  cascadia-light, sans-serif;
-    text-shadow: .7px .7px .7px var(--theme-dark);
+    /* text-shadow: .7px .7px .7px var(--theme-dark); */
     font-size: 2em;
     font-weight: normal;
     padding: 0;
@@ -58,8 +60,6 @@ body{
     width: 100%;
     height: fit-content;
     min-height: max-content;
-    /* overflow-y: scroll;
-    overflow-x: scroll; */
     image-rendering: auto;
 }
 
@@ -87,9 +87,10 @@ iframe{
     overflow: hidden;
 }
 /* todo: have a 2d marquee array that shows a slice of the buttons as the button array bouces around dvd logo style*/
+
 @keyframes marquee{
     from{
-        padding-left: 0;
+        padding-left: 0%;
     }
     to{
         padding-left: 100%;

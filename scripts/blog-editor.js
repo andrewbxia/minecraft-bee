@@ -28,13 +28,46 @@ const editorhtml = `
 </section>
 <div id="slider"></div>
 `;
-let blogwriting, slider;
+
+
+let slider = null;
 let dragging = false;
 let editing = false;
+let loadlastsave = false;
+let saved = true;
+let lastsave = performance.now();
+const savekeyword = "lastsave";
+const savelimit = 10000;
+const savemeter = new MeteredPatientTrigger(savelimit, () => savework());
+const savestatusmeter = new MeteredTrigger(33, () => savestatus());
+
 // const slider = eid("slider");
 // params already defined
 
+function savestatus(){
+    // const lastsave = eid("save-status").dataset.save;
+    if(!saved){
+        eid("save-status").innerText = `saving...(${savelimit - (performance.now() - savemeter.getrecent())}ms)`;
+    }
+    else if(parseInt(lastsave) > performance.now() - savelimit){
+        eid("save-status").innerText = "saved!";
+    }
+    else{
+        eid("save-status").innerText = `saved! ${((performance.now() - lastsave)/1000).toFixed(2)}s ago`;
+    }
+
+}
+
+function savework(){
+    localStorage.setItem(savekeyword, eid("blog-content").innerHTML);
+    saved = true;
+    lastsave = performance.now();
+    log(`saved ${lastsave}`);
+}
+
 if (params.has("b-edit")){
+    setInterval(() => savestatusmeter.fire(), 50);
+
     editing = true;
     eid("main").style.width = "100%";
     const aceurls = [
@@ -49,7 +82,6 @@ if (params.has("b-edit")){
 
     eid("main").innerHTML = editorhtml + eid("main").innerHTML;
     console.log(eid("main").innerHTML);
-    blogwriting = eid("blog-writing");
     eid("blog-writing").style.flexGrow = 1;
     eid("main-content").style.flexGrow = 0;
     slider = eid("slider");
@@ -61,12 +93,7 @@ if (params.has("b-edit")){
     document.addEventListener("mousemove", (event) => {
         if (dragging) {
             const mainwidth = parseFloat(getComputedStyle(eid("main")).width);
-            // log(mainwidth)
-            
-            // console.log(event.clientX)
-            // slider.style.left = `${event.clientX}px`;
             eid("main-content").style.width = `${mainwidth - (event.clientX - 15/2 + 60)}px`; // 30 padding
-            // blogwriting.style.width = `${event.clientX-15/2}px`;
         }
     });
     
@@ -88,6 +115,9 @@ if (params.has("b-edit")){
     });
 }
 function initediting() {
+    if(localStorage.getItem(savekeyword) && localStorage.getItem(savekeyword) != ""){
+        loadlastsave = confirm("Load last save: " + localStorage.getItem(savekeyword));
+    }
     ace.require("ace/ext/language_tools");
     ace.require("ace/ext/spellcheck");
     const beautify = ace.require("ace/ext/beautify");
@@ -104,12 +134,20 @@ function initediting() {
     const editorspace = eid("blog-content");
     editor.setTheme("ace/theme/monokai");
     editor.session.setMode("ace/mode/html");
-    editor.setValue(samplepost);
+    if(loadlastsave) editor.setValue(localStorage.getItem(savekeyword));
+    else editor.setValue(samplepost);
     beautify.beautify(editor.session);
 
     const doc = editor.session.getDocument();
+    log("editor loaded");
+    editorspace.addEventListener("loadpost", () => {
+        if(!loadlastsave)
+            editor.setValue(editorspace.innerHTML);
+    });
     doc.on("change", () => {
         editorspace.innerHTML = editor.getValue();
+        saved = false;
+        savemeter.fire();
     });
 
     // extra commands curated by chatgpt :)
@@ -124,11 +162,19 @@ function initediting() {
             editor.insert(`\n${indentation}<br>\n${indentation}`);
         }
     });
+    document.addEventListener("keydown", (event) => {
+        if(event.ctrlKey && event.key === 's'){
+            event.preventDefault();
+            savework();
+            alert("saved!");
+        }
+    });
 }
 
 
 window.addEventListener("beforeunload", (event) => {
-    if(editing){
+    if(editing && !saved){
+        
         event.returnValue = "SAVE SAVE SAVE";
         return "SAVE SAVE SAVE";
     }
