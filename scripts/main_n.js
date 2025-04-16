@@ -97,17 +97,16 @@ const depths = [1, 2, 3, 4,];
 depths.forEach(depth => {
     app(eid("bg-bars"), mk("div", {class: `c-${depth}` }));
 });
-app(document.head, mktxt("style", 
-    depths.map(depth => `.c-${depth}{ 
-        z-index: -${depth};
-        transition: transform ${depth * 0.6}s var(--ease-lessout);
+styling(depths.map(depth => `.c-${depth}{ 
+    z-index: -${depth};
+    transition: transform ${depth * 0.6}s var(--ease-lessout);
 
-        >div{
-            filter: blur(${min(10, pow(depth, 2))}px);
-        }
+    >div{
+        filter: blur(${min(10, pow(depth, 2))}px);
     }
-    `).join("\n")
-));
+}
+`).join("\n"));
+
 let numbars = 0;
 function bgbars(newheight) {
     if (!eid("bg-bars")) {
@@ -248,3 +247,91 @@ function addpost(postsidx){
     app(eid("blog"), postel);
 }
 
+// todo: create blogwriting system that mimics helper.js functions so i dont have
+// to write fully in html wow :o
+/*
+like:
+
+text text yap yap yap
+
+para(text yap yap yap
+
+wowwwooiejfiejfiejfeifjei
+
+)
+para(text yap yap yap)
+
+would be: 
+||||||||||||||||||||||||||||||||||||||||
+<article>
+text text yap yap yap
+
+<p>text yap yap yap
+
+wowwwooiejfiejfiejfeifjei
+
+</p>
+<p>text yap yap yap</p>
+
+
+
+
+</article>
+
+
+*/
+
+//todo: maybe make this handle n images instead of 4 with programatic css
+
+let trackimgcss = ``
+//     .track{
+// `;
+const baseartzlink = "/assets/imgs/artz/";
+const artzinfo = [
+    ["IMG_1106.jpg", `old ahh 60 second drawing of me`],
+    ["IMG_1366.jpg", `doodle for irl friend madeleine !!`],
+    ["IMG_1378.jpg", `ORIIIIIIIIIIIIIIIIIIII`],
+    ["IMG_1698.jpg", `${linkhtml("https://www.youtube.com/@RandomCatOnRoblox", "randomcat")} 
+        fanart while i still thought he was cool`],
+    ["IMG_1795.jpg", `rainstorm sh4rk doodle (saltwater boi)`],
+    ["IMG_1853.jpg", `half shitty merc fleet doodle half learning impact frames 
+        (i think the gun is pretty cool beans tho)`],
+    ["IMG_1861.jpg", `yveltal slurp(ee)`],
+    ["IMG_2119.jpg", `vandalizing my own 
+        <i>${linkhtml(baseartzlink + "IMG_2119_og.jpg", "vandalized", {title: "trust me"})}</i> 
+        ap chem booklet (jk thx alx and rachel i like it lol)`],
+    ["IMG_2231.jpg", `christmas doodle 4 online kiddos`],
+    ["IMG_2380.jpg", `ap chemistry collab`],
+    ["IMG_2000.jpg", `my first dip into digital art (god why didnt i use any blending for the lighting lol),
+         birthday piece done for online friend`],
+    // "IMG_.jpg",
+    // "IMG_.jpg",
+    // "IMG_.jpg",
+    // "IMG_.jpg",
+];
+artzinfo.sort(() => Math.random() - 0.5);
+// for(let i = 1; i <= min(dirs.length * 2, artzinfo.length); i++){
+//     trackimgcss += `
+//         .${imgprefix}${i}{
+//             --bg-url: url('${baseartzlink}${artzinfo[i-1][0]}');
+//         }\n
+//     `
+// }
+const dirs = ["front", "back", "left", "right"];
+const imgprefix = "a";
+function addtotrack(track, classadd = 0){
+    for(let i = 0; i < dirs.length; i++){
+        // app(track, app(mk("div", {class: `${dirs[i]}` }), mk("div", {class: `${imgprefix}${i+1+classadd} t-img`})));
+        app(track, app(mk("div", {class: `${dirs[i]}` }), mk("img", {class: `${imgprefix}${i+1+classadd} t-img`,
+            src: `${baseartzlink}${artzinfo[i+classadd][0]}`, loading: "lazy", decoding: "async",
+        })));
+    }
+}
+eqa(".track-outer .track:not(.other)").forEach((e) => {
+    addtotrack(e);
+});
+eqa(".track-outer .track.other").forEach((e) => {
+    addtotrack(e, dirs.length);
+});
+trackimgcss += "";
+styling(trackimgcss);

@@ -62,16 +62,31 @@
     </style>
 </head>
 <body>
-    <div id="fps" style="position: fixed; bottom: 0; left: 0;"></div>
+    <div id="fps" style="position: fixed; bottom: 0; left: 0; z-index: 1;"></div>
     <header id="main-h"></header>
     <div id="page">
         <div id="page-left"></div>
-        <div id="main" style="min-height: 15000px;">
-            
+        <div id="main" style="min-height: 15000px;" class="track-outer">
+            <!-- <div class="track-outer" style="transform: translateY(300px) translateX(150px)">
+                <div class="cover"></div>
+                <div class="track"></div>
+                <div class="track backface"></div>
+                <div class="track other"></div>
+                <div class="track other backface"></div>
+            </div> -->
+            <div class="track"></div>
+            <div class="track backface"></div>
+            <div class="track other"></div>
+            <div class="track other backface"></div>
+                <!-- <div class="track-outer"> -->
+                    <!-- <div class="cover"></div> -->
+                    
+                <!-- </div> -->
             <section id="abt-me">
                 <h1 id="branding" style="border: solid; border-width: 0 0 5px 0px; width: fit-content;">
                     axia.sh
                 </h1>
+                
                 <br>
                 <div style="text-align: left;">
                     <p>
@@ -89,6 +104,8 @@
                     </p>
                 </div>
             </section>
+            
+            
             <section id="blog"></section>
         </div>
         <div id="page-right"></div>

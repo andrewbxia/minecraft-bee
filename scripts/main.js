@@ -93,7 +93,7 @@ const artzinfo = [
         (i think the gun is pretty cool beans tho)`],
     ["IMG_1861.jpg", `yveltal slurp(ee)`],
     ["IMG_2119.jpg", `vandalizing my own 
-        <i>${linkhtml(baseartzlink + "IMG_2119_og.jpg", "vandalized","_blank", {title: "trust me"})}</i> 
+        <i>${linkhtml(baseartzlink + "IMG_2119_og.jpg", "vandalized", {title: "trust me"})}</i> 
         ap chem booklet (jk thx alx and rachel i like it lol)`],
     ["IMG_2231.jpg", `christmas doodle 4 online kiddos`],
     ["IMG_2380.jpg", `ap chemistry collab`],

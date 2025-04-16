@@ -137,15 +137,15 @@ app(document.head, mktxt("style", `#cd-player{
 
 const cds = { // implement artist and desc and source laterz
     chill:[
-        // ['bee-minecraft.jpg', 'palescreen.mp3'],
-        // ["snacko-cover.jpg", "dancefloor journey.mp3"],
-        // ["snacko-cover.jpg", "game time.mp3"],
-        // ["snacko-cover.jpg", "glittering seasons.mp3"],
-        // ["snacko-cover.jpg", "heartbeat of the land.mp3"],
-        // ["snacko-cover.jpg", "kingdom that echoes millennia.mp3"],
-        // ["snacko-cover.jpg", "snacko island party.mp3"],
-        // ["snacko-cover.jpg", "sunlight memories.mp3"],
-        ["snacko-cover.jpg", "4.24 Dawn Saga (Extended Mix).flac"],
+        ['bee-minecraft.jpg', 'palescreen.mp3'],
+        ["snacko-cover.jpg", "dancefloor journey.mp3"],
+        ["snacko-cover.jpg", "game time.mp3"],
+        ["snacko-cover.jpg", "glittering seasons.mp3"],
+        ["snacko-cover.jpg", "heartbeat of the land.mp3"],
+        ["snacko-cover.jpg", "kingdom that echoes millennia.mp3"],
+        ["snacko-cover.jpg", "snacko island party.mp3"],
+        ["snacko-cover.jpg", "sunlight memories.mp3"],
+        ["snacko-cover.jpg", "4.24 Dawn Saga (Extended Mix).mp3"],
     ],
     hicalibre:[
         ["snacko-cover.jpg", "lCwVr2s-pF0"],
@@ -227,6 +227,9 @@ source.connect(analyser);
 source.connect(cdaudiocontext.destination);
 function getVolume() { //TODO: make this an acutal visualizer, maybe make this a seperate class
     // if(isyt)return ytplayer.getVolume() / 100;
+    if(!cdok) return 0;
+    if(cdaudio.paused) return 0;
+    if(isyt && ytplayer.getPlayerState() !== YT.PlayerState.PLAYING) return 0;
     analyser.getByteTimeDomainData(audioarray);
     let sum = 0, maxvol = 0;
     for (let i = 0; i < audioarray.length; i++) {
@@ -243,15 +246,18 @@ function getVolume() { //TODO: make this an acutal visualizer, maybe make this a
 let avgvols = new RollingAvg(10);
 
 function visualizer(){
+    // if(!cdok) return;
+    // if(cdaudio.paused) requestAnimationFrame(visualizer);
+    // if(isyt && ytplayer.getPlayerState() !== YT.PlayerState.PLAYING) return;
     const volume = getVolume();
     avgvols.add(volume);
+
     eid("cd-cover").style.filter = `brightness(${1 + sqrt((avgvols.get()) * 100)})`;
     //lol
     if(autoplay){
-
-    eqa("p,h1,h2,h3").forEach(p => {p.style.marginLeft = `${avgvols.add(volume) * 100}px`});
-    eid("main-h").style.paddingTop = `${avgvols.get() * 100}px`;
-    eid("cd-player").style.right = `${avgvols.add(volume) * 100}px`;
+        eqa("p,h1,h2,h3").forEach(p => {p.style.marginLeft = `${avgvols.add(volume) * 100}px`});
+        eid("main-h").style.paddingTop = `${avgvols.get() * 100}px`;
+        eid("cd-player").style.right = `${avgvols.add(volume) * 100}px`;
     }
     requestAnimationFrame(visualizer);
 }

@@ -150,12 +150,22 @@ const script = (src, defer = true, async = true) => {
     app(document.head, sc);
     return sc;
 }
+const scripting = (src) => {
+    const sc = mktxt("script", src);
+    app(document.head, sc);
+    return sc;
+}
 const style = (src) => {
     const sty = mk("link", {rel: "stylesheet", href: src});
     app(document.head, sty);
     return sty;
 }
 
+const styling = (sty) => {
+    const st = mktxt("style", sty);
+    app(document.head, st);
+    return st;
+}
 const img = (src) => mk("img", {src});
 const imghtml = (src) => `<img src="${src}" />`;
 const p = (txt) => mktxt("p", txt);

@@ -1,3 +1,6 @@
+:root{
+    --main-width: 1100px;
+}
 html{
     scroll-behavior: smooth;
 }
@@ -23,15 +26,19 @@ html{
 #main{
     /* background-image: url('../assets/imgs/thing.png');
     background-size: cover; */
-    width: 1100px;
+    width: var(--main-width);
+    max-width: var(--main-width);
     text-shadow: 2px 2px 0px var(--theme-light);
-    background-color: rgba(var(--theme-light-vals), 0);
-    backdrop-filter: blur(16px);
+    background-color: rgba(var(--theme-light-vals), .7);
     /* box-shadow: 0px 5px 10px 5px var(--theme-light); */
     border: var(--border);
     border-width: 0 5px;
     h1{
         font-size: 2.5em;
+    }
+    >section{
+        
+        backdrop-filter: blur(16px);
     }
     
     /* redo the borders */
@@ -40,7 +47,7 @@ html{
 @media screen and (max-width: 1438px){
     #main{
         width: 100%;
-        padding: 0 10px;
+        max-width: calc(var(--main-width) + 100px);
         margin: 0 auto;
     }
     #cd-player{
@@ -50,8 +57,137 @@ html{
     
 }
 #abt-me, article{
+    padding: 0 10px;
     p{
-        margin: 1em 10px;
+        /* margin: 1em 10px; */
+    }
+}
+
+#abt-me{
+    position: relative;
+    /* margin-bottom: -1em; */
+}
+.track-outer{
+    /* position: absolute;
+    top: 0;
+    right: 0; */
+
+    transform-style: preserve-3d;
+    transform: translateZ(110px);
+    /* perspective: 1000px; */
+    --spin-speed: 100s; 
+    /* 10s for one rev */
+    .cover{
+        width: 1100px;
+        height: 500px;
+        /* background-color: var(--theme-dark); */
+        transform-style: preserve-3d;
+        transform: translateZ(-20px);
+         /* rotateX(-30deg) rotateZ(-15deg); */
+        pointer-events: none;
+    }
+    &.track:hover .track{
+        animation-play-state: paused;
+    }
+}
+
+/* have art track, when hover itll stop and enlarge currently hovered img */
+
+.track{
+    transform-style: preserve-3d;
+    animation: track-spin var(--spin-speed) linear infinite;
+    /* animation-play-state: paused; */
+    position: absolute;
+    /* left: 50%; */
+    right: 0;
+    top: 50px;
+    --size: 300px;
+    --width: calc(var(--size) * 0.81662);
+    outline: 3px rgb(var(--theme-dark-vals), 0.1) dashed;
+    /* sqrt(2)/sqrt(3), stay in school kids */
+    --aspect-ratio: 4/3;
+    width: var(--width);
+    aspect-ratio: var(--aspect-ratio);
+    /* height: 1000px; */
+    transform-origin: 50% 50%;
+    pointer-events: none;
+    &.other{
+        animation-delay: calc(var(--spin-speed) * -17 / 16);
+    }
+    &:not(.backface)>div>img.t-img:hover{
+        position: absolute;
+        right: 0;
+        transform: translateZ(30px) translate(-0%, -0%);
+
+        object-fit: contain;
+        max-width: 300%;
+        max-height: unset;
+    }
+    >div{
+        pointer-events: all;
+        >img.t-img{
+            user-select: none;
+            min-width: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0px 5px 10px 5px var(--theme-light);
+            transform-origin: 50% 50%;
+            transform-style: preserve-3d;
+            
+        }
+        backface-visibility: hidden;
+        position: absolute;
+        width: var(--width);
+        aspect-ratio: var(--aspect-ratio);
+        transform-style: preserve-3d;
+        &.left{
+            transform: rotateY(-90deg);
+            margin-left: calc(var(--size) * -1);
+        }
+        &.right{
+            transform: rotateY(90deg);
+            margin-left: calc(var(--size) * 1);
+        }
+        &.front{
+            transform: translateZ(var(--size));
+        }
+        &.back{
+            transform: translateZ(calc(var(--size) * -1)) rotateX(180deg) 
+            scale(-1);
+        }
+    }
+    &.backface div{
+        pointer-events: none;
+        /* outline: 3px solid red; */
+        /* for behind shadowing */
+        backface-visibility: visible !important;
+        opacity: 0.75;
+    }
+    
+}
+
+
+@keyframes track-spin{
+    0%{
+        
+        transform: translateY(6em) rotateX(-15deg) rotateZ(-15deg)rotateY(0deg);
+        
+    }
+    100%{
+        transform: translateY(6em) rotateX(-15deg)  rotateZ(-15deg)
+        rotateY(720deg);
+    }
+}
+/* spinning on 2 axes */
+@keyframes track-spin-2{
+    0%{
+        
+        transform: rotateX(-30deg) rotateZ(0deg)rotateY(0deg);
+        
+    }
+    100%{
+        transform: rotateX(-30deg)  rotateZ(0deg)
+        rotateY(720deg);
     }
 }
 
@@ -60,12 +196,78 @@ html{
     display: block;
     text-align: center;
     font-size: 2em;
+    margin: 0 auto;
 }
 
 #blog{
+    article{
+        border: var(--border); /*border placeholder*/
+        padding: 30px 15px;
+        font-size: 0.75em;
+    }
+}
+.globe {
 
+    transform-style: preserve-3d;
+    perspective: 2400px;
+    position: relative;
+    --speed: 60s;
+    width: 410px;
+    height: 410px;
+    mask-image: radial-gradient(#fff 50%, #fffa, #fff 70%);
 }
-article{
-    border: var(--border); /*border placeholder*/
-    padding: 0 15px;
+
+.globe > * {
+    top: 5px;
+    left: 5px;
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border-radius: 400px;
+    border: 2px solid white;
+    background: radial-gradient(#fff5, #fff0);
 }
+
+.globe .x1 {
+    animation: globespin1 var(--length) infinite ease-out;
+}
+
+.globe .x2 {
+    animation: globespin2 var(--length) infinite ease-out;
+}
+
+.globe .x3 {
+    display: none;
+    animation: globespin3 var(--length) infinite ease-out;
+}
+
+@keyframes globespin1 {
+    0% {
+        transform: rotate3d(1, 0, 0, 0deg);
+    }
+
+    100% {
+        transform: rotate3d(1, 0, 0, 360deg);
+    }
+}
+
+@keyframes globespin2 {
+    0% {
+        transform: rotate3d(0, 1, 1, 0deg);
+    }
+
+    100% {
+        transform: rotate3d(0, 1, 1, 360deg);
+    }
+}
+
+@keyframes globespin3 {
+    0% {
+        transform: rotate3d(0, 0, 1, 0deg);
+    }
+
+    100% {
+        transform: rotate3d(0, 0, 1, 360deg);
+    }
+}
+

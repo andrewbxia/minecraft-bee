@@ -29,9 +29,11 @@
     /* --theme-light: #d3d3d3;
     --theme-dark: #030623;
     --theme-tertiary: #fdefcc; */
-    --theme-light-vals: 195, 215, 238;
+    --theme-light-test: rgb(220, 233, 248);
+    --theme-light-vals: 220, 233, 248;
     --theme-light: rgb(var(--theme-light-vals));
-    --theme-dark: rgb(18, 28, 34);
+    --theme-dark-vals: 18, 28, 34;
+    --theme-dark: rgb(var(--theme-dark-vals));
     --theme-tertiary: rgb(211, 211, 211);
     --theme-blue: rgb(85, 153, 255);
     --theme-green: rgb(54, 224, 153);
@@ -66,6 +68,9 @@ body{
 img{
     max-width: 100%;
     max-height: 100%;
+}
+br{
+    line-height: 1em;
 }
 code{
     font-family: monospace;
