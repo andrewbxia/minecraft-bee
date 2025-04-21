@@ -81,6 +81,14 @@ function addclicklistener(query, callback){
     })
 }
 
+// dont use except when i go into typescript since event doesnt have code editor striggies
+const listen = (event, callback, element = document) => {
+    element.addEventListener(event, callback);
+    return () => element.removeEventListener(event, callback);
+}
+
+
+
 function isnum(num){
     if(typeof num === 'number') {
         return num - num === 0;
@@ -127,8 +135,8 @@ function appmany(parent, children){
     children.forEach(child => app(parent, child));
     return parent;
 }
-const fromhtml = (txt) => mktxt("div", txt).content.firstChild;
-const tohtml = (el) => app(mk("div"), el.cloneNode(true)).innerHTML;
+const fromhtml = (txt) => mktxt("template", txt).content.firstChild;
+const tohtml = (el) => el.outerHTML;
 
 function link(url, txt = "", target = "_blank", attr = {}){
     if(typeof target === "object"){
@@ -187,4 +195,3 @@ function putheader(){
 function putfooter(){
     document.body.insertAdjacentHTML("beforeend", footer);
 }
-

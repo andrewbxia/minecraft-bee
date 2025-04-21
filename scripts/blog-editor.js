@@ -21,31 +21,32 @@ const samplepost = `
 .
 `;
 
-const editorhtml = `
-<section id="blog-writing">
-    <div id="blog-editor"></div>
-    <div id="editor-output"></div>
-</section>
-<div id="slider"></div>
-`;
+
 
 
 let slider = null;
 let dragging = false;
-let editing = false;
-let loadlastsave = false;
-let saved = true;
-let lastsave = performance.now();
+const editorcntid = "blog-writing";
+const mainid = "main";
+const inscontent = "blog-content";
+const editorid = "blog-editor";
 const savekeyword = "lastsave";
 const savelimit = 10000;
-const savemeter = new MeteredPatientTrigger(savelimit, () => savework());
+const savemeter = new MeteredPatientTrigger(savelimit, () => autosave());
 const savestatusmeter = new MeteredTrigger(33, () => savestatus());
-
+let prevwidths = [0, 0];
+const editorhtml = `
+<section id="${editorcntid}">
+    <div id="${editorid}"></div>
+</section>
+<div id="slider"></div>
+`;
 // const slider = eid("slider");
 // params already defined
 
+
+
 function savestatus(){
-    // const lastsave = eid("save-status").dataset.save;
     if(!saved){
         eid("save-status").innerText = `saving...(${savelimit - (performance.now() - savemeter.getrecent())}ms)`;
     }
@@ -57,43 +58,223 @@ function savestatus(){
     }
 
 }
+const defsavedata = {
+    drafts: [],
+    ids: {},
+    lastsave: null,
+}
+const savedata = localStorage.getItem(savekeyword) ? JSON.parse(localStorage.getItem(savekeyword)) : defsavedata;
+const editmode = {method: "lastsave", id: -1};
+let draftsaveidx = -1;
+let lastsave = performance.now();
+let writingid = null;
+let editing = false;
+let loadlastsave = false;
+let saved = true;
+let preload = "";
+let beautify = null;
+let editor = null;
+function resetsavedata(){
+    if(confirm(`${localStorage.getItem(savekeyword)}\n reset save data?`)){
+        localStorage.setItem(savekeyword, JSON.stringify(defsavedata));
+    }
+}
+function geteditorspace(){
+    return eid("post-" + writingid);
+}
 
+function addblankpost(){
+    writingid = 0;
+    eid("blog").prepend(mk("article", {class: "post", id: `post-${writingid}`, "data-id": writingid}));
+    eid(`post-${writingid}`).innerHTML = preload || samplepost;
+}
+
+function editpost(fetchid){
+    editmode.id = fetchid;
+    writingid = fetchid;
+    editmode.method = "id";
+        getpost(fetchid).then(post => {
+            if(post.length === 0){
+                alert("post not found");
+            }
+            else{
+                preload = generatepost(post[0]).innerHTML;
+                eid(mainid).dispatchEvent(new Event("loadpost"));
+            }
+        });
+}
+
+function editdraft(draftid){
+    editmode.id = draftid;
+    editmode.method = "draft";
+    if(savedata.drafts[draftid] !== undefined){
+        preload = savedata.drafts[draftid];
+    }
+    else{
+        alert("draft not found");
+    }
+}
+
+function enterpage(){
+    const responses = [];
+    if(savedata.lastsave !== null){
+        responses.push(prompt(`${savedata.lastsave} \n load last save? (nothing for yes, type 'draft' for draft selection, number for article id)`));
+    }
+    else responses.push("");
+    if(responses[0] === ""){
+        return;
+    }
+    else if(responses[0] === "draft"){
+        let resp = "";
+        while(!isnum(pint(resp))){
+            resp = prompt(`drafts: ${savedata.drafts} \n select draft id`);
+        }
+        responses.push(resp);
+        editmode.id = pint(responses[1]);
+        log(editmode.id);
+        editmode.method = "draft";
+
+        preload = savedata.drafts[editmode.id];
+        if(preload === undefined){
+            alert("draft not found");
+        }
+        
+    }
+    else if(isnum(pint(responses[0]))){
+        const fetchid = pint(responses[0]);
+        editpost(fetchid);
+    }
+}
+
+
+
+function setupsave(){
+    if(!localStorage.getItem(savekeyword)){
+        localStorage.setItem(savekeyword, JSON.stringify(savedata));
+    }
+}
+
+
+/* 
+blog save data method
+const savedata = {
+    drafts: [],
+    ids: [],
+    lastsave: null,
+}
+edit-mode: {method: "last", id: -1}
+automatically save in "last", not as edit-mode tho
+when enter page{
+	ask to add in last
+	
+	if nothing selected do last, 
+	if draft selected print out drafts and ask selection id
+	if id number selected fetch it from blog
+	
+	if nothing set edit-mode as its default value
+
+	if draft or id do {method: "draft/id", id: id}
+
+}
+
+when exit page or switch to new post to edit or ctrl s{
+
+	ask to save as edit-mode, if yes return
+
+	ask to either save as draft{
+		ask if new draft or overwrite draft #
+
+	}
+	if id inputted{
+		if id inputted exists warn but go with it
+		if new id inputted cool beans
+	}
+	if nothing inputted save as last but warn
+}*/
 function savework(){
-    localStorage.setItem(savekeyword, eid("blog-content").innerHTML);
+
+    const resps = [];
+    resps.push(confirm(`save as ${JSON.stringify(editmode)}?`));
+    if(resps[0]){
+        savedata[editmode.method] = geteditorspace().innerHTML;
+    }
+    else{
+        let resp = "";
+        while(resp !== "draft" && !isnum(pint(resp))){
+            resp = prompt(`save as draft or id? (type 'draft' for draft selection, number for article id)`);
+        }
+        resps.push(resp);
+        if(resp === "draft"){
+            resp = "";
+            resp = prompt(`new draft or overwrite draft? (type anything for new draft, number for spec. draft id (max <=${savedata.drafts.length})`, editmode.id);
+            let draftsavingidx = editmode.id;
+            if(isnum(pint(resp))){
+                draftsavingidx = pint(resp);
+                if(draftsavingidx > savedata.drafts.length){
+                    alert("draft not found, saving as new");
+                }
+                draftsavingidx = min(draftsavingidx, savedata.drafts.length);
+
+            }
+            else{
+                draftsavingidx = savedata.drafts.length;
+            }
+            
+            savedata.drafts[draftsavingidx] = geteditorspace().innerHTML;
+        }
+        else{
+            let id = pint(resp);
+            if(id > lastpostid + 1){
+                alert("post not found, saving as new");
+            }
+            id = min(id, lastpostid + 1);
+            savedata.ids[id] = geteditorspace().innerHTML;
+        }
+    }
+
+
+    autosave();
+}
+function autosave(){
+    savedata.lastsave = geteditorspace().innerHTML;
+    localStorage.setItem(savekeyword, JSON.stringify(savedata));
+    // todo: save as json of seperate blog ids and then a save system for drafts (save1, save2, yatta yatta)
+    // find way to edit individual article elements
     saved = true;
     lastsave = performance.now();
     log(`saved ${lastsave}`);
 }
-
 if (params.has("b-edit")){
     setInterval(() => savestatusmeter.fire(), 50);
 
     editing = true;
-    eid("main").style.width = "100%";
+    eid(mainid).style.width = "100%";
+    const p_aceurls = [
+        "../scripts/ace-min-noconflict/ace.js"];
     const aceurls = [
-        "../scripts/ace-min-noconflict/ace.js",
         "../scripts/ace-min-noconflict/ext-language_tools.js",
         "../scripts/ace-min-noconflict/ext-spellcheck.js",
         "../scripts/ace-min-noconflict/ext-beautify.js"
     ];
 
     let numloaded = 0;
-    console.log(eid("main").innerHTML);
 
-    eid("main").innerHTML = editorhtml + eid("main").innerHTML;
-    console.log(eid("main").innerHTML);
-    eid("blog-writing").style.flexGrow = 1;
-    eid("main-content").style.flexGrow = 0;
+    // eid(mainid).innerHTML = editorhtml + eid(mainid).innerHTML;
+    // console.log(eid(mainid).innerHTML);
+    eid("page-left").innerHTML = editorhtml;
+    eqa("#main, #page-left, #page-right, #page, #demark-bar").forEach((el) => el.classList.add("editing"));
     slider = eid("slider");
     slider.addEventListener("mousedown", (event) => {
         dragging = true;
+        prevwidths = [event.clientX, eid("main").offsetWidth];
         slider.style.cursor = "grabbing";
     });
     
     document.addEventListener("mousemove", (event) => {
         if (dragging) {
-            const mainwidth = parseFloat(getComputedStyle(eid("main")).width);
-            eid("main-content").style.width = `${mainwidth - (event.clientX - 15/2 + 60)}px`; // 30 padding
+            const newwidth = (prevwidths[0] - event.clientX) + prevwidths[1];
+            // log(newwidth);
+            eid("main").style.width = `${newwidth}px`; // 30 padding
         }
     });
     
@@ -102,50 +283,78 @@ if (params.has("b-edit")){
         slider.style.cursor = "ew-resize";
     });
 
-    aceurls.forEach(url =>{
+    p_aceurls.forEach(url =>{
         const script = document.createElement("script");
         script.src = url;
         script.onload = () =>{
             numloaded++;
-            if(numloaded === aceurls.length){
-                initediting();
+            if(numloaded === p_aceurls.length){
+                numloaded = 0;
+                aceurls.forEach(url =>{
+                    const script = document.createElement("script");
+                    script.src = url;
+                    script.onload = () =>{
+                        numloaded++;
+                        if(numloaded === aceurls.length){
+                            initediting();   
+                        }
+                    };
+                    document.head.appendChild(script);
+                });
             }
         };
         document.head.appendChild(script);
     });
+
+    
 }
 function initediting() {
-    if(localStorage.getItem(savekeyword) && localStorage.getItem(savekeyword) != ""){
-        loadlastsave = confirm("Load last save: " + localStorage.getItem(savekeyword));
-    }
+    log("init editigin");
+    setupsave();
+    enterpage();
     ace.require("ace/ext/language_tools");
     ace.require("ace/ext/spellcheck");
-    const beautify = ace.require("ace/ext/beautify");
-    const editor = ace.edit("blog-editor");
+    beautify = ace.require("ace/ext/beautify");
+    editor = ace.edit("blog-editor");
     editor.setOptions({
         enableBasicAutocompletion: true,
         enableSnippets: true,
         enableLiveAutocompletion: true,
         useSoftTabs: true,
-        fontSize: "24px",
+        fontSize: "1rem",
         spellcheck: true,
         tabSize: 8,
+        gutter: true,
+        wrap: true,
     });
-    const editorspace = eid("blog-content");
     editor.setTheme("ace/theme/monokai");
     editor.session.setMode("ace/mode/html");
-    if(loadlastsave) editor.setValue(localStorage.getItem(savekeyword));
-    else editor.setValue(samplepost);
     beautify.beautify(editor.session);
+
+    if(editmode.method === "lastsave"){
+        loadlastsave = true;
+        addblankpost();
+        editor.setValue(savedata.lastsave);
+        writingid = 0;
+    }
+    else if(editmode.method === "draft"){
+        addblankpost();
+        editor.setValue(preload);
+    }
+    else if(editmode.method === "id"){
+    }
+
+
 
     const doc = editor.session.getDocument();
     log("editor loaded");
-    editorspace.addEventListener("loadpost", () => {
-        if(!loadlastsave)
-            editor.setValue(editorspace.innerHTML);
+    eid(mainid).addEventListener("loadpost", () => {
+        if(editmode.method === "id")
+            editor.setValue(preload);
     });
     doc.on("change", () => {
-        editorspace.innerHTML = editor.getValue();
+        if(!eid(`post-${writingid}`)) return;
+        eid(`post-${writingid}`).innerHTML = editor.getValue();
         saved = false;
         savemeter.fire();
     });
@@ -169,6 +378,21 @@ function initediting() {
             alert("saved!");
         }
     });
+
+    document.addEventListener("dblclick", (event) => {
+        const el = event.target;
+        if(el.matches("article.post *")){
+            const article = el.closest("article.post");
+            log(el, article)
+            const id = pint(article.dataset.id);
+            if(confirm(`load this post (${id})?`)){
+                editor.setValue(article.innerHTML);
+                writingid = article.dataset.id;
+                editpost(writingid);
+            }
+        }
+    });
+    
 }
 
 

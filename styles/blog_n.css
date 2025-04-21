@@ -1,0 +1,22 @@
+
+#slider{
+    height: 100%;
+    width: 15px;
+    background-color: var(--theme-dark);
+    /* border-radius: 25%; */
+    cursor: ew-resize;
+    min-width: 5px;
+}
+#blog-writing{
+    height: 100%;
+    max-height: 100vh;
+    width: 100%;
+    position: sticky;
+    top: 0;
+}
+#blog-editor{
+    height: 100%;
+    max-height: 100vh;
+    width: 100%;
+    min-width: 5vh;
+}

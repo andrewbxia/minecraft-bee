@@ -50,7 +50,7 @@ function generateoverview(title, id, desc, tags, createdat, editedat){
 }
 
 function loadid(){
-    loadoneko();
+    // loadoneko();
     const postid = params.get("id");
     if(!isnum(postid)){
         window.location.href = "/blog";
@@ -145,7 +145,7 @@ function loadoverview(){
     });
 }
 
-if(params.has("b-edit")) loadscript("../scripts/blog-editor.js", true);
+if(params.has("b-edit")) script("../scripts/blog-editor.js", true);
 if(params.has("id")){
     loadid()
 }

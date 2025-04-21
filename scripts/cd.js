@@ -134,7 +134,7 @@ app(document.head, mktxt("style", `#cd-player{
 }`));
 
 // utub api
-
+// ALSO FOR CHILL HAVE RANDOM YT NHATO MUSIC
 const cds = { // implement artist and desc and source laterz
     chill:[
         ['bee-minecraft.jpg', 'palescreen.mp3'],

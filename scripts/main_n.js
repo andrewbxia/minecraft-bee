@@ -171,122 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-
-
-
-// blog
-const blogpagelimit = 3;
-let pageidx = nullnum(pint(params.get("pg")));
-let postid =  nullnum(pint(params.get("id")));
-const posts = [];
-
-if(pageidx === null && postid === null)
-    pageidx = 0;
-
-(pageidx === null ? getpost(postid) : getpage(pageidx)).then(data => {
-    posts.push(...data);
-    dispposts();
-    if(postid !== null)
-        window.location.href = `#${postid}`;
-}).catch(error => {
-    err(error);
-    eid("blog").innerHTML = `<center>posts didnt load...maybe ${mkhtml("a", "reload?", {href: ""}) }
-    <br>.₊̣̇.ಇ/ᐠˬ ͜   ˬ ᐟ\∫.₊̣̇.</center>`;
-});
-
-// if(pageidx !== null){
-//     getpage(pageidx).then(data => {
-//         posts.push(...data);
-//         dispposts();
-//         if(postid !== null)
-//             window.location.href = `#${postid}`;
-//     });
-// }
-// else if(postid !== null){
-//     getpost(postid).then(data => {
-//         posts.push(data[0]);
-//         dispposts();
-//     });
-// }
-
-function dispposts(){
-    for(let i = 0; i < posts.length; i++){
-        addpost(i);
-    }
-}
-
-function addpost(postsidx){
-    log(postsidx);
-    const post = posts[postsidx];
-    const id = post.id;
-    const title = post.title;
-    const desc = post.description;
-    const tags = post.tags;
-    const created = new Date(post.created_at);
-    const edited = new Date(post.edited_at);
-    const cover = post.cover_url;
-    const content = post.content;
-    log(content)
-    
-    const postel = mk("article", {class: "post", title: title, dataset: {id: id}});
-    const posth = mk("center", {class: "post-header"});
-    const postc = mktxt("p", content, {class: "post-content"});
-    app(posth, mktxt("h2", title, {class: "post-title"}));
-    app(posth, mktxt("h3", desc, {class: "post-subtitle"}));
-    const misc = mk("span", {class: "post-misc"});
-    // app(misc, mk("span", ))
-    const hasedited = post.created_at !== post.edited_at;
-    const datestr = created.toDateString() + (hasedited ? ` (${edited.toDateString()})` : "");
-    appmany(misc, 
-        [p(datestr), p(`${post.tags.join(" · ")}`)]
-    );
-    
-    app(posth, misc);
-    app(postel, posth);
-    app(postel, postc);
-    app(eid("blog"), postel);
-}
-
-// todo: create blogwriting system that mimics helper.js functions so i dont have
-// to write fully in html wow :o
-/*
-like:
-
-text text yap yap yap
-
-para(text yap yap yap
-
-wowwwooiejfiejfiejfeifjei
-
-)
-para(text yap yap yap)
-
-would be: 
-||||||||||||||||||||||||||||||||||||||||
-<article>
-text text yap yap yap
-
-<p>text yap yap yap
-
-wowwwooiejfiejfiejfeifjei
-
-</p>
-<p>text yap yap yap</p>
-
-
-
-
-</article>
-
-
-*/
-
-//todo: maybe make this handle n images instead of 4 with programatic css
-
-let trackimgcss = ``
-//     .track{
-// `;
-const baseartzlink = "/assets/imgs/artz/";
+const baseartzlink = "./assets/imgs/artz/";
 const artzinfo = [
     ["IMG_1106.jpg", `old ahh 60 second drawing of me`],
     ["IMG_1366.jpg", `doodle for irl friend madeleine !!`],
@@ -318,12 +203,14 @@ artzinfo.sort(() => Math.random() - 0.5);
 //     `
 // }
 const dirs = ["front", "back", "left", "right"];
+const poss = [0, 4, 6, 2, 1, 5, 7, 3];
 const imgprefix = "a";
 function addtotrack(track, classadd = 0){
     for(let i = 0; i < dirs.length; i++){
         // app(track, app(mk("div", {class: `${dirs[i]}` }), mk("div", {class: `${imgprefix}${i+1+classadd} t-img`})));
         app(track, app(mk("div", {class: `${dirs[i]}` }), mk("img", {class: `${imgprefix}${i+1+classadd} t-img`,
-            src: `${baseartzlink}${artzinfo[i+classadd][0]}`, loading: "lazy", decoding: "async",
+            src: `${baseartzlink}${artzinfo[i+classadd][0]}`, loading: "lazy",
+            style: `animation-delay: calc(${-poss[i + classadd]} * var(--spin-speed) / 16 - var(--spin-speed) / 4);`,
         })));
     }
 }
@@ -333,5 +220,3 @@ eqa(".track-outer .track:not(.other)").forEach((e) => {
 eqa(".track-outer .track.other").forEach((e) => {
     addtotrack(e, dirs.length);
 });
-trackimgcss += "";
-styling(trackimgcss);

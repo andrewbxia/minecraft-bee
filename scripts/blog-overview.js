@@ -24,7 +24,7 @@ async function getpostsoverview(){
         }
     });
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
@@ -37,7 +37,7 @@ async function getpage(pageidx){
         }
     });
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
@@ -50,23 +50,24 @@ async function getpost(id){
         }
     });
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
+let lastpostid = null;
+
 async function numposts(){
-    const response = await fetch(`${supaurl}/rest/v1/posts?select=id`, {
+    const response = await fetch(`${supaurl}/rest/v1/posts?select=id&order=created_at.desc&limit=1`, {
         headers: {
             apikey: publicanonkey,
             "Authorization": `Bearer ${publicanonkey}`,
-            "Content-Type": "application/json",
-            "Prefer": "count=exact",
-            "Range": "0-0",
+            "Content-Type": "application/json"
         }
     });
-    return response.headers.get("Content-Range").split("/")[1];
+    const data = await response.json();
+    lastpostid = data[0].id;
 }
-
+numposts();
 // getpostsoverview().then(posts => {
 //     console.log(posts);
 // });

@@ -32,6 +32,7 @@
     --theme-light-test: rgb(220, 233, 248);
     --theme-light-vals: 220, 233, 248;
     --theme-light: rgb(var(--theme-light-vals));
+    --theme-dark-test: rgb(18, 28, 34);
     --theme-dark-vals: 18, 28, 34;
     --theme-dark: rgb(var(--theme-dark-vals));
     --theme-tertiary: rgb(211, 211, 211);
@@ -159,4 +160,12 @@ iframe{
 }
 .quarfont{
     font-size: 0.25em;
+}
+.flexcol{
+    display: flex;
+    flex-direction: column;
+}
+.flexrow{
+    display: flex;
+    flex-direction: row;
 }
