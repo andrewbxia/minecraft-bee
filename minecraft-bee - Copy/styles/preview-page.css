@@ -1,0 +1,182 @@
+@keyframes boxshadow{
+    0%{
+        box-shadow: white 0px 0px 10px;
+    }
+    20%{
+        box-shadow: white 0px 0px 100px;
+    }
+    35%{
+        box-shadow: white 0px 0px 500px;
+    }
+    55%{
+        box-shadow: white 0px 0px 200px;
+    }
+    80%{
+        box-shadow: white 0px 0px 20px;
+    }
+    85%{
+        box-shadow: white 0px 0px 25px;
+    }
+    100%{
+        box-shadow: white 0px 0px 75px;
+    }
+}
+
+#before-screen{
+    position: fixed;
+    background-color: black;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    /* left: 0; */
+    right: 0;
+    /* z-index: 1; */
+}
+#play-button-container{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    top: 40vh;
+    left: 50%;
+    transform: translateX(-50%);
+    
+}
+/* #play-button-container::after{
+    content: "";
+    top: 0;
+    left: 0;
+    width: 100%;
+    position: absolute;
+    background-color: white;
+} */
+#play-button{
+    font-size: 100px;
+    aspect-ratio: 1/1;
+    background: none;
+    border: white 3px solid;
+    padding: 25px;
+    /* height: 100px;
+    width: 100px; */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-shadow: white 0px 0px 10px;
+    box-shadow: white 0px 0px 10px;
+    cursor: progress;
+    transition-property: rotate,/* box-shadow,*/ background-color, color, text-shadow;
+    transition-duration: 0.5s;
+    &::after,&::before{
+        content: "";
+        background-color: black;
+        filter: invert(1);
+        mix-blend-mode: difference;
+        position: absolute;
+        width: 0%;
+        height: 0%;
+        transition-property: width, height, top, left, bottom, right;
+        transition-duration: 0.5s;
+    }
+    &::before{
+        top: 0;
+        left: inherit;
+        bottom: inherit;
+        right: 0;
+        width: 0%;
+    }
+    &::after{
+        top: inherit;
+        left: 0;
+        bottom: 0;
+        right: inherit;
+        height: 0%;
+    }
+}
+#play-button.play-button-hover{
+    /* prob gonna revert this back to a hover class */
+    /* todo: use ::before and ::after to fill in white rather than just using background color */
+    p{
+        rotate: 360deg;
+    }
+    background-color: white;
+    color: white;
+    text-shadow: white 0px 0px 10px;
+    box-shadow: white 0px 0px 100px;
+    animation: boxshadow 0.5s forwards;
+    &::before{
+        top: inherit;
+        left: 0;
+        bottom: 0;
+        right: inherit;
+        height: 100%;
+        width: 100%;
+    }
+    &::after{
+        top: 0;
+        left: inherit;
+        bottom: inherit;
+        right: 0;
+        width: 100%;
+        height: 100%;
+    }
+}
+/* .play-button-hover::after,
+.play-button-hover::before{
+    height: 100%;
+} */
+#play-button-text{
+    pointer-events: none;
+    transition-property: rotate;
+    transition-duration: 0.5s;
+    margin: 0;
+}
+#anim-link{
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    opacity: 0;
+}
+#play{
+    position: absolute; /* omg why does transform break this :sob: */
+    width: 100vw; /* DO NOT SET A Z INDEX IT WILL BREAK ANY FILTERS UNDERNEATH */
+    height: 100vh;
+    left: 0;
+    top: 0;
+    right: 0;
+    pointer-events: none;
+}
+.collapse{
+    position: absolute;
+    width: 1000vw;
+    height: 1000vh;
+    background-color: white;
+    left: 100%;
+    bottom: 0;
+    /* z-index: 0; */
+    transform-origin: 0% 100%;
+    /* transform: rotate(-90deg); */
+}
+.slide-in{
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+    left: 100%;
+    right: 0vw;
+    bottom: 0;
+    transform-origin: 100% 0%;
+}
+.filter{
+    background-color: black;
+    filter: invert(1);
+    mix-blend-mode: difference;
+}
+.hey-text{
+    color: white;
+    font-size: 100px;
+    margin: 0;
+    white-space: nowrap;
+}

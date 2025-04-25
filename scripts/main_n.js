@@ -88,11 +88,11 @@ function tohsl(cssColor, components = false) {
 // bg bars
 
 const containerlimiterid = "page";
-const basecolor = tohsl(compst(document.documentElement).getPropertyValue("--theme-light"), true);
+let basecolor = tohsl(compst(document.documentElement).getPropertyValue("--theme-light"), true);
 
 let currpxl = 0;
 const step = 1250;
-const maxpxl = () => min(1080 * 5, window.innerHeight * 3);
+const maxpxl = () => min(1080 * 5, window.innerHeight * 3.5);
 const depths = [1, 2, 3, 4,];
 depths.forEach(depth => {
     app(eid("bg-bars"), mk("div", {class: `c-${depth}` }));
@@ -122,15 +122,15 @@ function bgbars(newheight) {
             for (let cnt = 0; cnt < Math.log(depth) + 1; cnt++) {
                 numbars++;
                 const bar = mk("div", { class: `bg-bar bg-a-${randint(3, 1)}`});
-                const bgcolor = `hsl(${basecolor.h}, ${basecolor.s}%, ${rand( basecolor.l*invdepth / 6, basecolor.l * .75)}%)`;
+                const bgcolor = `hsl(${basecolor.h}, ${basecolor.s}%, ${rand( basecolor.l*invdepth / 5, basecolor.l * .75)}%)`;
                 
                 // bar.style.zIndex = -depth;
-                bar.style.height = `${(depth) * rand(5 + depth) + 4}vh`;
+                bar.style.height = `${(depth) * rand(depth) + 4* depth}vh`;
                 bar.style.rotate = `${rand(50, -25)*depth}deg`;
                 bar.style.left = `${rand(50, -25)}%`;
                 bar.style.backgroundColor = bgcolor;
                 bar.style.top = `${currpxl - rand(step)}px`;
-                bar.style.opacity = (invdepth) * rand(.2 * invdepth, .35);
+                bar.style.opacity = (invdepth) * rand(.35 * invdepth, .45);
                 // bar.style.boxShadow = `0 0 ${pow((depth - 1), 2) * 10}px ${bgcolor}`;
                 // bar.style.animationDelay = `${rand(0.5)}s`;
                 bar.style.animationDuration = `${rand(2, .5)}s`;
@@ -140,7 +140,7 @@ function bgbars(newheight) {
     }
 }
 
-const scrollbars = new MeteredTrigger(100, () => {
+const scrollbarst = new MeteredTrigger(100, () => {
     // if(window.devicePixelRatio * 100 <= 60)return;
     // if(fpsm.cntn() <= 50) return; // dont run if not doing too hot
     const scroll = window.innerHeight + window.scrollY;
@@ -155,14 +155,26 @@ const scrollbars = new MeteredTrigger(100, () => {
     const panstrength = 0.1;
     for(let depth of depths){
         const invdepth = max(.5, depths.length - depth);
-        if(fpsm.cntn() <= 60 - invdepth * 5) return;
+        if(fpsm.cntn()+6 <= 60 - invdepth * 5) return;
         eq("#bg-bars .c-" + depth).style.transform = `translateY(${(scroll * -panstrength * pow(invdepth, 2)) % min(maxpxl(),Infinity)}px)`;
     }
 });
 
 window.addEventListener("scroll", () => {
-    scrollbars.fire();
+    scrollbarst.fire();
 });
+
+function resetscrollbars(){
+    currpxl = 0;
+    numbars = 0;
+    basecolor = tohsl(compst(document.documentElement).getPropertyValue("--theme-light"), true);
+    eqa("#bg-bars>div").forEach((e) => {
+        e.innerHTML = "";
+    });
+    bgbars(window.innerHeight + window.scrollY);
+    scrollbarst.fire();
+}
+
 
 // once everything is loaded
 document.addEventListener("DOMContentLoaded", () => {
@@ -171,9 +183,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-const baseartzlink = "./assets/imgs/artz/";
+const baseartzlink = "../assets/imgs/artz/";
 const artzinfo = [
-    ["IMG_1106.jpg", `old ahh 60 second drawing of me`],
+    ["IMG_1106.jpg", `old ahh 60 second portrait of me`],
     ["IMG_1366.jpg", `doodle for irl friend madeleine !!`],
     ["IMG_1378.jpg", `ORIIIIIIIIIIIIIIIIIIII`],
     ["IMG_1698.jpg", `${linkhtml("https://www.youtube.com/@RandomCatOnRoblox", "randomcat")} 
@@ -195,28 +207,75 @@ const artzinfo = [
     // "IMG_.jpg",
 ];
 artzinfo.sort(() => Math.random() - 0.5);
-// for(let i = 1; i <= min(dirs.length * 2, artzinfo.length); i++){
-//     trackimgcss += `
-//         .${imgprefix}${i}{
-//             --bg-url: url('${baseartzlink}${artzinfo[i-1][0]}');
-//         }\n
-//     `
-// }
 const dirs = ["front", "back", "left", "right"];
 const poss = [0, 4, 6, 2, 1, 5, 7, 3];
 const imgprefix = "a";
+
+
+let trackimgcss = "";
+for(let i = 0; i < dirs.length * 4; i++){
+    trackimgcss += `
+        .${imgprefix}${i}{
+            --bg-url: url('${baseartzlink}${artzinfo[(i) % artzinfo.length][0]}');
+        }\n
+    `
+}
+
 function addtotrack(track, classadd = 0){
     for(let i = 0; i < dirs.length; i++){
+        // log((i+classadd) % artzinfo.length)
         // app(track, app(mk("div", {class: `${dirs[i]}` }), mk("div", {class: `${imgprefix}${i+1+classadd} t-img`})));
-        app(track, app(mk("div", {class: `${dirs[i]}` }), mk("img", {class: `${imgprefix}${i+1+classadd} t-img`,
-            src: `${baseartzlink}${artzinfo[i+classadd][0]}`, loading: "lazy",
-            style: `animation-delay: calc(${-poss[i + classadd]} * var(--spin-speed) / 16 - var(--spin-speed) / 4);`,
-        })));
+        const transition = randarrchoose([
+            "0.75s var(--ease-doublebacktrack);",
+            "0.75s var(--ease-backtrack);",
+            "none"]);
+        const trackitem = app(mk("div", {class: `${dirs[i]}` }), 
+            app(
+                mk("div", {class: `${imgprefix}${(i + classadd)} t-img`,
+            style: `animation-delay: calc(${-poss[(i + classadd) % poss.length]} * var(--spin-speed) / 16 - var(--spin-speed) / 4);`,
+            }),app(mk("div", {style: `transition: ${transition}`}), mktxt("p", artzinfo[(i+classadd) % artzinfo.length][1], {class: "t-img-desc"})
+            ))
+        );
+        app(track, trackitem);
     }
 }
-eqa(".track-outer .track:not(.other)").forEach((e) => {
+styling(trackimgcss);
+eqa(".track-outer .track-1.track:not(.other)").forEach((e) => {
     addtotrack(e);
 });
-eqa(".track-outer .track.other").forEach((e) => {
+eqa(".track-outer .track-1.track.other").forEach((e) => {
     addtotrack(e, dirs.length);
+});
+eqa(".track-outer .track-2.track:not(.other)").forEach((e) => {
+    addtotrack(e, dirs.length * 2);
+});
+eqa(".track-outer .track-2.track.other").forEach((e) => {
+    addtotrack(e, dirs.length * 3);
+});
+eqa(".t-img").forEach((e) => {
+    const bimg = compst(e).backgroundImage;
+    const bimgurl = bimg.substring(5, bimg.length - 2);
+
+    const img = new Image();
+    img.onload = () => {
+        e.style.aspectRatio = `${img.width} / ${img.height}`;
+    };
+    log(bimgurl);
+    img.src = bimgurl;
+});
+
+const scrollprogress = new MeteredTrigger(33, () => {
+    eid("scroll-progress").style.width = `${(window.scrollY / (eid(containerlimiterid).offsetHeight - window.innerHeight)) * 100}%`;
+});
+
+window.addEventListener("scroll", () => {
+    scrollprogress.fire();
+});
+
+
+const toggletheme = new MeteredTrigger(251, () => {
+    document.documentElement.classList.toggle("dark");
+    // setTimeout(() => {
+        resetscrollbars();
+    // }, 250);
 });

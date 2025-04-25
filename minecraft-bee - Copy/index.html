@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>thing</title>
+    <script>
+        let pageentered = false;
+    </script>
+    <style id="font-faces">
+        @font-face {
+            font-family: dos;
+            src: url("../assets/fonts/Web437_DOS-V_re_JPN16.woff");
+            font-display: block;
+        }
+        @font-face{
+            font-family: snapit;
+            src: url("../assets/fonts/Snap-itmono.woff2");
+        }
+        @font-face{
+            font-family: atrament;
+            src: url("../assets/fonts/Atrament-Regular.otf");
+            font-weight: normal;
+        }
+        @font-face {
+            font-family: atrament;
+            src: url("../assets/fonts/Atrament-Italic.otf");
+            font-style: italic;
+        }
+        @font-face {
+            font-family: atrament;
+            src: url("../assets/fonts/Atrament-Semibold.otf");
+            font-weight: bold;
+        }
+        @font-face {
+            font-family: atrament;
+            src: url("../assets/fonts/Atrament-SemiboldItalic.otf");
+            font-weight: bold;
+            font-style: italic;
+        }
+    </style>
+    <script src="./scripts/helper.js"></script>
+    <script src="./scripts/helper-classes.js"></script>
+    <script src="./scripts/dev-detect.js"></script>
+    <script src="./scripts/animation3.js"></script>
+    <!-- <script src="./scripts/oneko.js" defer data-cat="./assets/imgs/oneko.png"></script> -->
+    <script defer src="./scripts/cd.js"></script>
+    <script src="./scripts/preview-page.js" defer></script>
+    <script src="./scripts/main.js" defer></script>
+    <script src="./scripts/blog-overview.js" defer></script>
+    <link rel="stylesheet" href="./styles/theme.css">
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/preview-page.css">
+    <style id="scrollbar-css">
+        ::-webkit-scrollbar{
+            width: 15px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--theme-light);
+            border-radius: 4px;
+            border: 3px var(--theme-orange) dashed;
+        }
+        ::-webkit-scrollbar-thumb{
+            background: var(--theme-dark);
+            border: 3px var(--theme-pink) dashed;
+            /* border-radius: 4px; */
+        }
+    </style>
+    <style id="shooting-bar-css">
+        #shooting-bars {
+            z-index: 10;
+            --shooting-duration: 3s;
+            position: fixed;
+            rotate: 35deg;
+            transform-origin: 50% 0%;
+            width: 2000px;
+            height: 300px;
+            top: 0;
+            right: calc(-.5 * 2000px);
+            pointer-events: none;
+            /* border: 2px black solid; */
+            /* animation: rotateinf 10s linear infinite; */
+        }
+        @media (max-width: 800px){
+            #shooting-bars{
+                height: 150px;
+            }
+        }
+        
+        .shooting-bar{
+            position: absolute;
+            pointer-events: none;
+            left: 0;
+            animation-timing-function:  ease, ease-out;
+            animation-iteration-count: 1, infinite;
+            animation-name: shootright, blink;
+            animation-fill-mode: forwards, none;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 2em;
+        }
+        @keyframes blink{
+            0%, 100%{
+                filter: brightness(100%);
+            }
+            50%{
+                filter: brightness(115%);
+            }
+        }
+
+        @keyframes shootright{
+            from{
+                left: -100%;
+            }
+            to{
+                left: 100%;
+                /* display: none; */
+            }
+        }
+
+        @keyframes rotateinf {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- <div id="before-screen">
+        <div id="play-button-container">
+            <button id="play-button" style="rotate: 0deg;">
+                <p id="play-button-text">
+                    ▶
+                </p>
+            </button>
+            <p class="hey-text">Hey Hey!</p>
+        </div>
+        <a href="./scripts/animation3.js" id="anim-link">
+            my bad js library used for this
+        </a>
+        
+    </div>
+    <div id="play"> -->
+        
+        <!-- diff animations -->
+        <!-- <div class="collapse filter">
+            <div style="
+            position: absolute;
+            transform-origin: 50% 100%;
+            rotate: 180deg;
+            left: 0;
+            bottom: 0;">
+                <img src="./assets/imgs/ab.gif">
+            </div>
+            
+        </div>
+        <div class="slide-in"></div>
+    </div>
+    <div id="again-menu">
+        <button id="again-button" onclick="resetPlay()">
+        </button>
+    </div> -->
+    <div id="fps" style="position: fixed; top: 0; left: 0;"></div>
+    <div id="info" style="position: fixed; top: 0; right: 0;"></div>
+    
+    
+    <div id="container">
+        <!-- <div id="off-left">
+            <section>
+                wh
+            </section>
+        </div> -->
+        <div id="main">
+            <div class="c-container">
+                <section style="min-width: 100px"></section>
+                <section id="me-section">
+                    <div id="me-img">
+                        <img src="./assets/imgs/bee-minecraft.jpg">
+                    </div>
+                    <div id="cd-player">
+                        <div id="cd-cover"></div>
+                        <div id="cd-controls">
+                            <p id="cd-status" style="margin: 0; color: var(--theme-light)">d(-w-)b</p>
+                            <input type="range" id="cd-progress" value="0" min="0" max="100" step="1" 
+                            oninput="cdprogress(event)">
+                            <input type="range" id="cd-volume" value="100" min="0" max="100" step="1" 
+                            oninput="cdvolume(event)" orient="vertical"
+                            style="position: absolute; right: 0; bottom: 0;"
+                            >
+                            <input type="checkbox" id="cd-autoplay" name="autoplay" 
+                            oninput="cdautoplay(event)">
+                            <button id="cd-play" onclick="playcd()">
+                                <p>▶</p>
+                            </button>
+                            <button id="cd-reset" onclick="resetcd()">
+                                <p>■</p>
+                            </button>
+                            <button id="cd-next" onclick="nextcdthisonesucks(event)">
+                                <!-- wow u really hate this one!!! or just wanna see the animations -->
+                                <p>nxt</p>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="me-text">
+                        <h1 class="link">axia.sh</h1>
+                        <p>
+                            ello! 
+                        </p>
+                        <p>
+                            this will be my corner of the internet for now, 
+                            where I'll do whatevs here i wanna or 
+                            something something yadda yatta yabadabadoo
+                        </p>
+                        <p>
+                            also, I like coding in pure vanilla HTML CSS and JS instead of using a framework to do stuff. 
+                            Whether that is a product of laziness to learn such tools or my desire for spiritual independence is a question 
+                            not even I really know the answer to. :p
+                        </p>
+                    </div>
+                </section>
+            </div>
+            
+            <section id="section-88-31" class="marquee-rev marquee-stop">
+                <div id="container-88-31"></div>
+            </section>
+            <section id="blog-section">
+                
+                <div class="off-left"></div>
+                <div id="blog-writing" style="display: none;">
+                    <div id="blog-editor"></div>
+                    <div id="editor-output"></div>
+                </div>
+                <iframe src="./blog/index.html" style="border: none; width: 100%; "></iframe>
+                
+            </section>
+
+            <section id="banners" style="height: 150px;"></section>
+
+            <section id="artz-section">
+                <h2>notebook lined artz
+                    <span style="font-size: 0.25em; font-weight: normal;">
+                        (roughly in order of recency <span class="shade" style="font-size: 0.5em;">(and quality)</span>)
+                    </span>
+                </h2>
+                <p class="halffont">click/clickout to enlarge!</p>
+                <p class="halffont">mb if enlarging images a bit finicky, just wanted to do this navigation in pure CSS lol</p>
+                <div id="artz-nav-t">
+                    <button class="artz-prev" onclick="prevartz()">
+                        <p>&lt;</p>
+                    </button>
+                    <span id="artz-nav-t-page">1</span>
+                    <button class="artz-next" onclick="nextartz()">
+                        <p>&gt;</p>
+                    </button>
+                </div>
+                <div id="artz"></div>
+                <div id="artz-nav-b">
+                    <button class="artz-prev" onclick="prevartz()">
+                        <p>&lt;</p>
+                    </button>
+                    <button class="artz-next" onclick="nextartz()">
+                        <p>&gt;</p>
+                    </button>
+                </div>
+            </section>
+            <section id="other-section" style="z-index: -1;min-height: 5000px;">
+                <h2>others</h2>
+            </section>
+        </div>
+        <div id="off-right">
+            <section style="pointer-events: none;" id="cd-offset"></section>
+            <section style="border-width: calc((var(--offright-width) - 180px) / 4); aspect-ratio: 1/1;">
+                <iframe width="180" height="180" style="border:none" src="https://dimden.neocities.org/navlink/" name="neolink"></iframe>
+
+            </section>
+        </div>
+    </div>
+    
+    <div id="bg-bars">
+        <!-- <div class="c-1"></div>
+        <div class="c-2"></div>
+        <div class="c-3"></div> -->
+    </div>
+    <style>
+        
+        
+    </style>
+</body>
+</html>
