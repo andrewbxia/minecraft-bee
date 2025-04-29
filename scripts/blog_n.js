@@ -38,15 +38,14 @@ function generatepost(post){
     const edited = new Date(post.edited_at);
     const cover = post.cover_url;
     const content = post.content;
-    log(content)
     
-    const postel = mk("article", {class: "post", title: title, "data-id": id, id: `post-${id}`});
-    const posth = mk("center", {class: "post-header"});
+    const postel = mk("article", {class: "post", "data-id": id, id: `post-${id}`});
+    const posth = mk("center", {class: "post-header", title: title});
     const postc = mktxt("p", content, {class: "post-content"});
     app(posth, mktxt("h2", title, {class: "post-title"}));
     app(posth, mktxt("h3", desc, {class: "post-subtitle"}));
     const misc = mk("span", {class: "post-misc"});
-    // app(misc, mk("span", ))
+
     const hasedited = post.created_at !== post.edited_at;
     const datestr = created.toDateString() + (hasedited ? ` (${edited.toDateString()})` : "");
     appmany(misc, 
@@ -60,7 +59,7 @@ function generatepost(post){
 }
 
 function addpost(postsidx){
-    log(postsidx);
+    // log(postsidx);
     const post = posts[postsidx];
     const postel = generatepost(post);
     
@@ -104,7 +103,7 @@ wowwwooiejfiejfiejfeifjei
 //todo: maybe make this handle n images instead of 4 with programatic css
 
 if(params.has("b-edit")) script("./scripts/blog-editor.js", true);
-
+eid("blog").innerHTML = "";
 if(pageidx === null && postid === null)
     pageidx = 0;
 
@@ -112,9 +111,9 @@ if(pageidx === null && postid === null)
     posts.push(...data);
     dispposts();
     if(postid !== null)
-        window.location.href = `#${postid}`;
+        window.location.href = `#post-${postid}`;
 }).catch(error => {
     err(error);
-    eid("blog").innerHTML = `<center>posts didnt load...maybe ${mkhtml("a", "reload?", {href: ""}) }
+    eid("blog").innerHTML += `<center>posts didnt load...maybe ${mkhtml("a", "reload?", {href: ""}) }
     <br>.₊̣̇.ಇ/ᐠˬ ͜   ˬ ᐟ\∫.₊̣̇.</center>`;
 });

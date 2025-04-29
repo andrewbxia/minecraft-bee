@@ -154,7 +154,7 @@ const cds = { // implement artist and desc and source laterz
 };
 
 const cdcategories = Object.keys(cds);
-const cdcategory = 0;
+let cdcategory = 0;
 
 const cdimgpath = "./assets/imgs/cds/", cdaudiopath = "./assets/audios/cds/";
 
@@ -184,29 +184,6 @@ const cdframes = [
     "d^bc(owo)",
 ];
 
-script("https://youtube.com/iframe_api");
-let ytplayer = null;
-let isyt = false;
-{
-function onYouTubeIframeAPIReady() {
-    ytplayer = new YT.Player("yt-music", {
-        height: "0", // Hide visual player unless you want to show it
-        width: "0",
-        videoId: "",
-        host: "https://www.youtube-nocookie.com",
-        events: {
-            onReady: () => {},
-            onStateChange: ytchange,
-        }
-    });
-}
-function ytchange(event) {
-    if (event.data === YT.PlayerState.ENDED && autoplay) {
-        cdaudio.onended();
-    }
-}
-}
-
 const cdtitleinterval = setInterval(() => {
     if(!cdaudio.paused) cdtitleframe = max(0, cdtitleframe - 1);
     else cdtitleframe = min(cdframes.length - 1, cdtitleframe + 1);
@@ -226,10 +203,8 @@ const source = cdaudiocontext.createMediaElementSource(cdaudio);
 source.connect(analyser);
 source.connect(cdaudiocontext.destination);
 function getVolume() { //TODO: make this an acutal visualizer, maybe make this a seperate class
-    // if(isyt)return ytplayer.getVolume() / 100;
     if(!cdok) return 0;
     if(cdaudio.paused) return 0;
-    if(isyt && ytplayer.getPlayerState() !== YT.PlayerState.PLAYING) return 0;
     analyser.getByteTimeDomainData(audioarray);
     let sum = 0, maxvol = 0;
     for (let i = 0; i < audioarray.length; i++) {
@@ -248,7 +223,6 @@ let avgvols = new RollingAvg(10);
 function visualizer(){
     // if(!cdok) return;
     // if(cdaudio.paused) requestAnimationFrame(visualizer);
-    // if(isyt && ytplayer.getPlayerState() !== YT.PlayerState.PLAYING) return;
     const volume = getVolume();
     avgvols.add(volume);
 
@@ -272,25 +246,17 @@ function placecd(e){
     const cdimg = mk("img");
     const selectedcd = randarrchoose(cds[cdcategories[cdcategory]]);
 
-    if(isyt){
-        cdimg.src = `https://img.youtube.com/vi/${selectedcd[1]}/maxresdefault.jpg`;
-        cdimg.style.objectFit = "cover";
-        
-    }
-    else cdimg.src = cdimgpath + selectedcd[0];
+    cdimg.src = cdimgpath + selectedcd[0];
     cd.dataset.audio = cdaudiopath + selectedcd[1];
     cd.dataset.audioname = selectedcd[1];
+    cdaudio.src = cd.dataset.audio;
     
-    isyt = selectedcd[1].indexOf(".") === -1;
-    if(!isyt){
-        cdaudio.src = cd.dataset.audio;
-    }
-
     app(cdplayer, app(cd, cdimg));
     const rotation = (Math.random() * 360 * dir ? 1 : -1) + "deg";
     cd.style.rotate = rotation;
     cd.dataset.rotation = rotation;
     cdpaused = true;
+
     if(autoplay) playcd(e);
     cd.animate([
         {[dirstrop]: cddim * (dir ? 1: -1) + "px", rotate: 0 + "deg", width: "0px"},
@@ -298,39 +264,30 @@ function placecd(e){
     ], {
         duration: 800,
         easing: "ease-in-out",
-        // fill: "forwards"
     }).onfinish = (e) => {
         cdok = true;
     };
 }
 placecd();
+
 cdaudio.onended = () => {
     log("ended");
     if(autoplay)
         nextcdthisonesucks();
     else stopcd();
 };
-// cdaudio.addEventListener("ended", stopcd);
+
 const cdplaytext = "▶", cdstoptext = "❚❚";
 
 function playcd(e){// have to pass event so browser know its user interaction guhhhhh
     if(cdaudiocontext.state === "suspended") cdaudiocontext.resume();
     const cd = cdplayer.querySelector(".cd");
-    if(isyt && ytplayer){
-        if(!ytplayer.getPlayerState) return;
-        if(ytplayer.getPlayerState() === YT.PlayerState.PAUSED){   
-            ytplayer.playVideo();
-        }
-        else if(ytplayer.getPlayerState() === YT.PlayerState.ENDED || ytplayer.getPlayerState() === YT.PlayerState.CUED){
-            ytplayer.loadVideoById(cd.dataset.audioname);
-        }
-    }
-    else{
-        if(!cdaudio.paused) return;
-        if(decodeURIComponent(cdaudio.src).indexOf(cd.dataset.audioname) === -1)
-            cdaudio.src = cd.dataset.audio;
-        cdaudio.play();
-    }
+    
+    if(!cdaudio.paused) return;
+    if(decodeURIComponent(cdaudio.src).indexOf(cd.dataset.audioname) === -1)
+        cdaudio.src = cd.dataset.audio;
+    cdaudio.play();
+    
     cdpaused = false;
     new Ani(".cd").rule({
         from: [{rotate: "0deg"}],  
@@ -347,13 +304,10 @@ function playcd(e){// have to pass event so browser know its user interaction gu
     cdok = true;
 }
 function stopcd(full = false, out = false){
-    if(isyt)
-            ytplayer.pauseVideo();
-    else{
-        if(!full && cdaudio.paused && !cdaudio.ended) return 0;
-        cdaudio.pause();
-    }
 
+    if(!full && cdaudio.paused && !cdaudio.ended) return 0;
+    cdaudio.pause();
+    
     // hacky
     const from2 = [{rotate: "0deg"}]; 
     const to2 = [{rotate: full ? "0deg" : eq(".cd").dataset.rotation}]; 
@@ -385,32 +339,29 @@ function stopcd(full = false, out = false){
 
 function resetcd(){
     stopcd(false, false);
-    if(isyt) ytplayer.seekTo(0);
-    else cdaudio.currentTime = 0;
+    cdaudio.currentTime = 0;
 }
 const progressinterval = setInterval(() => {   
     let progress = 0;
-    if(isyt){
-        if(!ytplayer.getCurrentTime) return;
-        progress = ytplayer.getCurrentTime() / ytplayer.getDuration();
-    }
-    else if(cdaudio.duration > 0){
+    
+    if(cdaudio.duration > 0){
         progress = cdaudio.currentTime / cdaudio.duration;
     }
     progress *= 100;
     if(isNaN(progress)) progress = 0;
     eid("cd-progress").value = progress;
 }, 500);
+
 function cdprogress(event){
     const newprogress = event.currentTarget.value;
-    const duration = isyt ? ytplayer.getDuration() : cdaudio.duration;
-    let newtime = duration * newprogress / 100;
-    if(isyt) ytplayer.seekTo(newtime);
-    else cdaudio.currentTime = newtime;
+    let newtime = cdaudio.duration * newprogress / 100;
+    cdaudio.currentTime = newtime;
 }
+
 function cdvolume(event){
     cdaudio.volume = event.currentTarget.value / 100;
 }
+
 function cdautoplay(event){
     const value = event.currentTarget.checked;
     autoplay = value;
@@ -421,8 +372,6 @@ function nextcdthisonesucks(){
     eqa("#cd-controls button").forEach(b => b.disabled = true);
     const delay = stopcd(true, true);
     const cd = eq(".cd");
-    // do the animation here later of it dropping and colliding with the bottom screen or someth
-    // and a funny one where it shoots off violently lol
     const hoffset = brect(cdplayer).bottom;
     const bodywidth = window.innerWidth;
 

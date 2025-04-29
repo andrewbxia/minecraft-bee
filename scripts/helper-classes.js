@@ -171,3 +171,103 @@ class RollingAvg{
 //     }
 // }
 
+// requires some methods from helper.js
+class RollingActives{
+    len = axiatxt.length;
+    #classpre = "";
+    #active = "";
+    axia = axia;
+    axiac = axia.childNodes;
+    #activeq = Array(this.len).fill(0); /* keep track of cells currently active */
+    #cnt = 0;
+    #forcedreset = false;
+
+    constructor(el, activeclass = "active", classprefix = "*"){ // maybe do class prefix later im lazy
+        assert(el instanceof HTMLElement, "el is not a html element");
+        this.axiac = el.childNodes;
+        this.len = el.childNodes.length;
+        if(this.len === 0) warn("el gott like no children bruh");
+        assert(typeof classprefix === "string" && classprefix.length > 0, "classprefix must be a nonempty string");
+        assert(typeof activeclass === "string" && activeclass.length > 0, "activeclass must be a nonempty string");
+        this.#classpre = classprefix;
+        this.#active = activeclass;
+    }
+
+    #genid(){
+        return ++this.#cnt;
+    }
+
+    #schedulereset(totaldelay = 0, idcheck = Infinity){
+        setTimeout(() => {
+            if(idcheck < this.#cnt)return;
+            this.reset(true);
+        }, totaldelay);
+    }
+
+    reset(indices = [], force = false){
+        if(typeof indices === "boolean"){
+            force = indices;
+            indices = [];
+        }
+        if(force){
+            this.#forcedreset = true; // activeq can possible go into the negatives
+            this.axiac.forEach(e => {
+                e.classList.remove(this.#active);
+            });
+            this.#activeq.forEach(q => q = 0);
+        }
+        else{
+            indices.forEach(idx => {
+                this.#activeq[idx]--;
+                assert(this.#activeq[idx] >= 0 || this.#forcedreset, "activeq negative?");
+                if(this.#activeq[idx] == 0){
+                    this.axiac[idx].classList.remove(this.#active);
+                    this.#activeq[idx] = 0;
+                }
+            });            
+        }
+    }
+
+    set(arr = [], delay = 0, duration = 0){
+        if(arr.length === 0) return;
+        setTimeout(() => {
+            this.reset();
+            arr.forEach(idx => {
+                this.axiac[idx].classList.add(this.#active);
+                this.#activeq[idx]++;
+                // log(this.#activeq);
+            });
+        }, delay);
+        setTimeout(() => {
+            this.reset(arr);
+        }, delay + duration);
+    }
+    pass(reverse = randint(1), nucleationsites = randint(floor(this.len / 2) - 1, 1),
+    step = randint(floor(this.len / max(1, nucleationsites - 1))-1, 1)){
+        const id = this.#genid();
+        // const nucleationsites = randint(floor(this.len / 2) - 1, 1);
+        // const step = randint(floor(this.len / nucleationsites)-1, 1);
+        const delay = randint(150, 250); // 100ms
+        let totaldelay = 0;
+        const maxstart = max(0, this.len - nucleationsites*step), start = randint(maxstart);
+        const rev = reverse ? -1 : 1;
+
+        for(let i = reverse ? this.len - start - 1: start; 
+            reverse ? i >= 0 : i < this.len; i += rev){
+
+            let idx = i;
+            const indices = [];
+            while(idx >= 0 && idx < this.len && indices.length < nucleationsites){
+                indices.push(idx);
+                idx += step * rev;
+            }
+
+            this.set(indices, totaldelay, delay);
+            // setTimeout(() => {log(this.#activeq)}, totaldelay+delay);
+            totaldelay += delay;
+        }
+        
+        // this.#schedulereset(totaldelay, id);
+        return totaldelay;
+    }
+}

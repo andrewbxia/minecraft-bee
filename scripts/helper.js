@@ -5,12 +5,15 @@ const compst = (el) => window.getComputedStyle(el);
 const brect = (el) => el.getBoundingClientRect();
 const pint = (el, rad = 10) => parseInt(el, rad);
 const poat = (el) => parseFloat(el);
-const log = (...message) =>   console.log(...message);
+const log = (...message) =>  {console.log(...message);};
 const err = (...message) => console.error(...message);
 const abs = (num) => Math.abs(num);
 const pow = (num, exp) => Math.pow(num, exp);
 const assert = (condition, msg) => {if(!condition) throw new Error(msg);};
 const assertnotreached = (msg = "unreachable thingy reached") => assert(false, msg);
+const trueheight = window.innerHeight * window.devicePixelRatio;
+const truewidth = window.innerWidth * window.devicePixelRatio;
+const sp = "&nbsp;";
 
 
 function max(...args){
@@ -112,9 +115,16 @@ function mk(type, attr = {}){
     }
     return el;
 }
-function mktxt(type, txt, attr = {}){
+function mktxt(type, txt, attr = {}, explicit = false){ /* explicitly set as inner text */
+    if(typeof attr === "boolean"){
+        explicit = attr;
+        attr = {};
+    }
     const el = mk(type, attr);
-    el.innerHTML = txt; // hopefully no one abooses this :(((((
+    if(explicit)
+        el.innerText = txt;
+    else
+        el.innerHTML = txt; // hopefully no one abooses this :(((((
     return el;
 }
 function mkhtml(type, txt = "", attr = {}) {
@@ -152,7 +162,11 @@ function linkhtml(url, txt = "", target = "_blank", attr = {}){
     }
     return mkhtml("a", txt, {href: url, target: target, ...attr});;
 }
-
+function nodelist(arr){
+    const list = document.createDocumentFragment();
+    appmany(list, arr);
+    return list;
+}
 const script = (src, defer = true, async = true) => {
     const sc = mk("script", {src, defer, async});
     app(document.head, sc);

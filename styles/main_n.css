@@ -1,5 +1,5 @@
 :root{
-    --main-width: 1300px;
+    --main-width: 1000px;
 }
 html{
     scroll-behavior: smooth;
@@ -22,6 +22,33 @@ html{
     }
 }
 
+/* cd is 338 px */
+@media screen and (max-width: 1400px){
+    body{
+        .track{
+            display: none;
+        }
+        #page{
+            overflow: visible;
+        }
+        #main{
+            /* width: 100%; */
+            --bg-opacity: 0.25;
+            width: calc(var(--main-width) + 100px);
+            margin: 0 auto;
+            >section{
+                /* backdrop-filter: blur(8px); */
+            }
+        }
+        #cd-player{
+            /* later have a openable side menu for this */
+            display: none;
+        }
+    }
+    
+    
+}
+
 /* :root.dark #moon-svg{
     display: block;
 }
@@ -34,102 +61,123 @@ html{
 #sun-svg{
     display: block;
 } */
-:root.dark #theme-switch{
-    rotate: calc( 180deg);
-    top: -30px;
-    >.o-container{
-        rotate: 180deg;
+
+@keyframes theme-glow{
+    0%{
+        filter: drop-shadow(0px 0px 1px var(--theme-dark-other));
+    }
+    25%{
+        filter: drop-shadow(0px 0px 2px var(--theme-dark-other));
+    }
+    100%{
+        filter: drop-shadow(0px 0px 1px var(--theme-dark-other));
+    }
+}
+@keyframes theme-icon-rotate{
+    0%{
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(360deg);
     }
     
-    
+}
+:root.dark #theme-switch{
+    rotate: calc( 180deg);
+    top: -50px;
+    >.ts-container{
+        rotate: 180deg;
+    }
     &:hover{
-        /* rotate: calc(1*360deg + 180deg + 10deg + var(--slant)); */
-        transform: translate(-100%, 300%);
-        >.o-container{
+        transform: translate(-1vw, 1vh);
+        >.ts-container{
             rotate: calc(180deg - 3deg);
         }
     }
 }
 #theme-switch:hover{
     cursor: pointer;
-    transform: translate(-200%, 200%);
-    >.o-container{
+    transform: translate(-2vw, 2vh);
+    >.ts-container{
         rotate: -3deg;
+        >.container>svg{
+            animation-play-state: paused !important;
+            rotate: 270deg;
+            &#sun-svg{
+                rotate: -270deg;
+            }
+            filter: drop-shadow(0px 0px 3px var(--theme-dark-other));
+        }
     }
-    /* rotate: calc(10deg + var(--slant)); */
 }
 
 #theme-switch{
     --scale: 3;
-    --slant: 15deg; /* also rotation */
+    --slant: 15deg;
     --speed: .75s;
     position: fixed;
     z-index: 1;
-    top: 130px;
-    right: -15px;
-    rotate: 0deg;
-    transform-origin: -4950% 5000%;
+    top: calc(50px + 2.67em); /*2em (h1) + 0.67em from margin-block-startend  user-stylesheet*/
+    right: 0px;
+    transform-origin: -50vw 50vh;
     transition: var(--speed) var(--ease-backtrack);
     transition-property: rotate, transform, top, right;
-    width: 1vw;
-    height: 1vh;
-    
+    width: 0;
+    height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    >.o-container{
-        /* filter: hue-rotate(358deg) brightness(85%); */
+    >.ts-container{
+        background-color: var(--theme-light-other);
+        transition-property: background-color, rotate;
+        transition-duration: 2.65s, var(--speed);
+        transition-timing-function: var(--ease-morein-out), var(--ease-backtrack);
         display: flex;
         flex-direction: row;
-        transition: rotate var(--speed) var(--ease-backtrack);
         transform: skew(var(--slant));
-        >#c-moon{
-            top: 0;
-            /* rotate: 180deg; */
-        }
-        >#c-sun{
-            bottom: 0;
-        }&::before, &::after{
+        &::before, &::after{
             content: '';
             position: absolute;
             background-color: rgb(var(--theme-light-other-vals), 0.25);
             mix-blend-mode: plus-lighter;
             height: 4px;
-            width: 100%;
+            --speed: 10s;
         }
         &::before{
             bottom: 0;
             left: 0;
             height: 100%;
-            animation: border-anim-lr 11.3s linear infinite;
+            animation: border-anim-lr var(--speed) linear infinite;
         }
         &::after{
             bottom: 0;
             left: 0;
-            animation: border-anim-bt 11.3s linear infinite;
-            height: 50%;
-            animation-delay: calc(11.3s * -1 / 4);
+            animation: border-anim-bt var(--speed) linear infinite;
+            width: 100%;
+            animation-delay: calc(var(--speed) * -1 / 4);
         }
         
     }
-    >.o-container>.container{
-        /* transform: translate(-50%, -50%); */
-        /* transform-origin: 50% 50%; */
-        background-color: var(--theme-light-other);
-        transition: background-color 2.65s var(--ease-morein-out);
-        min-height:100px;
-        min-width: 100px;
+    >.ts-container>.container{
+        height:100px;
+        width: 100px;
         display: flex;
         align-items: center;
         justify-content: center;
+        transform: skew(calc(-1 * var(--slant)));
         >svg{
-            transform: scale(var(--scale)) skew( calc(-1 * var(--slant)));
+            animation: theme-icon-rotate 2s ease-in-out infinite;
+            transform-origin: 50% 50%;
+            transition: 1.6s var(--ease-backtrack);
+            transition-property: rotate, filter;
+            scale: var(--scale);
             fill: var(--theme-dark-other);
             height: 1.5rem;
             width:  1.5rem;
             filter: drop-shadow(0px 0px 1px var(--theme-dark-other));
         }
-        #moon-svg{
+        #sun-svg{
+            animation-direction: reverse;
         }
     }
 }
@@ -143,17 +191,21 @@ html{
     }
 }
 #page-right{
+    flex-grow: 5;
     &.editing{
         display: none;
     }
-    flex-grow: 5;
+}
+#fps, #main{
+    text-shadow: 2px 2px 0px var(--theme-light);
 }
 #main{
     /* background-image: url('../assets/imgs/thing.png');
     background-size: cover; */
+    --bg-opacity: 0.7;
     width: var(--main-width);
     max-width: var(--main-width);
-    background-color: rgba(var(--theme-light-vals), .7);
+    background-color: rgba(var(--theme-light-vals), var(--bg-opacity));
     color: inherit;
     transition-property: background-color, color;
     transition-duration: 0.75s;
@@ -161,32 +213,18 @@ html{
     /* box-shadow: 0px 5px 10px 5px var(--theme-light); */
     border: var(--border);
     border-width: 0 5px;
-    text-shadow: 2px 2px 0px var(--theme-light);
     h1{
         font-size: 2.5em;
     }
     >section{
-        
-        backdrop-filter: blur(16px);
+        /* backdrop-filter: blur(16px); doesnt do anything */
+        /* transform-style: preserve-3d; */
     }
     &.editing{
         max-width: unset;
     }
     
     /* redo the borders */
-}
-/* cd is 338 px */
-@media screen and (max-width: 1338px){
-    #main{
-        width: 100%;
-        max-width: calc(var(--main-width) + 100px);
-        margin: 0 auto;
-    }
-    #cd-player{
-        /* later have a openable side menu for this */
-        display: none;
-    }
-    
 }
 
 #abt-me{
@@ -196,31 +234,78 @@ html{
         line-height: var(--line-height);
     }
     #branding{
+        margin-left: -10px;
         position: relative;
+        transform-style: preserve-3d;
         width: fit-content;
+        >.b-ch{
+            position: relative;
+            mix-blend-mode: difference;
+            &::before, &::after{
+                content: '';
+                position: absolute;
+                width: 100%;
+                pointer-events: none;
+                left: 0;
+                height: 0px;
+            }
+            &::before{
+                top: 0;
+                background-color: var(--theme-dark);
+                mix-blend-mode: plus-lighter; /* color */
+                transition: height 0.35s cubic-bezier(0.1,0.7,0.3,1);
+            }
+            &::after{
+                bottom: 100%;
+                background-color: var(--theme-light-other);
+                transition: 0.35s ;
+                transition-timing-function: ease-in-out
+                , cubic-bezier(.65,0,.4,1.2);
+                transition-property: height, bottom;
+
+            }
+            &:hover, &.active{
+                /* text-shadow: none; */
+                &::before{
+                    height: 110%;
+                }
+                &::after{
+                    bottom: -10%;
+                    height: 6px;
+
+                }
+            }
+        }
+
+
         &::before, &::after{
             content: '';
             position: absolute;
             background-color: var(--theme-dark);
             height: 4px;
-            width: 100%;
+            /* width: 100%; */
+            pointer-events: none;
         }
         
 
         &::before{
-            bottom: 0;
+            bottom: -10%;
             left: 0;
             animation: border-anim-lr 1s var(--ease-morein-out) infinite;
         }
         &::after{
             top: 0;
             left: 0;
-            animation: border-anim-tb 1s var(--ease-morein-out) infinite;
+            /* animation: border-anim-tb 3s var(--ease-morein-out) infinite; */
+            height: 0;
             mix-blend-mode: hue;
-            height: 100%;
-            animation-delay: calc(1s * -1 / 4);
+            /* height: 100%; */
+            animation-delay: calc(3s * -1 / 4);
         }
     }
+}
+:root.dark #branding>.b-ch::before{
+    mix-blend-mode: multiply !important;
 }
 #blog{
     >article{
@@ -245,7 +330,7 @@ html{
 article{
     line-height: var(--line-height);
     border: var(--border); /*border placeholder*/
-    padding: 30px 150px;
+    padding: 30px 145px;
     font-size: 0.75em;
     .post-header{
         margin: 1em 0;
@@ -289,6 +374,7 @@ article{
 
 #scroll-progress{
     position: fixed;
+    z-index: 2;
     bottom: 0;
     left: 0;
     height: 8px;
@@ -348,10 +434,10 @@ article{
     }
     25%{
         top: 0;
-        height: 100%;
+        height: 110%;
     }
     50%, 100%{
-        top: 100%;
+        top: 110%;
         height: 0%;
     }
 }
@@ -389,8 +475,8 @@ article{
     transform-style: preserve-3d;
     transform: translateZ(10px);
     --spin-speed: 100s;
-    /* 10s for one rev */
-    .cover{
+    /* one rev */
+    >.cover{
         width: 1100px;
         height: 500px;
         transform-style: preserve-3d;
@@ -403,14 +489,21 @@ article{
 .track{
     transform-style: preserve-3d;
     animation: track-spin-1 var(--spin-speed) linear infinite;
+    background-color: transparent;
     &.track-2{
-        --spin-speed: 114.159s;
+        --spin-speed: 113.14159s;
         animation: track-spin-2 var(--spin-speed) linear infinite;
     }
+    &.track-3{
+        /* --spin-speed: 1117.159s; */
+        --size: 700px;
+        /* animation: track-spin-3 var(--spin-speed) linear infinite; */
+    }
+    
     position: absolute;
-    right: -300px;
-    top: 0;
     --size: 300px; /* height */
+    right: calc(var(--size) * -1);
+    top: 0;
     --width: calc(var(--size) * 0.8165);
     /* sqrt(2)/sqrt(3), stay in school kids, at least i think this is right or soemthing */
     outline: 3px rgb(var(--theme-dark-vals), 0.1) dashed;
@@ -434,6 +527,7 @@ article{
                 /* sin(rotateX deg) */
             opacity: 1;
             perspective: 2000px;
+            /* perspective-origin: ; */
             width: 200%;
             >div{
                 --anim-speed: 3s;
@@ -474,18 +568,15 @@ article{
             height: 100%;
             background-image: var(--bg-url);
             background-position: center;
-            border-radius: 10px;
             background-size: cover;
             /* box-shadow: 0px 5px 10px 5px var(--theme-light); dont use will lag */
             /* animation: track-rotate-match var(--spin-speed) linear infinite; */
-            transform-style: preserve-3d;
             transition-property: transform, perspective;
             transition-duration: 0.25s, 0.55s;
             transition-timing-function: var(--ease-backtrack), ease-out;
             perspective: 100px;
             >div{
                 --border-offset: 0;
-                transform-style: preserve-3d;
                 transform: translate3d(100px, 100px, 1500px) rotateX(60deg) rotateY(30deg);
                 transition-property: transform, opacity;
                 /* transition: 0.75s var(--ease-doublebacktrack); set by javascirpt */
@@ -619,6 +710,19 @@ also extra 5 deg x rotate so it doesnt interfere with other one
     
     100%{
         transform: translateY(249.17px) translateZ(-18.19px) translateX(54.01px) rotateX(10deg) rotateZ(15deg)
+        rotateY(180deg);
+    }
+}
+@keyframes track-spin-3{
+    0%{
+        
+        transform: translateY(249.17px) translateZ(-18.19px) translateX(-250px) rotateX(10deg) rotateZ(105deg)
+        rotateY(900deg);
+        
+    }
+    
+    100%{
+        transform: translateY(249.17px) translateZ(-18.19px) translateX(-250px) rotateX(10deg) rotateZ(105deg)
         rotateY(180deg);
     }
 }

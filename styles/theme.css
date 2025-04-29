@@ -62,6 +62,7 @@
     --ease-doublebacktrack: cubic-bezier(.75,-.4,.2,1.2);
     --ease-backtrack-test: cubic-bezier(.75,-.4,.2,1.); /* breaks the transition funny*/
     --border: double var(--theme-dark);
+    /* maybe do border sides like https://natu.moe/cool */
 
     --theme-light-other-vals: var(--comp-purple-vals);
     --theme-dark-other-vals: var(--comp-orange-vals);
@@ -92,6 +93,13 @@ body{
     height: fit-content;
     min-height: max-content;
     image-rendering: auto;
+}
+
+::selection, ::-moz-selection {
+    background-color: var(--theme-dark);
+    color: var(--theme-light);
+    text-shadow: none;
+    mix-blend-mode: color;
 }
 
 img{
