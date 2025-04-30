@@ -229,9 +229,9 @@ function visualizer(){
     eid("cd-cover").style.filter = `brightness(${1 + sqrt((avgvols.get()) * 100)})`;
     //lol
     if(autoplay){
-        eqa("p,h1,h2,h3").forEach(p => {p.style.marginLeft = `${avgvols.add(volume) * 100}px`});
-        eid("main-h").style.paddingTop = `${avgvols.get() * 100}px`;
-        eid("cd-player").style.right = `${avgvols.add(volume) * 100}px`;
+        // eqa("p,h1,h2,h3").forEach(p => {p.style.marginLeft = `${avgvols.add(volume) * 100}px`});
+        // eid("main-h").style.paddingTop = `${avgvols.get() * 100}px`;
+        // eid("cd-player").style.right = `${avgvols.add(volume) * 100}px`;
     }
     requestAnimationFrame(visualizer);
 }

@@ -1,154 +1,119 @@
-const blogcontent = eid("blog-content");
-const onekosrc = `../scripts/oneko.js`;
 
-function loadoneko(){
-    const script = document.createElement("script");
-    script.src = onekosrc;
-    script.setAttribute("data-cat", "../assets/imgs/oneko.png");
-    document.body.appendChild(script);
-}
-function disperror(errmsg){
-    blogcontent.innerHTML = `<h1>woops</h1>
-    <p>${errmsg}</p>`;
-}
-function todate(date){
-    return new Date(date).toUTCString().substring(0, 16);
-}
 
-function datedesc(createdat, editedat){
-    return `posted ${createdat} ${editedat > createdat ? `(edited ${editedat})` : ""}`;
-}
 
-function generatedesc(desc, tags, createdat = "", editedat = ""){
-    const container = mk("div");
-    const list = mk("ul", {class: "b-info"});
 
-    if(createdat) app(list, mktxt("li", datedesc(createdat, editedat), {class: "b-date"}));
-    if(desc) app(list, mktxt("li", desc, {class: "b-desc"}));
-    if(tags.length != 0) app(list, mktxt("li", tags.join(", #"), {class: "b-tags"}));
-    
-    app(container, list);
-    return container;
-}
-function generateoverview(title, id, desc, tags, createdat, editedat){
-    const container = mk("div");
-    container.className = "b-entry";
-    title = app(mk("span", {class: "b-main-row"}), app(mk("h2"), link(`/blog?id=${id}`, title, "_top", {class: "b-title"})));
+// blog
+const blogpagelimit = 3;
+let pageidx = nullnum(pint(params.get("pg")));
+let postid =  nullnum(pint(params.get("id")));
+const posts = [];
 
-    const date = p(`posted ${createdat}`);
-    if(editedat > createdat) date.innerText+= `(edited ${editedat})`;
-    date.className = "date-desc";
-    app(title, date);
-    app(container, title);
-    
-    
-    //app(container, );
-    app(container, generatedesc(desc, tags, "", ""));
-    return container;
-    // <p class="b-date">posted ${createdat}</p>
+// if(pageidx !== null){
+//     getpage(pageidx).then(data => {
+//         posts.push(...data);
+//         dispposts();
+//         if(postid !== null)
+//             window.location.href = `#${postid}`;
+//     });
+// }
+// else if(postid !== null){
+//     getpost(postid).then(data => {
+//         posts.push(data[0]);
+//         dispposts();
+//     });
+// }
 
-}
-
-function loadid(){
-    // loadoneko();
-    const postid = params.get("id");
-    if(!isnum(postid)){
-        window.location.href = "/blog";
+function dispposts(){
+    for(let i = 0; i < posts.length; i++){
+        addpost(i);
     }
+}
 
+function generatepost(post){
+    const id = post.id;
+    const title = post.title;
+    const desc = post.description;
+    const tags = post.tags;
+    const created = new Date(post.created_at);
+    const edited = new Date(post.edited_at);
+    const cover = post.cover_url;
+    const content = post.content;
     
+    const postel = mk("article", {class: "post", "data-id": id, id: `post-${id}`});
+    const posth = mk("center", {class: "post-header", title: title});
+    const postc = mktxt("p", content, {class: "post-content"});
+    app(posth, mktxt("h2", title, {class: "post-title"}));
+    app(posth, mktxt("h3", desc, {class: "post-subtitle"}));
+    const misc = mk("span", {class: "post-misc"});
 
-    async function getpost(){
-        const response = await fetch(`${supaurl}/rest/v1/posts?id=eq.${postid}`, {
-            headers: {
-                apikey: publicanonkey,
-                "Authorization": `Bearer ${publicanonkey}`,
-                "Content-Type": "application/json"
-        }
-        })
-        .then(res => res.json())
-        .catch(error => {
-            err(error);
-            disperror(err.message);
-            return null;
-        });
-        log(response);
-        return response;
-    }
-    getpost().then(post=>{
-        if(post === null || post.length === 0){
-            disperror("cant find post of id "+postid);
-            return;
-        }
-        post = post[0];
-        console.log(post);
-        const id = post.id;
-        const createdat = post.created_at;
-        const editedat = post.edited_at;
-        const content = post.content;
-        const coverurl = post.cover_url;
-        const title = post.title;
-        const tags = post.tags;
-        const description = post.description;
-        
-        eid("post-desc").appendChild(generatedesc(description, tags, todate(createdat), todate(editedat)));
-        // for some reason i have to keep using eid() or the html wont insert or the event wont fire at all
-        // i love javascrpt
-        eid("blog-content").innerHTML = content;
-        eid("blog-content").dispatchEvent(new Event("loadpost"));
-        // console.log(blogcontent);
-        document.dispatchEvent(new Event("googies_loaed"));
-    });
+    const hasedited = post.created_at !== post.edited_at;
+    const datestr = created.toDateString() + (hasedited ? ` (${edited.toDateString()})` : "");
+    appmany(misc, 
+        [p(datestr), p(`${post.tags.join(" · ")}`)]
+    );
+    
+    app(posth, misc);
+    app(postel, posth);
+    app(postel, postc);
+    return postel;
 }
 
-function loadoverview(){
-    getpostsoverview().then(posts => {
-        eid("pls").style.display = "block";
-        blogcontent.innerHTML = "";
-        posts.forEach(post => {
-            const id = post.id;
-            let createdat = post.created_at;
-            let editedat = post.edited_at;
-            const content = post.content;
-            const coverurl = post.cover_url;
-            const title = post.title;
-            const tags = post.tags;
-            const desc = post.description;
-
-            const edited = editedat > createdat;
-
-            createdat = todate(createdat);
-            editedat = todate(editedat);
-
-
-            const blog = document.createElement("div");
-            blog.className = "b-entry";
-
-            blog.innerHTML = `
-            <span class="b-head">
-                <a href="/blog?id=${id}" target="_top">${title}</a>
-                <p class="b-date">posted ${createdat}</p>
-            </span>
-            <ul>
-                ${desc ? `<li>${desc}</li>` : ""}
-                ${tags.length != 0 ? `<li class="b-tags">${tags.join(', ')}</li>` : ""}
-            </ul>
-            `;
-            log(blog.innerHTML);
-            blogcontent.appendChild(generateoverview(title, id, desc, tags, createdat, editedat));
-        });
-        // blogcontent.appendChild(ul);
-        document.dispatchEvent(new Event("googies_loaed"));
-
-    }).catch((error)=>{
-        disperror(error.message);
-    });
+function addpost(postsidx){
+    // log(postsidx);
+    const post = posts[postsidx];
+    const postel = generatepost(post);
+    
+    app(eid("blog"), postel);
 }
 
-if(params.has("b-edit")) script("../scripts/blog-editor.js", true);
-if(params.has("id")){
-    loadid()
-}
-else{
-    loadoverview();
-}
+// todo: create blogwriting system that mimics helper.js functions so i dont have
+// to write fully in html wow :o
+/*
+like:
+
+text text yap yap yap
+
+para(text yap yap yap
+
+wowwwooiejfiejfiejfeifjei
+
+)
+para(text yap yap yap)
+
+would be: 
+||||||||||||||||||||||||||||||||||||||||
+<article>
+text text yap yap yap
+
+<p>text yap yap yap
+
+wowwwooiejfiejfiejfeifjei
+
+</p>
+<p>text yap yap yap</p>
+
+
+
+
+</article>
+
+
+*/
+
+//todo: maybe make this handle n images instead of 4 with programatic css
+
+if(params.has("b-edit")) script("./scripts/blog-editor.js", true);
+eid("blog").innerHTML = "";
+if(pageidx === null && postid === null)
+    pageidx = 0;
+
+(pageidx === null ? getpost(postid) : getpage(pageidx)).then(data => {
+    posts.push(...data);
+    dispposts();
+    if(postid !== null)
+        window.location.href = `#post-${postid}`;
+}).catch(error => {
+    err(error);
+    eid("blog").innerHTML += `<center>posts didnt load...maybe ${mkhtml("a", "reload?", {href: ""}) }
+    <br>.₊̣̇.ಇ/ᐠˬ ͜   ˬ ᐟ\∫.₊̣̇.</center>`;
+});

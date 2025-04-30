@@ -181,11 +181,13 @@ class RollingActives{
     #activeq = Array(this.len).fill(0); /* keep track of cells currently active */
     #cnt = 0;
     #forcedreset = false;
+    #decay = 100;
 
     constructor(el, activeclass = "active", classprefix = "*"){ // maybe do class prefix later im lazy
         assert(el instanceof HTMLElement, "el is not a html element");
         this.axiac = el.childNodes;
         this.len = el.childNodes.length;
+        // issues where helper.js is not loaded yet
         if(this.len === 0) warn("el gott like no children bruh");
         assert(typeof classprefix === "string" && classprefix.length > 0, "classprefix must be a nonempty string");
         assert(typeof activeclass === "string" && activeclass.length > 0, "activeclass must be a nonempty string");
@@ -240,14 +242,14 @@ class RollingActives{
         }, delay);
         setTimeout(() => {
             this.reset(arr);
-        }, delay + duration);
+        }, delay + duration + this.#decay);
     }
     pass(reverse = randint(1), nucleationsites = randint(floor(this.len / 2) - 1, 1),
-    step = randint(floor(this.len / max(1, nucleationsites - 1))-1, 1)){
+    step = randint(floor(this.len / max(1, nucleationsites - 1))-1, 1), delay = randint(150, 350) / 2){
         const id = this.#genid();
         // const nucleationsites = randint(floor(this.len / 2) - 1, 1);
         // const step = randint(floor(this.len / nucleationsites)-1, 1);
-        const delay = randint(150, 250); // 100ms
+        // const delay = randint(150, 350) / 20; // 100ms
         let totaldelay = 0;
         const maxstart = max(0, this.len - nucleationsites*step), start = randint(maxstart);
         const rev = reverse ? -1 : 1;

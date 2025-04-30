@@ -63,6 +63,7 @@
     --ease-backtrack-test: cubic-bezier(.75,-.4,.2,1.); /* breaks the transition funny*/
     --border: double var(--theme-dark);
     /* maybe do border sides like https://natu.moe/cool */
+    --toggle-timing: 0.75s var(--ease-backtrack);
 
     --theme-light-other-vals: var(--comp-purple-vals);
     --theme-dark-other-vals: var(--comp-orange-vals);
@@ -89,7 +90,7 @@ body{
     font-weight: normal;
     padding: 0;
     margin: 0;
-    width: 100%;
+    width: auto;
     height: fit-content;
     min-height: max-content;
     image-rendering: auto;
