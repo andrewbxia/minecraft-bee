@@ -340,6 +340,7 @@ html{
         }
         p{
             margin: 1em 0;
+            text-indent: 2em;
         }
         img{}
         ul{}
