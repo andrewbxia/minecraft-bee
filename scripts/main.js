@@ -37,7 +37,7 @@ app(eid("main-h"), app(mk("div",{style: "min-width: fit-content;", id: "header-m
 
 // branding visuals
 document.title = baseurl; // later have this textanimate based on branding activeq
-const axia = eid("branding"), axiatxt = baseurl + "∫:p_d_";
+const axia = eid("branding"), axiatxt = baseurl + "·∫:p_d_";
 axia.innerText = "";
 
 for(let i = 0; i < axiatxt.length; i++){
