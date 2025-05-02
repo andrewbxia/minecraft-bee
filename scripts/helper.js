@@ -91,6 +91,13 @@ const listen = (event, callback, element = document) => {
     return () => element.removeEventListener(event, callback);
 }
 
+const toggletheme = () => document.documentElement.classList.toggle("dark"); 
+// light mode better tho :sunglasses: :sunglasses:
+if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
+    toggletheme();
+}
+
+
 
 
 function isnum(num){

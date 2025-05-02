@@ -37,6 +37,9 @@ app(document.head, mktxt("style", `#cd-player{
     position: fixed;
     ${dirstr}: 0;
     bottom: 0;
+    &.editing{
+        display: none;
+    }
     >#cd-controls{
         position: absolute;
         top: 0;

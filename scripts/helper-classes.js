@@ -65,9 +65,9 @@ class PerSec{
     }
 }
 
+
 class MeteredPatientTrigger{
-    #curr = 0;
-    #lastfire = 0;
+    #lastfire = -1;
     #limit = 100;
     #q = new PerSec();
     #callback = () => new Error("not set yet noobb");
@@ -77,7 +77,6 @@ class MeteredPatientTrigger{
     constructor(limit, callback, log = false){
         this.#limit = limit;
         this.#callback = callback;
-        this.#curr = performance.now() - this.#limit;
         this.#q.setwindow(limit);
         this.#lastfire = 0;
         this.#log = log;
@@ -88,6 +87,7 @@ class MeteredPatientTrigger{
         if(this.#q.getq().length === 0){
             if(this.#log) console.log("fired");
             this.#callback(...args);
+            this.#lastfire = performance.now();
         }
         else{
             if(this.#trigger) clearTimeout(this.#trigger);
@@ -97,14 +97,52 @@ class MeteredPatientTrigger{
 
         }
         this.#q.add();
-        this.#lastfire = performance.now();
 
     }
 
     getrecent(){
-        return this.#q.length === 0 ? this.#lastfire : this.#q.getq().at(-1);
+        return this.#lastfire;
     }
 }
+
+class MeteredQueueTrigger{
+    #lastfire = 0;
+    #limit = 100;
+    #callback = () => new Error("not set yet noobb");
+    #trigger = setTimeout(() => {}, 0);
+    #log = false;
+    #queued = false;
+
+    constructor(limit, callback, log = false){
+        this.#limit = limit;
+        this.#callback = callback;
+        this.#log = log;
+    }
+
+    fire(...args){
+        const diff = performance.now() - this.#lastfire;
+        if(diff >= this.#limit){
+            if(this.#log) console.warn("fired");
+            this.#callback(...args);
+            this.#lastfire = performance.now();
+            this.#queued = false;
+        }
+        else{
+            if(!this.#queued){
+                this.#trigger = setTimeout(() => {
+                    this.fire(...args);
+                }, this.#limit - diff);
+            }
+            this.#queued = true;
+        }
+    }
+
+    getrecent(){
+        return this.#lastfire;
+    }
+
+}
+
 
 class RollingAvg{
     #q = [];

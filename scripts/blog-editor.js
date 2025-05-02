@@ -262,19 +262,21 @@ if (params.has("b-edit")){
     // eid(mainid).innerHTML = editorhtml + eid(mainid).innerHTML;
     // console.log(eid(mainid).innerHTML);
     eid("page-left").innerHTML = editorhtml;
-    eqa("#main, #page-left, #page-right, #page, #demark-bar").forEach((el) => el.classList.add("editing"));
+    eqa("#main, #page-left, #page-right, #page, #demark-bar, .track, #cd-player")
+        .forEach((el) => el.classList.add("editing"));
     slider = eid("slider");
     slider.addEventListener("mousedown", (event) => {
         dragging = true;
-        prevwidths = [event.clientX, eid("main").offsetWidth];
+        prevwidths = [event.clientX, eid(editorcntid).offsetWidth];
         slider.style.cursor = "grabbing";
     });
     
     document.addEventListener("mousemove", (event) => {
         if (dragging) {
-            const newwidth = (prevwidths[0] - event.clientX) + prevwidths[1];
+            const newwidth = (event.clientX- prevwidths[0]) + prevwidths[1];
+            
             // log(newwidth);
-            eid("main").style.width = `${newwidth}px`; // 30 padding
+            eid(editorcntid).style.width = `${newwidth}px`; // 30 padding
         }
     });
     

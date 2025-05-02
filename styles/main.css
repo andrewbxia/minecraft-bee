@@ -212,8 +212,8 @@ html{
     max-width: var(--main-width);
     background-color: rgba(var(--theme-light-vals), var(--bg-opacity));
     color: inherit;
-    transition-property: background-color, color;
     transition: var(--toggle-timing);
+    transition-property: background-color, color;
     /* box-shadow: 0px 5px 10px 5px var(--theme-light); */
     border: var(--border);
     border-width: 0 5px;
@@ -226,6 +226,7 @@ html{
     }
     &.editing{
         max-width: unset;
+        flex-grow: 0;
     }
     
     /* redo the borders */
@@ -366,7 +367,7 @@ html{
         float: right;
         shape-outside: inset(50%);
         top: 0;
-        right: calc(1 * var(--main-width));
+        right: var(--main-width);
         
     }
 }
@@ -487,6 +488,9 @@ html{
 /* inspo from tanza (https://tanza.me) */
 
 .track{
+    &.editing{
+        display: none;
+    }
     transform-style: preserve-3d;
     animation: track-spin-1 var(--spin-speed) linear infinite;
     background-color: transparent;

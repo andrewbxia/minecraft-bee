@@ -47,6 +47,7 @@ window.addEventListener("resize", () => {
     axia.style.fontSize = `${axia.clientWidth * 1.5 / axiatxt.length}px`;
 });
 window.dispatchEvent(new Event("resize"));
+
 const bsplash = new RollingActives(axia);
 axia.childNodes.forEach((el, idx) => {
     el.addEventListener("mouseover", () => {
@@ -71,7 +72,7 @@ function playbsplash() {
         }, t + randint(700, 300));
     }
     else{
-        setTimeout(playbsplash, 100);
+        setTimeout(playbsplash, 1000);
     }
 }
 playbsplash();
@@ -136,22 +137,15 @@ function tohsl(cssColor, components = false){
     return `hsl(${h}, ${s}%, ${l}%${a === 1 ? '' : `, ${a}`})`;
 }
 
-
-const scrollprogress = new MeteredTrigger(33, () => {
+const scrollprogress = new MeteredQueueTrigger(70, () => {
     eid("scroll-progress").style.width = `${(window.scrollY / (eid(containerlimiterid).offsetHeight - window.innerHeight)) * 100}%`;
 });
-
 window.addEventListener("scroll", () => {
     scrollprogress.fire();
 });
 
-const toggledark = () => document.documentElement.classList.toggle("dark");
-
-if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
-    toggledark();
-}
-const toggletheme = new MeteredTrigger(250, () => {
-    toggledark();
+const triggertheme = new MeteredTrigger(250, () => {
+    toggletheme();
     // setTimeout(() => {
         resetscrollbars();
     // }, 250);
