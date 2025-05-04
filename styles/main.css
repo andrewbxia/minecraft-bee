@@ -325,6 +325,8 @@ html{
         border: var(--border); /*border placeholder*/
         padding: 30px 145px;
         font-size: 0.75em;
+        hyphens: auto;
+        hyphenate-character: '-ඞ';
         .post-header{
             margin: 1em 0;
         }
@@ -341,7 +343,15 @@ html{
         ul{}
         ol{}
         blockquote{}
-        code{}
+        code{
+            display: block;
+            backdrop-filter: brightness(0.5);
+            padding: 5px;
+            line-height: 100%;
+            text-indent: 0;
+            hyphens: none;
+            min-inline-size: 100%;
+        }
         pre{}
         table{}
         figure{}

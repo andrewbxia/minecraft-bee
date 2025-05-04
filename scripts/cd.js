@@ -60,7 +60,7 @@ const dirstr = dir ? "left" : "right";
 const dirstrop = dir ? "right" : "left";
 const cdheight = 338;
 
-log(styling(`#cd-player{
+styling(`#cd-player{
     user-select: none;
     width: calc(${cdheight}px / 2);
     aspect-ratio: 1/2;
@@ -180,7 +180,7 @@ log(styling(`#cd-player{
     100% {
         transform: rotate(360deg);
     }    
-}`))
+}`);
 
 // utub api
 // ALSO FOR CHILL HAVE RANDOM YT NHATO MUSIC
@@ -300,7 +300,7 @@ function visualizer(){
         volume = getcdvolume() / max(0.05, cdaudio.volume);
     avgvols.add(volume);
     volv = volume - prevvol;
-    if(volv > 0) avgvolsvp.add(volv);
+    if(volv >= 0) avgvolsvp.add(volv);
     avgvolsvn.add(volv);
 
     prevvol = volume;
@@ -340,7 +340,6 @@ function placecd(e){
     cdpaused = true;
 
     if(autoplay) playcd(e);
-    log(rotation);
     cd.animate([
         {[dirstrop]: cddim * (dir ? 1: -1) + "px", rotate: 0 + "deg", width: "1000px"},
         {[dirstrop]: "-100%", rotate: rotation, width: cddim + "px"},
@@ -354,7 +353,6 @@ function placecd(e){
 placecd();
 
 cdaudio.onended = () => {
-    log("ended");
     if(autoplay)
         nextcdthisonesucks();
     else stopcd();
@@ -485,8 +483,8 @@ function nextcdthisonesucks(){
         cd.style.zIndex = 1;
         document.body.before(cd);
         cd.style.top = `${rect.top}px`;
-        log(dirstrop, `${rect[dirstrop]}px`);
-        log(`${brect(cd)[dirstrop]}px`);
+        // log(dirstrop, `${rect[dirstrop]}px`);
+        // log(`${brect(cd)[dirstrop]}px`);
         // log(brect(document.body).width - (rect[dirstrop]),brect(cd)[dirstrop]);
     })
     .rule({

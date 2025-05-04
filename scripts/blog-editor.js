@@ -74,6 +74,7 @@ let saved = true;
 let preload = "";
 let beautify = null;
 let editor = null;
+const blogtemplate = generatepost({}).innerHTML;
 function resetsavedata(){
     if(confirm(`${localStorage.getItem(savekeyword)}\n reset save data?`)){
         localStorage.setItem(savekeyword, JSON.stringify(defsavedata));
@@ -118,13 +119,12 @@ function editdraft(draftid){
 function enterpage(){
     const responses = [];
     if(savedata.lastsave !== null){
-        responses.push(prompt(`${savedata.lastsave} \n load last save? (nothing for yes, type 'draft' for draft selection, number for article id)`));
+        responses.push(prompt(
+            `${savedata.lastsave} \n load last save? 
+            (nothing for yes, type 'draft' for draft selection, number for article id, anything else for no)`));
     }
     else responses.push("");
-    if(responses[0] === ""){
-        return;
-    }
-    else if(responses[0] === "draft"){
+    if(responses[0] === "draft"){
         let resp = "";
         while(!isnum(pint(resp))){
             resp = prompt(`drafts: ${savedata.drafts} \n select draft id`);
@@ -143,6 +143,14 @@ function enterpage(){
     else if(isnum(pint(responses[0]))){
         const fetchid = pint(responses[0]);
         editpost(fetchid);
+    }
+    else if (responses[0] === ""){
+        preload = savedata.lastsave;
+        return;
+    }
+    else{
+        preload = blogtemplate;
+        editmode.method = "lastsave";
     }
 }
 
@@ -318,6 +326,7 @@ function initediting() {
     log("init editigin");
     setupsave();
     enterpage();
+
     ace.require("ace/ext/language_tools");
     ace.require("ace/ext/spellcheck");
     beautify = ace.require("ace/ext/beautify");
@@ -334,24 +343,23 @@ function initediting() {
     });
     editor.setTheme("ace/theme/monokai");
     editor.session.setMode("ace/mode/html");
-    beautify.beautify(editor.session);
 
     if(editmode.method === "lastsave"){
         loadlastsave = true;
         addblankpost();
-        editor.setValue(savedata.lastsave);
         writingid = 0;
     }
     else if(editmode.method === "draft"){
         addblankpost();
-        editor.setValue(preload);
     }
     else if(editmode.method === "id"){
     }
-
-
+    editor.setValue(preload);
+    eid(`post-${writingid}`).innerHTML = editor.getValue();
 
     const doc = editor.session.getDocument();
+    setTimeout(() => beautify.beautify(editor.session), 0);
+
     log("editor loaded");
     eid(mainid).addEventListener("loadpost", () => {
         if(editmode.method === "id")

@@ -30,14 +30,14 @@ function dispposts(){
 }
 
 function generatepost(post){
-    const id = post.id;
-    const title = post.title;
-    const desc = post.description;
-    const tags = post.tags;
-    const created = new Date(post.created_at);
-    const edited = new Date(post.edited_at);
+    const id = post.id || 0;
+    const title = post.title || "TITLE";
+    const desc = post.description || "DESC";
+    const tags = post.tags || ["omg", "wow", "amazin"];
+    const created = new Date(post.created_at) || new Date();
+    const edited = new Date(post.edited_at) || new Date();
     const cover = post.cover_url;
-    const content = post.content;
+    const content = post.content || "AMAZING CONTENT";
     
     const postel = mk("article", {class: "post", "data-id": id, id: `post-${id}`});
     const posth = mk("center", {class: "post-header", title: title});
@@ -46,10 +46,10 @@ function generatepost(post){
     app(posth, mktxt("h3", desc, {class: "post-subtitle"}));
     const misc = mk("span", {class: "post-misc"});
 
-    const hasedited = post.created_at !== post.edited_at;
+    const hasedited = created !== edited;
     const datestr = created.toDateString() + (hasedited ? ` (${edited.toDateString()})` : "");
     appmany(misc, 
-        [p(datestr), p(`${post.tags.join(" · ")}`)]
+        [p(datestr), p(`${tags.join(" · ")}`)]
     );
     
     app(posth, misc);

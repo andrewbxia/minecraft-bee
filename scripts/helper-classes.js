@@ -68,6 +68,7 @@ class PerSec{
 
 class MeteredPatientTrigger{
     #lastfire = -1;
+    #lastattempt = -1;
     #limit = 100;
     #q = new PerSec();
     #callback = () => new Error("not set yet noobb");
@@ -84,10 +85,11 @@ class MeteredPatientTrigger{
 
     fire(...args){
         this.#q.shift();
+        this.#lastattempt = performance.now();
         if(this.#q.getq().length === 0){
             if(this.#log) console.log("fired");
             this.#callback(...args);
-            this.#lastfire = performance.now();
+            this.#lastfire = this.#lastattempt;
         }
         else{
             if(this.#trigger) clearTimeout(this.#trigger);
@@ -101,6 +103,10 @@ class MeteredPatientTrigger{
     }
 
     getrecent(){
+        return this.#lastattempt;
+    }
+
+    getrecentfire(){
         return this.#lastfire;
     }
 }

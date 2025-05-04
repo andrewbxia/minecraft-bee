@@ -362,7 +362,6 @@ async function artzurl(idx){
     eqa(".t-img").forEach((e) => {
         const bimg = compst(e).backgroundImage;
         const bimgurl = bimg.substring(5, bimg.length - 2);
-        log(bimg);
     
         const img = new Image();
         img.onload = () => {
