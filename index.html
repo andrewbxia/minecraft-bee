@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=800px, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>axia.sh</title>
+    <title>andrewb.xyz</title>
+    <!-- axia.sh -->
     <!-- preload scripts -->
     <script src="./scripts/helper.js"></script>
     <script src="./scripts/helper-classes.js"></script>
@@ -153,17 +154,19 @@
         <div id="page-right"></div>
     </div>
     <div id="cd-player">
-        <div id="cd-cover"></div>
+        <div id="cd-vol-bar"></div>
+        <canvas id="cd-cover"></canvas>
         <div id="cd-controls">
             <p id="cd-status" style="margin: 0; color: var(--theme-light)">d(-w-)b</p>
             <input type="range" id="cd-progress" value="0" min="0" max="100" step="1" 
             oninput="cdprogress(event)">
             <input type="range" id="cd-volume" value="100" min="0" max="100" step="1" 
-            oninput="cdvolume(event)" orient="vertical"
-            style="position: absolute; right: 0; bottom: 0;"
-            >
-            <input type="checkbox" id="cd-autoplay" name="autoplay" 
-            oninput="cdautoplay(event)">
+            oninput="cdvolume(event)">
+            <label for="cd-autoplay">
+                <span class="half-font">autoplay:</span>
+                <input type="checkbox" id="cd-autoplay" name="autoplay" 
+                oninput="cdautoplay(event)">
+            </label>
             <button id="cd-play" onclick="playcd(event)">
                 <p>▶</p>
             </button>

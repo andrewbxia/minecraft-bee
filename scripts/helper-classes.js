@@ -220,8 +220,10 @@ class RollingActives{
     #cnt = 0;
     #forcedreset = false;
     #decay = 100;
+    #initialized = false;
 
     constructor(el, activeclass = "active", classprefix = "*"){ // maybe do class prefix later im lazy
+        this.#init();
         assert(el instanceof HTMLElement, "el is not a html element");
         this.axiac = el.childNodes;
         this.len = el.childNodes.length;
@@ -268,7 +270,7 @@ class RollingActives{
         }
     }
 
-    set(arr = [], delay = 0, duration = 0){
+    set(arr = [], delay = 0, duration = 0, decay = this.#decay){
         if(arr.length === 0) return;
         setTimeout(() => {
             this.reset();
@@ -280,34 +282,87 @@ class RollingActives{
         }, delay);
         setTimeout(() => {
             this.reset(arr);
-        }, delay + duration + this.#decay);
+        }, delay + duration + decay);
     }
-    pass(reverse = randint(1), nucleationsites = randint(floor(this.len / 2) - 1, 1),
-    step = randint(floor(this.len / max(1, nucleationsites - 1))-1, 1), delay = randint(150, 350) / 2){
-        const id = this.#genid();
-        // const nucleationsites = randint(floor(this.len / 2) - 1, 1);
-        // const step = randint(floor(this.len / nucleationsites)-1, 1);
-        // const delay = randint(150, 350) / 20; // 100ms
-        let totaldelay = 0;
-        const maxstart = max(0, this.len - nucleationsites*step), start = randint(maxstart);
-        const rev = reverse ? -1 : 1;
 
-        for(let i = reverse ? this.len - start - 1: start; 
-            reverse ? i >= 0 : i < this.len; i += rev){
+    #init(){}
+
+
+    pass({reverse = randint(1), nucleationsites = randint(floor(this.len / 2) - 1, 1), 
+        step = randint(floor(this.len / max(1, nucleationsites - 1)) - 1, 1), delay = randint(150, 350) / 2, 
+        start = -1, end = this.len, decay = this.#decay} = {}) {
+        const id = this.#genid();
+        let totaldelay = 0;
+        end = min(end, this.len);
+        const maxstart = end - (nucleationsites - 1) * step;
+        const rev = reverse ? -1 : 1;
+        let omg = false;
+        let prevstart = start;
+        if(start === -1)
+            start = randint(maxstart);
+        else{
+            start = clamp(start, 0, maxstart);
+            if(reverse) start = end - start - 1;
+        }
+
+        for (let i = reverse ? end - start - 1 : start; 
+            reverse ? i >= 0 : i < end; i += rev) {
 
             let idx = i;
             const indices = [];
-            while(idx >= 0 && idx < this.len && indices.length < nucleationsites){
+            while (idx >= 0 && idx < this.len && indices.length < nucleationsites) {
                 indices.push(idx);
                 idx += step * rev;
             }
 
-            this.set(indices, totaldelay, delay);
-            // setTimeout(() => {log(this.#activeq)}, totaldelay+delay);
+            this.set(indices, totaldelay, delay, decay);
             totaldelay += delay;
         }
-        
-        // this.#schedulereset(totaldelay, id);
+
         return totaldelay;
     }
+}
+
+class WeightedChoices{
+    #weights = [];
+    #choices = [];
+
+    add(choice, weight = 1){
+        if(weight < 0) throw new Error("weight(s) cannot be negative");
+        this.#choices.push(choice);
+        this.#weights.push(weight + (this.#weights.at(-1) || 0));
+    }
+
+    constructor(choices, weights){
+        if(weights === undefined){
+            if(choices[0] instanceof Array && choices[0].length === 2){
+                weights = choices.map(c => c[1]);
+                choices = choices.map(c => c[0]);
+            }
+            else{
+                weights = Array(choices.length).fill(1);
+                choices = choices;
+            }
+        }
+        for(let i = 0; i < choices.length; i++){
+            this.add(choices[i], weights[i]);
+        }
+    }
+
+    choose(){
+        if(this.#weights.length === 0) return null;
+        const rand = Math.random() * this.#weights.at(-1);
+        let l = 0, r = this.#weights.length - 1, m = 0;
+        while(l < r){
+            m = l + Math.floor((r - l) / 2);
+            if(this.#weights[m] < rand) l = m + 1;
+            else r = m;
+        }
+        return this.#choices[l];
+    }
+    spinthelottery(){
+        return this.choose();
+    }
+
+
 }

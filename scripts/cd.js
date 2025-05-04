@@ -1,3 +1,33 @@
+// prob the worst code ive ever written, dont reuse for your own projects lmao
+// prob the worst code ive ever written, dont reuse for your own projects lmao
+// prob the worst code ive ever written, dont reuse for your own projects lmao
+// prob the worst code ive ever written, dont reuse for your own projects lmao
+// prob the worst code ive ever written, dont reuse for your own projects lmao
+// prob the worst code ive ever written, dont reuse for your own projects lmao
+// prob the worst code ive ever written, dont reuse for your own projects lmao
+// prob the worst code ive ever written, dont reuse for your own projects lmao
+
+const cds = { // implement artist and desc and source laterz
+    chill:[
+        ['palescreen_jacket.jpg', 'palescreen.mp3'],
+        ["snacko-cover.jpg", "dancefloor journey.mp3"],
+        ["snacko-cover.jpg", "game time.mp3"],
+        ["snacko-cover.jpg", "glittering seasons.mp3"],
+        ["snacko-cover.jpg", "heartbeat of the land.mp3"],
+        ["snacko-cover.jpg", "kingdom that echoes millennia.mp3"],
+        ["snacko-cover.jpg", "snacko island party.mp3"],
+        ["snacko-cover.jpg", "sunlight memories.mp3"],
+        ["nhato-dawnsaga.jpg", "4.24 Dawn Saga (Extended Mix).mp3"],
+        ["tf40k.jpg", "путь льда(put' l'da).mp3"],
+    ],
+    hicalibre:[
+        // ["snacko-cover.jpg", "lCwVr2s-pF0"],
+        ["tf40k.jpg", "Backbeat Maniac.mp3"],
+    ]
+    
+};
+
+
 /*
 needs this html somewhere
 <div id="cd-player">
@@ -7,8 +37,7 @@ needs this html somewhere
             <input type="range" id="cd-progress" value="0" min="0" max="100" step="1" 
             oninput="cdprogress(event)">
             <input type="range" id="cd-volume" value="100" min="0" max="100" step="1" 
-            oninput="cdvolume(event)" orient="vertical"
-            style="position: absolute; right: 0; bottom: 0;"
+            oninput="cdvolume(event)"
             >
             <input type="checkbox" id="cd-autoplay" name="autoplay" 
             oninput="cdautoplay(event)">
@@ -31,7 +60,8 @@ const dirstr = dir ? "left" : "right";
 const dirstrop = dir ? "right" : "left";
 const cdheight = 338;
 
-app(document.head, mktxt("style", `#cd-player{
+log(styling(`#cd-player{
+    user-select: none;
     width: calc(${cdheight}px / 2);
     aspect-ratio: 1/2;
     position: fixed;
@@ -48,10 +78,10 @@ app(document.head, mktxt("style", `#cd-player{
         height: 100%;
         display: flex;
         flex-direction: column;
-        /* justify-content: end; */
         justify-content: space-evenly;
         align-items: first baseline;
         padding: 0;
+    color: var(--theme-light);
         >button{
             width: 50px;
             height: 50px;
@@ -79,14 +109,29 @@ app(document.head, mktxt("style", `#cd-player{
     text-align: center;
     width: 100%;
 }
-#cd-cover{
-    background-color: var(--theme-dark);
-    transition: filter 0.15s ease-out;
-    width: 100%;
-    height: 100%;
-    /* position: relative; */
+#cd-volume{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    rotate: -90deg;
+    transform-origin: 50% -300%;
 }
 
+#cd-vol-bar{
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background-color: var(--theme-light-other);
+    bottom: 0;
+    left: 0;
+    opacity: 0.5;
+    transition: bottom 0.05s ease-out;
+}
+#cd-cover{
+    width: ${cdheight/2}px;
+    height: ${cdheight}px;
+    /* position: relative; */
+}
 .cd{
     z-index: -1;
     width: ${cdheight}px;
@@ -94,6 +139,7 @@ app(document.head, mktxt("style", `#cd-player{
     position: absolute;
     top: 0;
     transition: rotate 0.25s ease-out;
+    transform-origin: ${cdheight/2}px ${cdheight/2}px;
     /* left: 0; */
     ${dirstrop}: -100%;
     >img{
@@ -134,27 +180,10 @@ app(document.head, mktxt("style", `#cd-player{
     100% {
         transform: rotate(360deg);
     }    
-}`));
+}`))
 
 // utub api
 // ALSO FOR CHILL HAVE RANDOM YT NHATO MUSIC
-const cds = { // implement artist and desc and source laterz
-    chill:[
-        ['bee-minecraft.jpg', 'palescreen.mp3'],
-        ["snacko-cover.jpg", "dancefloor journey.mp3"],
-        ["snacko-cover.jpg", "game time.mp3"],
-        ["snacko-cover.jpg", "glittering seasons.mp3"],
-        ["snacko-cover.jpg", "heartbeat of the land.mp3"],
-        ["snacko-cover.jpg", "kingdom that echoes millennia.mp3"],
-        ["snacko-cover.jpg", "snacko island party.mp3"],
-        ["snacko-cover.jpg", "sunlight memories.mp3"],
-        ["snacko-cover.jpg", "4.24 Dawn Saga (Extended Mix).mp3"],
-    ],
-    hicalibre:[
-        ["snacko-cover.jpg", "lCwVr2s-pF0"],
-    ]
-    
-};
 
 const cdcategories = Object.keys(cds);
 let cdcategory = 0;
@@ -205,31 +234,81 @@ let audioarray = new Uint8Array(analyser.frequencyBinCount);
 const source = cdaudiocontext.createMediaElementSource(cdaudio);
 source.connect(analyser);
 source.connect(cdaudiocontext.destination);
-function getVolume() { //TODO: make this an acutal visualizer, maybe make this a seperate class
-    if(!cdok) return 0;
-    if(cdaudio.paused) return 0;
+
+let baseweight = 10;
+function getcdvolume() { //TODO: make this an actual visualizer, maybe make this a separate class
+    if (!cdok) return 0;
+    if (cdaudio.paused) return 0;
     analyser.getByteTimeDomainData(audioarray);
-    let sum = 0, maxvol = 0;
+    let sum = 0;
     for (let i = 0; i < audioarray.length; i++) {
         const value = audioarray[i] / 128 - 1;
-        maxvol = max(maxvol, audioarray[i]);
-         // bass multiplier
-         sum += value * value * (audioarray[i] < 128 ? 2 : 1);
+        let add =  value * value;
+        if(audioarray[i] < 128) add = Math.log(1 + baseweight * add);
+        sum += add;
     }
-    const volume = Math.sqrt(sum / audioarray.length);
+    const volume = sqrt(sum / audioarray.length);
     // return maxvol / 128 - 1;
     return volume;
 }
 
-let avgvols = new RollingAvg(10);
+const avgvols = new RollingAvg(15), avgvolsvp = new RollingAvg(5), avgvolsvn = new RollingAvg(5);
+let prevvol = 0, volv = 0;
+const coverbars = 100;
+const cdcanvas = eid("cd-cover");
+// cdcanvas.width = cdheight / 2;
+// cdcanvas.height = cdheight;
+function shiftcdcoverbars(){
+    let percentage = pow(avgvols.get(), 2);
+    let percentagevp = pow(avgvolsvp.get(), 2);
+    let percentagevn = pow(avgvolsvn.get(), 3);
+    const ctx = cdcanvas.getContext("2d");
+    const width = cdcanvas.width;
+    const height = cdcanvas.height;
+    const midheight = height / 2;
+    const barwidth = 3;
+    const barheight = height * percentage;
+    const barheightvp = height * percentagevp;
+    const barheightvn = height * percentagevn;
+    eid("cd-vol-bar").style.bottom = `${barheight*cdheight/(width/2)}px`;
+    // log(width, height)
+
+    const imagedata = ctx.getImageData(barwidth, 0, width - barwidth, height);
+    ctx.putImageData(imagedata, 0, 0);
+    ctx.clearRect(width - barwidth, 0, barwidth, height);
+
+    ctx.fillStyle = docproperty('--theme-dark');
+    ctx.fillRect(width - barwidth, 0, barwidth, height - barheight);
+
+    ctx.fillStyle = docproperty('--theme-dark-other');
+    // ctx.fillRect(width - barwidth, 0, barwidth, barheightvn);
+    ctx.fillRect(width - barwidth, midheight - height*avgvolsvn.get(), barwidth, height*avgvolsvn.get());
+    ctx.fillRect(width - barwidth, height - barheightvp, barwidth, barheightvp);
+
+    ctx.fillStyle = docproperty('--theme-light');
+    ctx.fillRect(width - barwidth, height - barheight, barwidth, barheight - barheightvp);
+
+
+    
+}
+
+
 
 function visualizer(){
-    // if(!cdok) return;
-    // if(cdaudio.paused) requestAnimationFrame(visualizer);
-    const volume = getVolume();
+    let volume = 0;
+    if(!cdaudio.paused)
+        volume = getcdvolume() / max(0.05, cdaudio.volume);
     avgvols.add(volume);
+    volv = volume - prevvol;
+    if(volv > 0) avgvolsvp.add(volv);
+    avgvolsvn.add(volv);
 
-    eid("cd-cover").style.filter = `brightness(${1 + sqrt((avgvols.get()) * 100)})`;
+    prevvol = volume;
+    // eid("cd-cover").style.filter = `brightness(${1 + (abs(avgvols.get()) * 100) * (avgvols.get() < 0 ? -1 : 1)})`; 
+    shiftcdcoverbars();
+    
+    
+    
     //lol
     if(autoplay){
         // eqa("p,h1,h2,h3").forEach(p => {p.style.marginLeft = `${avgvols.add(volume) * 100}px`});
@@ -241,7 +320,7 @@ function visualizer(){
 visualizer();
 
 function placecd(e){
-    if(cdplayer.querySelector(".cd")) throw new Error("cd already placed");
+    if(eq(".cd")) throw new Error("cd already placed");
 
     const cd = mk("div");
     cd.classList.add("cd");
@@ -255,18 +334,19 @@ function placecd(e){
     cdaudio.src = cd.dataset.audio;
     
     app(cdplayer, app(cd, cdimg));
-    const rotation = (Math.random() * 360 * dir ? 1 : -1) + "deg";
+    const rotation = (rand(3) * 360 * (rand(1)<.5 ? 1 : -1)) + "deg";
     cd.style.rotate = rotation;
     cd.dataset.rotation = rotation;
     cdpaused = true;
 
     if(autoplay) playcd(e);
+    log(rotation);
     cd.animate([
-        {[dirstrop]: cddim * (dir ? 1: -1) + "px", rotate: 0 + "deg", width: "0px"},
+        {[dirstrop]: cddim * (dir ? 1: -1) + "px", rotate: 0 + "deg", width: "1000px"},
         {[dirstrop]: "-100%", rotate: rotation, width: cddim + "px"},
     ], {
         duration: 800,
-        easing: "ease-in-out",
+        easing: docproperty("--ease-backtrack"),
     }).onfinish = (e) => {
         cdok = true;
     };

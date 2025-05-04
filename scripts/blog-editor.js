@@ -270,14 +270,18 @@ if (params.has("b-edit")){
         prevwidths = [event.clientX, eid(editorcntid).offsetWidth];
         slider.style.cursor = "grabbing";
     });
+
+    const mainwidth = pint(docproperty("--main-width"));
+    const extrawidth = 5*2 + 15; // 5 padding 15 slider width
     
     document.addEventListener("mousemove", (event) => {
         if (dragging) {
-            const newwidth = (event.clientX- prevwidths[0]) + prevwidths[1];
-            
-            // log(newwidth);
-            eid(editorcntid).style.width = `${newwidth}px`; // 30 padding
+            let newwidth = (event.clientX - prevwidths[0]) + prevwidths[1];
+            if(abs(mainwidth + newwidth + extrawidth - eid("page").clientWidth) < 15) 
+                newwidth = eid("page").clientWidth - mainwidth - extrawidth;
+            eid(editorcntid).style.width = `${newwidth}px`;
         }
+        window.dispatchEvent(new Event("resize"));
     });
     
     document.addEventListener("mouseup", () => {
@@ -326,7 +330,6 @@ function initediting() {
         fontSize: "1rem",
         spellcheck: true,
         tabSize: 8,
-        gutter: true,
         wrap: true,
     });
     editor.setTheme("ace/theme/monokai");

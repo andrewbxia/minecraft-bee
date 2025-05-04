@@ -54,18 +54,6 @@ html{
     
 }
 
-/* :root.dark #moon-svg{
-    display: block;
-}
-#moon-svg{
-    display: none;
-}
-:root.dark #sun-svg{
-    display: none;
-}
-#sun-svg{
-    display: block;
-} */
 
 @keyframes theme-glow{
     0%{
@@ -239,89 +227,95 @@ html{
         line-height: var(--line-height);
         margin-bottom: 1em;
     }
-    #branding{
-        margin-left: -10px;
-        transform-style: preserve-3d;
+    
+}
+
+#branding{
+    display: flex;
+    flex-grow: 1;
+    align-items: stretch;
+    justify-content: space-between;
+
+    user-select: none;
+    margin-left: -10px;
+    transform-style: preserve-3d;
+    transform: translateZ(var(--z-offset));
+
+    width: 100%;
+    width: calc(100% + 20px);
+    max-width: calc(100% + 20px);
+    >span.b-ch{
+        position: relative;
+        mix-blend-mode: difference;
+        
         width: 100%;
-        width: calc(100% + 20px);
-        max-width: calc(100% + 20px);
-        transform: translateZ(var(--z-offset));
-        display: flex;
-        flex-grow: 1;
-        align-items: stretch;
-        justify-content: space-between;
-        >span.b-ch{
-            position: relative;
-            mix-blend-mode: difference;
-            
-            width: 100%;
-            font-size: inherit;
-            text-align: center;
-            &::before, &::after{
-                content: '';
-                position: absolute;
-                width: 100%;
-                pointer-events: none;
-                left: 0;
-                height: 0px;
-            }
-            &::before{
-                top: 0;
-                background-color: var(--theme-dark);
-                mix-blend-mode: plus-lighter; /* color */
-                transition: height 0.45s cubic-bezier(0.1,0.7,0.3,1);
-            }
-            &::after{
-                bottom: 100%;
-                background-color: var(--theme-light-other);
-                transition: 0.35s;
-                transition-timing-function: ease-in-out
-                , cubic-bezier(.65,0,.4,1.2);
-                transition-property: height, bottom;
-
-            }
-            &:hover, &.active{
-                /* text-shadow: none; */
-                &::before{
-                    height: 110%;
-                }
-                &::after{
-                    bottom: -10%;
-                    height: 6px;
-                }
-            }
-            &:hover::before{
-                transition-duration: 0.65s;
-            }
-        }
-
-
+        font-size: inherit;
+        text-align: center;
         &::before, &::after{
             content: '';
             position: absolute;
-            background-color: var(--theme-dark);
-            height: 6px;
-            /* width: 100%; */
+            width: 100%;
             pointer-events: none;
-        }
-        
-
-        &::before{
-            bottom: -10%;
             left: 0;
-            animation: border-anim-lr 1s var(--ease-morein-out) infinite;
+            height: 0px;
+        }
+        &::before{
+            top: 0;
+            background-color: var(--theme-dark);
+            mix-blend-mode: plus-lighter; /* color */
+            transition: height 0.45s cubic-bezier(0.1,0.7,0.3,1);
         }
         &::after{
-            top: 0;
-            left: 0;
-            /* animation: border-anim-tb 3s var(--ease-morein-out) infinite; */
-            height: 0;
-            mix-blend-mode: hue;
-            /* height: 100%; */
-            animation-delay: calc(3s * -1 / 4);
+            bottom: 100%;
+            background-color: var(--theme-light-other);
+            transition: 0.35s;
+            transition-timing-function: ease-in-out
+            , cubic-bezier(.65,0,.4,1.2);
+            transition-property: height, bottom;
+
+        }
+        &:hover/*, &.active */{
+            /* text-shadow: none; */
+            &::before{
+                height: 110%;
+            }
+            &::after{
+                bottom: -10%;
+                height: 6px;
+            }
+        }
+        &:hover::before{
+            transition-duration: 0.65s;
         }
     }
+
+
+    &::before, &::after{
+        content: '';
+        position: absolute;
+        background-color: var(--theme-dark);
+        height: 6px;
+        /* width: 100%; */
+        pointer-events: none;
+    }
+    
+
+    &::before{
+        bottom: -10%;
+        left: 0;
+        animation: border-anim-lr 1s var(--ease-morein-out) infinite;
+    }
+    &::after{
+        top: 0;
+        left: 0;
+        /* animation: border-anim-tb 3s var(--ease-morein-out) infinite; */
+        height: 0;
+        mix-blend-mode: hue;
+        /* height: 100%; */
+        animation-delay: calc(3s * -1 / 4);
+    }
 }
+
 :root.dark #branding>.b-ch::before{
     mix-blend-mode: multiply !important;
 }
@@ -379,8 +373,10 @@ html{
     left: 0;
     height: 8px;
     background-color: var(--theme-dark);
-    width: 0;
+    --start-width: 100%;
+    width: var(--start-width);
     transition: width 0.5s var(--ease-backtrack);
+    transform: skew(30deg);
     --speed: 3s;
     &::before, &::after{
         content: '';
@@ -388,10 +384,10 @@ html{
         top: 0;
         left: 0;
         height: 100%;
-        width: 0;
+        width: var(--start-width);
     }
     &::before{
-        background-color: rgba(var(--theme-light-vals), .9);
+        background-color: var(--theme-light-other);
         animation: border-anim-lr var(--speed) var(--ease-morein-out) infinite;
     }
     &::after{

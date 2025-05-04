@@ -1,5 +1,5 @@
 "use strict";
-const baseurl = window.location.host; // give them the port if the wanna!!!!
+const baseurl = window.location.host; // give them the port if they wanna!!!!
 const fpsm = new PerSec(1000);
 const dispfps = new MeteredTrigger(100, () => {eid("fps").innerText = fpsm.cntn();});
 let prevfps = 0, maxfps = 0;
@@ -9,6 +9,7 @@ function fps(){
         dispfps.fire();
         prevfps = fpsm.cntn();
         maxfps = max(maxfps, prevfps);
+        // log(typeof prevfps, typeof fpsm.cntn());
     }
     window.requestAnimationFrame(fps);
 }
@@ -37,36 +38,63 @@ app(eid("main-h"), app(mk("div",{style: "min-width: fit-content;", id: "header-m
 
 // branding visuals
 document.title = baseurl; // later have this textanimate based on branding activeq
-const axia = eid("branding"), axiatxt = baseurl + "·∫:p_d_";
+const axia = eid("branding"), axiatxt = baseurl + "·∫:p_d_", axialen = axiatxt.length;
 axia.innerText = "";
 
-for(let i = 0; i < axiatxt.length; i++){
+for(let i = 0; i < axialen; i++){
     app(axia, mktxt("span", axiatxt[i], {class: "b-ch", id: "b-ch-"+i}));
 }
 window.addEventListener("resize", () => {
-    axia.style.fontSize = `${axia.clientWidth * 1.5 / axiatxt.length}px`;
+    axia.style.fontSize = `${axia.clientWidth * 1.5 / axialen}px`;
 });
 window.dispatchEvent(new Event("resize"));
 
-const bsplash = new RollingActives(axia);
+
+const bsplash = new RollingActives(axia, "active-100");
+
+styling(`
+#branding>span.b-ch{
+    ${Array.from({length: 20}, (_, i) => `
+        &.active-${(i + 1) * 10}{
+            &::before{
+            height: ${10 * (i + 2)}%;
+        }
+        &::after{
+            bottom: ${100 - (i + 2) * 10}%;
+            height: ${max(6, (i + 1) * .6)}px;
+        }
+    }
+    `).reverse().join('')}
+}
+`);
+
 axia.childNodes.forEach((el, idx) => {
     el.addEventListener("mouseover", () => {
-        bsplash.set([idx], 0, 250);
-    })
-})
+        bsplash.set([idx], 0, 125);
+    });
+});
+axia.addEventListener("click", (e) => {
+    const el = e.target.closest("span.b-ch");
+    if(!el)return;
+    const idx = pint(el.id.substring("b-ch-".length));
+    el.classList.add("active-40");
+    setTimeout(() => {
+        el.classList.remove("active-40");
+    }, 100);
+    bsplash.pass({reverse: 0, nucleationsites: 1, start: min(axialen, idx + 1), delay: 60, decay: 100});
+    bsplash.pass({reverse: 1, nucleationsites: 1, start: max(0, idx - 1),       delay: 60, decay: 100});
+});
 
+
+const bsplashrand = new WeightedChoices([
+    [() => max(bsplash.pass({reverse: 0}), bsplash.pass({reverse: 1})), 2],
+    [() => max(bsplash.pass({reverse: 1, nucleationsites: 1, delay: 70}),
+        bsplash.pass({reverse: 0, nucleationsites: 1, delay: 70})), 1],
+]);
 
 function playbsplash() {
     if(!axia.matches(":hover")){
-        let t = 0;
-        
-        const choice = rand(1);
-        if (choice < 0.5){
-            t = max(bsplash.pass(1), bsplash.pass(0));
-        }
-        else{
-            t = max(bsplash.pass(1,1,20,70), bsplash.pass(0,1,20,70));
-        }
+        const t = bsplashrand.spinthelottery()();
         setTimeout(() => {
             playbsplash();
         }, t + randint(700, 300));
@@ -225,7 +253,7 @@ function bgbars(newheight){
     }
 }
 
-const scrollbarst = new MeteredTrigger(100, () => {
+const scrollbarst = new MeteredQueueTrigger(100, () => {
     // if(window.devicePixelRatio * 100 <= 60)return;
     // if(fpsm.cntn() <= 50) return; // dont run if not doing too hot
     const scroll = window.innerHeight + window.scrollY;
@@ -305,43 +333,74 @@ const imgprefix = "a";
 
 function generateposs(cnt){
     const poss = [];
-
-
     return poss;
 }
 
-let trackimgcss = "";
-for(let i = 0; i < dirs.length * 4; i++){
-    trackimgcss += `
-        .${imgprefix}${i}{
-            --bg-url: url('${baseartzlink}${artzinfo[(i) % artzinfo.length][0]}');
+let trackimgcss = "", bgurlloaded = 0;
+async function artzurl(idx){
+    if(idx >= artzinfo.length){
+        const catdata = await fetch("https://api.thecatapi.com/v1/images/search")
+            .then((response) => response.json());
+        const url = catdata[0].url;
+        return url;
+    }
+    else{
+        return baseartzlink + artzinfo[idx][0];
+    }
+}
+(async () => {
+    for(let i = 0; i < dirs.length * 4; i++){
+        const url = await artzurl(i);
+        trackimgcss += `
+        .${imgprefix}${i} {
+            --bg-url: url('${url}');
         }\n
-    `
+        `;
+        bgurlloaded++;
+    }
+    styling(trackimgcss);
+    eqa(".t-img").forEach((e) => {
+        const bimg = compst(e).backgroundImage;
+        const bimgurl = bimg.substring(5, bimg.length - 2);
+        log(bimg);
+    
+        const img = new Image();
+        img.onload = () => {
+            e.style.aspectRatio = `${img.width} / ${img.height}`;
+        };
+        // log(bimgurl);
+        img.src = bimgurl;
+    });
+})();
+
+function trackitem(idx, transition = "none"){
+    let desc = "";
+    if(idx >= artzinfo.length) desc = "index overflow cat!!";
+    else desc = artzinfo[idx][1];
+    return app(mk("div",{class: `${dirs[idx % dirs.length]}` }), 
+        app(
+            mk("div",
+                {class: `${imgprefix}${(idx)} t-img`,
+                    style: `animation-delay: calc(${-poss[idx % poss.length]} * var(--spin-speed) / 16 - var(--spin-speed) / 4);`,
+            }),
+            app(
+                mk("div",{style: `transition: ${transition}`}), 
+                mktxt("p", desc, {class: "t-img-desc"})
+            ))
+        );
 }
 
 function addtotrack(track, classadd = 0){
     for(let i = 0; i < dirs.length; i++){
-        // log((i+classadd) % artzinfo.length)
-        // app(track, app(mk("div",{class: `${dirs[i]}` }), mk("div",{class: `${imgprefix}${i+1+classadd} t-img`})));
         const transition = randarrchoose([
             "0.75s var(--ease-doublebacktrack);",
             "0.75s var(--ease-backtrack);",
             "none"]);
         // overflow cat for indices out of range
-        const trackitem = app(mk("div",{class: `${dirs[i]}` }), 
-            app(
-                mk("div",{class: `${imgprefix}${(i + classadd)} t-img`,
-                style: `animation-delay: calc(${-poss[(i + classadd) % poss.length]} * var(--spin-speed) / 16 - var(--spin-speed) / 4);`,
-                }),
-                app(
-                    mk("div",{style: `transition: ${transition}`}), 
-                    mktxt("p", artzinfo[(i+classadd) % artzinfo.length][1],{class: "t-img-desc"})
-                ))
-            );
-        app(track, trackitem);
+        const titem = trackitem(i + classadd, transition);
+        app(track, titem);
     }
 }
-styling(trackimgcss);
 eqa(".track-outer .track-1.track:not(.other)").forEach((e) => {
     addtotrack(e);
 });
@@ -360,17 +419,7 @@ eqa(".track-outer .track-2.track.other").forEach((e) => {
 // eqa(".track-outer .track-3.track.other").forEach((e) => {
 //     addtotrack(e, dirs.length * 4);
 // });
-eqa(".t-img").forEach((e) => {
-    const bimg = compst(e).backgroundImage;
-    const bimgurl = bimg.substring(5, bimg.length - 2);
 
-    const img = new Image();
-    img.onload = () => {
-        e.style.aspectRatio = `${img.width} / ${img.height}`;
-    };
-    // log(bimgurl);
-    img.src = bimgurl;
-});
 // experimental track thing
 
 // eqa(".track-outer .track-3.track:not(.other)").forEach((e) => {

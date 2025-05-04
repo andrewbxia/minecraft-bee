@@ -100,7 +100,6 @@ body{
     background-color: var(--theme-dark);
     color: var(--theme-light);
     text-shadow: none;
-    mix-blend-mode: color;
 }
 
 img{
@@ -168,6 +167,26 @@ iframe{
     }
 } */
 
+::-webkit-scrollbar {
+    width: 0.5em;
+  }
+
+::-webkit-scrollbar-track {
+    background-color: var(--theme-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--theme-light-other);
+    height: 2.67em;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    cursor: pointer;
+    border-left: .5em double var(--theme-light);
+    background-color: var(--theme-dark)
+}
+
+
 .marquee{
     /* overflow: hidden; make sure to apply overflow hidden to this container*/
     white-space: nowrap;
@@ -192,17 +211,9 @@ iframe{
 .shade{
     color: var(--theme-shade);
 }
-.halffont{
+.half-font{
     font-size: 0.5em;
 }
-.quarfont{
+.quar-font{
     font-size: 0.25em;
-}
-.flexcol{
-    display: flex;
-    flex-direction: column;
-}
-.flexrow{
-    display: flex;
-    flex-direction: row;
 }

@@ -20,6 +20,7 @@ const sp = "&nbsp;";
 function max(...args){
     if(args.length === 0) return null;
     let max = args[0];
+    args[1] = args[1] || 0;
     for(let i = 1; i < args.length; i++){
         if(typeof max !== typeof args[i]) console.warn("types not same");
         max = max > args[i] ? max : args[i];
@@ -29,11 +30,17 @@ function max(...args){
 function min(...args){
     if(args.length === 0) return null;
     let min = args[0];
+    args[1] = args[1] || 0;
     for(let i = 1; i < args.length; i++){
         if(typeof min !== typeof args[i]) console.warn("types not same");
         min = min < args[i] ? min : args[i];
     }
     return min;
+}
+function clamp(val, min, max){
+    if(val < min) return min;
+    if(val > max) return max;
+    return val;
 }
 const floor = (a) => Math.floor(a);
 const ceil = (a) => Math.ceil(a);
@@ -96,9 +103,12 @@ const toggletheme = () => document.documentElement.classList.toggle("dark");
 if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
     toggletheme();
 }
-
-
-
+const docproperty = (property) => compst(document.documentElement).getPropertyValue(property);
+const setdocproperty = (element = document.documentElement, property, value = null) => {
+    if(value !== null)
+        element.style.setProperty(property, value);
+    return docproperty(property);
+}
 
 function isnum(num){
     if(typeof num === 'number') {
