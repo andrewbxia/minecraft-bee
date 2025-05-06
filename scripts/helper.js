@@ -12,8 +12,10 @@ const abs = (num) => Math.abs(num);
 const pow = (num, exp) => Math.pow(num, exp);
 const assert = (condition, msg) => {if(!condition) throw new Error(msg);};
 const assertnotreached = (msg = "unreachable thingy reached") => assert(false, msg);
-const trueheight = window.innerHeight * window.devicePixelRatio;
-const truewidth = window.innerWidth * window.devicePixelRatio;
+
+const baseurl = window.location.host; // give them the port if they wanna!!!!
+const truheight = window.innerHeight * window.devicePixelRatio;
+const truwidth = window.innerWidth * window.devicePixelRatio;
 const sp = "&nbsp;";
 
 

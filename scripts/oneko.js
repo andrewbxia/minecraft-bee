@@ -1,6 +1,6 @@
 
 
-function oneko(speed = 10) {
+function oneko(speed = 10, color = false) {
   const isReducedMotion =
     window.matchMedia(`(prefers-reduced-motion: reduce)`) === true ||
     window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true;
@@ -9,8 +9,11 @@ function oneko(speed = 10) {
 
   const nekoEl = document.createElement("div");
 
-  let nekoPosX = 32;
-  let nekoPosY = 32;
+  let nekoPosX = 32 + Math.random() * window.innerWidth;
+  let nekoPosY = 32 + Math.random() * window.innerHeight;
+  setTimeout(() => {
+    nekoPosY += window.scrollY;
+  }, 0);
 
   let mousePosX = 0;
   let mousePosY = 0;
@@ -103,6 +106,16 @@ function oneko(speed = 10) {
       nekoFile = curScript.dataset.cat
     }
     nekoEl.style.backgroundImage = `url(${nekoFile})`;
+    if(color){
+      const nekoId = document.createElement("p");
+      nekoId.innerText = speed;
+      const speedPercentage = Math.min(Math.max((speed - 5) / (55 - 5), 0), 1);
+      const red = Math.round(255 * (1 - speedPercentage));
+      const green = Math.round(255 * speedPercentage);
+      nekoId.style.color = `rgb(${red}, ${green}, 0)`;
+      nekoId.style.userSelect = "none";
+      nekoEl.appendChild(nekoId);
+    }
 
     document.body.appendChild(nekoEl);
 
@@ -222,30 +235,12 @@ function oneko(speed = 10) {
     }
   }
 
-  const style = document.createElement('style');
-  style.innerHTML = `
-		  @keyframes heartBurst {
-			  0% { transform: scale(0); opacity: 1; }
-			  100% { transform: scale(1); opacity: 0; }
-		  }
-		  .heart {
-			  position: absolute;
-			  font-size: 2em;
-			  animation: heartBurst 1s ease-out;
-			  animation-fill-mode: forwards;
-        user-select: none;
-        pointer-events: none;
-			  /*color: #ab9df2;*/
-		  }
-	  `;
-
-  document.head.appendChild(style);
   nekoEl.addEventListener('click', explodeHearts);
 
   function frame() {
     frameCount += 1;
-    const diffX = nekoPosX - mousePosX;
-    const diffY = nekoPosY - mousePosY;
+    const diffX = nekoPosX - mousePosX - window.scrollX;
+    const diffY = nekoPosY - mousePosY - window.scrollY;
     const distance = Math.sqrt(diffX ** 2 + diffY ** 2);
 
     if (distance < nekoSpeed || distance < 120) {
@@ -282,6 +277,32 @@ function oneko(speed = 10) {
   }
 
   init();
+  const mouseMoveEvent = new MouseEvent("mousemove", {
+    clientX: Math.random() * window.innerWidth,
+    clientY: Math.random() * window.innerHeight,
+  });
+  document.dispatchEvent(mouseMoveEvent);
+}
+const nekoStyle = document.createElement('style');
+nekoStyle.innerHTML = `
+    @keyframes heartBurst {
+      0% { transform: scale(0); opacity: 1; }
+      100% { transform: scale(1); opacity: 0; }
+    }
+    .heart {
+      position: absolute;
+      font-size: 2em;
+      animation: heartBurst 1s ease-out;
+      animation-fill-mode: forwards;
+      user-select: none;
+      pointer-events: none;
+      /*color: #ab9df2;*/
+    }
+  `;
+
+document.head.appendChild(nekoStyle);
+while(Math.random() < 0.5){
+  oneko(Math.floor(Math.random() * 10) + 5);
 }
 oneko(7);
 oneko(12);

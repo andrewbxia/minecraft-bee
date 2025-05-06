@@ -29,10 +29,19 @@
     /* --theme-light: #d3d3d3;
     --theme-dark: #030623;
     --theme-tertiary: #fdefcc; */
+
+    /* main theme colors */
+    /* light */
     --theme-white-vals: 220, 233, 248;
-    --theme-white: rgb(var(--theme-white-vals));
     --theme-black-vals: 9, 29, 44;
+    --theme-white: rgb(var(--theme-white-vals));
     --theme-black: rgb(var(--theme-black-vals));
+    /* dark */
+    --comp-purple-vals: 114, 111, 255;
+    --comp-orange-vals: 255, 217, 0;
+    --comp-purple: rgb(var(--comp-purple-vals));
+    --comp-orange: rgb(var(--comp-orange-vals));
+
 
     --theme-light-test: rgb(220, 233, 248);
     --theme-light-vals: var(--theme-white-vals);
@@ -41,16 +50,13 @@
     --theme-dark-vals: var(--theme-black-vals);
     --theme-dark: rgb(var(--theme-dark-vals));
 
-    --comp-purple-vals: 114, 111, 255;
-    --comp-orange-vals: 255, 217, 0;
+
     --theme-blue-vals: 85,153,255;
     --theme-green-vals: 54,224,153;
     --theme-tertiary: rgb(211, 211, 211);
     --theme-blue: rgb(var(--theme-blue-vals));
     --theme-green: rgb(var(--theme-green-vals));
     --theme-purple: rgb(136, 99, 223);
-    --comp-purple: rgb(var(--comp-purple-vals));
-    --comp-orange: rgb(var(--comp-orange-vals));
     --theme-orange: rgb(231, 190, 75);
     --theme-pink: rgb(245, 96, 158);
     --theme-yellow: rgb(255, 255, 119);
@@ -149,23 +155,6 @@ iframe{
         padding-left: 100%;
     }
 }
-/* @keyframes marquee-rev-full {
-    0% {
-        padding-left: 0;
-    }
-    25% {
-        padding-left: -100%;
-    }
-    50%{
-        padding-left: 0;
-    }
-    75%{
-        padding-left: 100%;
-    }
-    100%{
-        padding-left: 0;
-    }
-} */
 
 ::-webkit-scrollbar {
     width: 0.5em;

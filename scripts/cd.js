@@ -261,7 +261,8 @@ const cdcanvas = eid("cd-cover");
 function shiftcdcoverbars(){
     let percentage = pow(avgvols.get(), 2);
     let percentagevp = pow(avgvolsvp.get(), 2);
-    let percentagevn = pow(avgvolsvn.get(), 3);
+    // let percentagevn = pow(avgvolsvn.get(), 3);
+    let percentagevn = avgvolsvn.get();
     const ctx = cdcanvas.getContext("2d");
     const width = cdcanvas.width;
     const height = cdcanvas.height;
@@ -269,24 +270,25 @@ function shiftcdcoverbars(){
     const barwidth = 3;
     const barheight = height * percentage;
     const barheightvp = height * percentagevp;
+    const left = width - barwidth;
     const barheightvn = height * percentagevn;
     eid("cd-vol-bar").style.bottom = `${barheight*cdheight/(width/2)}px`;
     // log(width, height)
 
-    const imagedata = ctx.getImageData(barwidth, 0, width - barwidth, height);
+    const imagedata = ctx.getImageData(barwidth, 0, left, height);
     ctx.putImageData(imagedata, 0, 0);
-    ctx.clearRect(width - barwidth, 0, barwidth, height);
+    ctx.clearRect(left, 0, barwidth, height);
 
     ctx.fillStyle = docproperty('--theme-dark');
-    ctx.fillRect(width - barwidth, 0, barwidth, height - barheight);
+    ctx.fillRect(left, 0, barwidth, height - barheight);
 
     ctx.fillStyle = docproperty('--theme-dark-other');
     // ctx.fillRect(width - barwidth, 0, barwidth, barheightvn);
-    ctx.fillRect(width - barwidth, midheight - height*avgvolsvn.get(), barwidth, height*avgvolsvn.get());
-    ctx.fillRect(width - barwidth, height - barheightvp, barwidth, barheightvp);
+    ctx.fillRect(left, midheight - barheightvn, barwidth, barheightvn);
+    ctx.fillRect(left, height - barheightvp, barwidth, barheightvp);
 
     ctx.fillStyle = docproperty('--theme-light');
-    ctx.fillRect(width - barwidth, height - barheight, barwidth, barheight - barheightvp);
+    ctx.fillRect(left, height - barheight, barwidth, barheight - barheightvp);
 
 
     

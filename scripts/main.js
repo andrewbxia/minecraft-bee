@@ -1,5 +1,4 @@
 "use strict";
-const baseurl = window.location.host; // give them the port if they wanna!!!!
 const fpsm = new PerSec(1000);
 const dispfps = new MeteredTrigger(100, () => {eid("fps").innerText = fpsm.cntn();});
 let prevfps = 0, maxfps = 0;
@@ -14,27 +13,6 @@ function fps(){
     window.requestAnimationFrame(fps);
 }
 fps();
-// TODO: ahve these be individual elements so i can use them for funny thingies
-let mainhtext = [
-    baseurl,
-    "here to stay",
-    "test3",
-    "test4",
-    "test5",
-    "what",
-];
-
-const jointxt = `${sp}|${sp}`;
-mainhtext = mainhtext.flatMap((e, i) => i < mainhtext.length ? [e, jointxt] : [e]);
-mainhtext = mainhtext.concat(mainhtext);
-const mainhnodes = nodelist(mainhtext.map((e) => {
-    const node = mktxt("h1", e, {});
-    if (e !== jointxt) 
-        node.classList.add("main-h-text");
-    return node;
-}));
-
-app(eid("main-h"), app(mk("div",{style: "min-width: fit-content;", id: "header-m-c"}), app(mk("span", {class: "marquee-100", id: "header-m"}), mainhnodes)));
 
 // branding visuals
 document.title = baseurl; // later have this textanimate based on branding activeq
@@ -182,7 +160,7 @@ const triggertheme = new MeteredTrigger(250, () => {
 
 
 const barsizealert = () => {
-    if(trueheight / window.innerHeight < 0.75){
+    if(truheight / window.innerHeight < 0.75){
         alert(`
             hi! thanks for checking out my site :)\n
             with some browsers like firefox, the nifty background effect you see here may get pretty laggy when you zoom out a lot since they dont handle zoomed-out vw-scaled elements well, 
@@ -206,8 +184,8 @@ let basecolor = tohsl(compst(document.documentElement).getPropertyValue("--theme
 
 let currpxl = 0;
 const step = 1150;
-const maxpxl = () => min(1080 * 5, trueheight * 3.75);
-const maxscroll = () => window.innerHeight / trueheight * maxpxl();
+const maxpxl = () => min(1080 * 5, truheight * 3.75);
+const maxscroll = () => window.innerHeight / truheight * maxpxl();
 const depths = [1, 2, 3, 4,];
 depths.forEach(depth => {
     app(eid("bg-bars"), mk("div",{class: `c-${depth}` }));
