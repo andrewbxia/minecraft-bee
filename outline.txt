@@ -7,6 +7,29 @@ _
       ->       =>
 _
 
+idea for left side:
+
+have it be a sliding window
+
+like:
+==========||
+about     ||
+==========||
+          ||
+          ||
+          ||
+==========||
+
+and when user hovers over stuff below 'about' it will slide and revela other stuff
+==========||
+          ||
+          ||
+==========||
+credits   ||
+==========||
+          ||
+==========||
+
 possible domain names:
 !!!
 axia.cafe

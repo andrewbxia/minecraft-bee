@@ -23,9 +23,13 @@ const cds = { // implement artist and desc and source laterz
     hicalibre:[
         // ["snacko-cover.jpg", "lCwVr2s-pF0"],
         ["tf40k.jpg", "Backbeat Maniac.mp3"],
+        ["planet_shaper_jacket.jpg", "bass bomb.mp3"],
     ]
     
 };
+
+const cdcategories = Object.keys(cds);
+let cdcategory = 0;
 
 
 /*
@@ -114,7 +118,7 @@ styling(`#cd-player{
     right: 0;
     bottom: 0;
     rotate: -90deg;
-    transform-origin: 50% -300%;
+    transform-origin: 40% -300%;
 }
 
 #cd-vol-bar{
@@ -185,9 +189,6 @@ styling(`#cd-player{
 // utub api
 // ALSO FOR CHILL HAVE RANDOM YT NHATO MUSIC
 
-const cdcategories = Object.keys(cds);
-let cdcategory = 0;
-
 const cdimgpath = "./assets/imgs/cds/", cdaudiopath = "./assets/audios/cds/";
 
 const cdplayer = eid("cd-player");
@@ -256,6 +257,8 @@ const avgvols = new RollingAvg(15), avgvolsvp = new RollingAvg(5), avgvolsvn = n
 let prevvol = 0, volv = 0;
 const coverbars = 100;
 const cdcanvas = eid("cd-cover");
+const ctx = cdcanvas.getContext("2d", {willReadFrequently: true, 
+    desynchronize: true});
 // cdcanvas.width = cdheight / 2;
 // cdcanvas.height = cdheight;
 function shiftcdcoverbars(){
@@ -263,7 +266,6 @@ function shiftcdcoverbars(){
     let percentagevp = pow(avgvolsvp.get(), 2);
     // let percentagevn = pow(avgvolsvn.get(), 3);
     let percentagevn = avgvolsvn.get();
-    const ctx = cdcanvas.getContext("2d");
     const width = cdcanvas.width;
     const height = cdcanvas.height;
     const midheight = height / 2;

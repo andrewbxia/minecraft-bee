@@ -372,3 +372,79 @@ class WeightedChoices{
 
 
 }
+
+class KeySet{
+
+    static #keys = new Set();
+    static #initialized = false;
+    static #specialchars = new Map([
+        [" ", "\"\""],
+        ["Enter", "⏎"],
+        ["Shift", "⇧"],
+        ["Control", "Ctrl"],
+        ["Alt", "Alt"],
+        ["Tab", "⇥"],
+        ["CapsLock", "⇪"],
+        ["ArrowUp", "↑"],
+        ["ArrowDown", "↓"],
+        ["ArrowLeft", "←"],
+        ["ArrowRight", "→"],
+        ["Backspace", "⌫"],
+        ["Delete", "⌦"],
+        ["Escape", "⎋"],
+        ["Insert", "⎀"],
+        ["Home", "⇱"],
+        ["End", "⇲"],
+        ["PageUp", "⇞"],
+        ["PageDown", "⇟"],
+        ["PrintScreen", "⎙"],
+        ["Pause", "⏸"],
+        ["NumLock", "⇭"],
+        ["ScrollLock", "⇳"],
+    ]);
+
+    static onnewkey = () => {};
+    static onoofkey = () => {};
+
+    static getkeys(){
+        return this.#keys;
+    }
+    static contains(key){
+        return this.#keys.has(key);
+    }
+    static spcontains(spkey){
+        return this.#specialchars.has(spkey);
+    }
+    static check(key){
+        if(this.spcontains(key)) key = this.#specialchars.get(key);
+        else if(key.length <= 1) return true;
+        else return false;
+    }
+    static keydown(e){
+        let key = e.key;
+        if(key === "\"") return;
+        // if(key.length > 1) {}
+        if(this.spcontains(key)) key = this.#specialchars.get(key);
+        else if(key.length > 1) return;
+        if(this.contains(key)) return;
+
+        this.#keys.add(key);
+        this.onnewkey({key: key, ekey: e.key});
+    }
+    static keyup(e){
+        let key = e.key;
+        if(this.spcontains(key)) key = this.#specialchars.get(key);
+        else if(key.length > 1) return;
+        if(!this.contains(key)) return;
+
+        this.onoofkey({key: key, ekey: e.key});
+        this.#keys.delete(key);
+    }
+
+    static init(){
+        if(this.#initialized) return;
+        this.#initialized = true;
+        window.addEventListener("keydown", this.keydown.bind(this), {passive: true});
+        window.addEventListener("keyup", this.keyup.bind(this), {passive: true});
+    }
+}

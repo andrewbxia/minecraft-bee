@@ -166,16 +166,16 @@ function oneko(speed = 10, color = false) {
       idleAnimation == null
     ) {
       let avalibleIdleAnimations = ["sleeping", "scratchSelf"];
-      if (nekoPosX < thresh) {
+      if (nekoPosX < window.scrollX + thresh) {
         avalibleIdleAnimations.push("scratchWallW");
       }
-      if (nekoPosY < thresh) {
+      if (nekoPosY < window.scrollY + thresh) {
         avalibleIdleAnimations.push("scratchWallN");
       }
-      if (nekoPosX > window.innerWidth - thresh) {
+      if (nekoPosX > window.innerWidth + window.scrollX - thresh) {
         avalibleIdleAnimations.push("scratchWallE");
       }
-      if (nekoPosY > window.innerHeight - thresh) {
+      if (nekoPosY > window.innerHeight + window.scrollY - thresh) {
         avalibleIdleAnimations.push("scratchWallS");
       }
       idleAnimation =

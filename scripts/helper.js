@@ -210,7 +210,7 @@ const styling = (sty) => {
 }
 const img = (src) => mk("img", {src});
 const imghtml = (src) => `<img src="${src}" />`;
-const p = (txt) => mktxt("p", txt);
+const p = (txt, attr = {}) => mktxt("p", txt, attr);
 const li = (el) => app(mk("li"), el);
 
 

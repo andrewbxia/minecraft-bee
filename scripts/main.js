@@ -1,4 +1,5 @@
 "use strict";
+KeySet.init();
 const fpsm = new PerSec(1000);
 const dispfps = new MeteredTrigger(100, () => {eid("fps").innerText = fpsm.cntn();});
 let prevfps = 0, maxfps = 0;
@@ -14,6 +15,25 @@ function fps(){
 }
 fps();
 
+const keyset = eid("keyset");
+const kps = new PerSec(1000);
+// const keysetsize = () => {
+//     keyset.style.fontSize = `${sqrt(kps.cntn())}ch`;
+//     window.requestAnimationFrame(keysetsize);
+// }
+// keysetsize();
+
+KeySet.onnewkey = (key) => {
+    kps.add();
+    const keyel = p(key.key, {"data-key": key.ekey, style: `font-size: ${sqrt(kps.cntn())}ch;` });
+    keyel.style.animationTimingFunction = `cubic-bezier(1,${pow(1.5, min(10, sqrt(kps.cntn())))},0.45,1.25)`;
+    app(keyset, keyel);
+
+}
+KeySet.onoofkey = (key) => {
+    const el = eq(`#keyset>[data-key="${key.ekey}"]`);
+    if(el) el.remove();
+}
 // branding visuals
 document.title = baseurl; // later have this textanimate based on branding activeq
 const axia = eid("branding"), axiatxt = baseurl + "·∫:p_d_", axialen = axiatxt.length;

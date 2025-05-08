@@ -1,5 +1,6 @@
 :root{
     --main-width: 1000px;
+    --header-height: 2.67em;
 }
 html{
     scroll-behavior: smooth;
@@ -110,7 +111,7 @@ html{
     --speed: .75s;
     position: fixed;
     z-index: 1;
-    top: calc(50px + 2.67em); /*2em (h1) + 0.67em from margin-block-startend  user-stylesheet*/
+    top: calc(50px + var(--header-height)); /*2em (h1) + 0.67em from margin-block-startend  user-stylesheet*/
     right: 0px;
     transform-origin: -50vw 50vh;
     transition: var(--speed) var(--ease-backtrack);
@@ -192,6 +193,36 @@ html{
 #fps, #main{
     text-shadow: 2px 2px 0px var(--theme-light);
 }
+
+#keyset{
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: var(--header-height);
+    /* width: 1ch; */
+    display: flex;
+    flex-direction: column;
+    >p{
+        animation: pop-in 0.15s forwards;
+    }
+}
+
+@keyframes pop-in{
+    0%{
+        transform: translate(-100%, 0);
+        rotate: -25deg;
+    }
+    35%{
+        margin-left: 1ch;
+        transform: translate(.35ch, 0);
+        rotate: 15deg;
+    }
+    100%{
+        transform: translate(0, 0);
+        rotate: 0deg;
+    }
+}
+
 #main{
     /* background-image: url('../assets/imgs/thing.png');
     background-size: cover; */
