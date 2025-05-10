@@ -5,7 +5,7 @@ const compst = (el) => window.getComputedStyle(el);
 const brect = (el) => el.getBoundingClientRect();
 const pint = (el, rad = 10) => parseInt(el, rad);
 const poat = (el) => parseFloat(el);
-const log = (...message) => console.log(...message);
+const log = (...message) => console.trace(...message);
 const warn = (...message) => console.warn(...message);
 const err = (...message) => console.error(...message);
 const abs = (num) => Math.abs(num);

@@ -358,6 +358,7 @@ html{
         font-size: 0.75em;
         hyphens: auto;
         hyphenate-character: '-ඞ';
+        word-wrap: break-word;
         .post-header{
             margin: 1em 0;
         }

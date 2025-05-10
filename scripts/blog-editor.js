@@ -44,7 +44,16 @@ const editorhtml = `
 // const slider = eid("slider");
 // params already defined
 
-
+function resetsavedata(method){
+    if(!savedata[method]) return new Error("method not found");
+    if(!confirm(`reset ${method} data? it has: ${savedata[method]}`)) return;
+    savedata[method] = defsavedata[method];
+    localStorage.setItem(savekeyword, JSON.stringify(savedata));
+}
+function beaut(){
+    if(!editor) return;
+    beautify.beautify(editor.session);
+}
 
 function savestatus(){
     if(!saved){
@@ -59,8 +68,8 @@ function savestatus(){
 
 }
 const defsavedata = {
-    drafts: [],
-    ids: {},
+    drafts: {},
+    ids: [],
     lastsave: null,
 }
 const savedata = localStorage.getItem(savekeyword) ? JSON.parse(localStorage.getItem(savekeyword)) : defsavedata;
@@ -74,18 +83,14 @@ let saved = true;
 let preload = "";
 let beautify = null;
 let editor = null;
-const blogtemplate = generatepost({}).innerHTML;
-function resetsavedata(){
-    if(confirm(`${localStorage.getItem(savekeyword)}\n reset save data?`)){
-        localStorage.setItem(savekeyword, JSON.stringify(defsavedata));
-    }
-}
+const blogtemplate = generatepost({}).innerHTML + samplepost;
 function geteditorspace(){
     return eid("post-" + writingid);
 }
 
 function addblankpost(){
     writingid = 0;
+    log(writingid);
     eid("blog").prepend(mk("article", {class: "post", id: `post-${writingid}`, "data-id": writingid}));
     eid(`post-${writingid}`).innerHTML = preload || samplepost;
 }
@@ -94,25 +99,28 @@ function editpost(fetchid){
     editmode.id = fetchid;
     writingid = fetchid;
     editmode.method = "id";
-        getpost(fetchid).then(post => {
-            if(post.length === 0){
-                alert("post not found");
-            }
-            else{
-                preload = generatepost(post[0]).innerHTML;
-                eid(mainid).dispatchEvent(new Event("loadpost"));
-            }
-        });
+    getpost(fetchid).then(post => {
+        if(post.length === 0){
+            preload = blogtemplate;
+            alert("post not found");
+        }
+        else{
+            preload = generatepost(post[0]).innerHTML;
+            eid(mainid).dispatchEvent(new Event("loadpost"));
+        }
+        eid(`post-${writingid}`).innerHTML = preload;
+    });
 }
 
 function editdraft(draftid){
     editmode.id = draftid;
-    editmode.method = "draft";
+    editmode.method = "drafts";
     if(savedata.drafts[draftid] !== undefined){
         preload = savedata.drafts[draftid];
     }
     else{
         alert("draft not found");
+        preload = blogtemplate;
     }
 }
 
@@ -127,17 +135,11 @@ function enterpage(){
     if(responses[0] === "draft"){
         let resp = "";
         while(!isnum(pint(resp))){
-            resp = prompt(`drafts: ${savedata.drafts} \n select draft id`);
+            resp = prompt(`drafts: ${Object.keys(savedata.drafts)} \n select draft id`);
         }
         responses.push(resp);
-        editmode.id = pint(responses[1]);
-        log(editmode.id);
-        editmode.method = "draft";
-
-        preload = savedata.drafts[editmode.id];
-        if(preload === undefined){
-            alert("draft not found");
-        }
+        editmode.id = responses[1]; // let be string
+        editdraft(editmode.id);
         
     }
     else if(isnum(pint(responses[0]))){
@@ -204,30 +206,30 @@ function savework(){
     const resps = [];
     resps.push(confirm(`save as ${JSON.stringify(editmode)}?`));
     if(resps[0]){
-        savedata[editmode.method] = geteditorspace().innerHTML;
+        if(editmode.method === "lastsave")
+            savedata[editmode.method] = geteditorspace().innerHTML;
+        else
+            savedata[editmode.method][editmode.id] = geteditorspace().innerHTML;
     }
     else{
         let resp = "";
         while(resp !== "draft" && !isnum(pint(resp))){
-            resp = prompt(`save as draft or id? (type 'draft' for draft selection, number for article id)`);
+            resp = prompt(`save as draft or id? (type 'draft' for draft selection, number for article id), curr mode: ${JSON.stringify(editmode)}`);
         }
         resps.push(resp);
         if(resp === "draft"){
             resp = "";
             resp = prompt(`new draft or overwrite draft? (type anything for new draft, number for spec. draft id (max <=${savedata.drafts.length})`, editmode.id);
             let draftsavingidx = editmode.id;
-            if(isnum(pint(resp))){
-                draftsavingidx = pint(resp);
-                if(draftsavingidx > savedata.drafts.length){
-                    alert("draft not found, saving as new");
-                }
-                draftsavingidx = min(draftsavingidx, savedata.drafts.length);
 
+            // draftsavingidx = savedata.drafts.length;
+
+            if(savedata.drafts[draftsavingidx]){
+                if(!confirm(`draft ${draftsavingidx} exists, overwriting, ye or ne`)){
+                    alert("draft not saved");
+                    return;
+                }
             }
-            else{
-                draftsavingidx = savedata.drafts.length;
-            }
-            
             savedata.drafts[draftsavingidx] = geteditorspace().innerHTML;
         }
         else{
@@ -349,21 +351,23 @@ function initediting() {
         addblankpost();
         writingid = 0;
     }
-    else if(editmode.method === "draft"){
+    else if(editmode.method === "drafts"){
         addblankpost();
     }
     else if(editmode.method === "id"){
     }
     editor.setValue(preload);
+
     eid(`post-${writingid}`).innerHTML = editor.getValue();
 
     const doc = editor.session.getDocument();
-    setTimeout(() => beautify.beautify(editor.session), 0);
+    beaut();
 
     log("editor loaded");
     eid(mainid).addEventListener("loadpost", () => {
         if(editmode.method === "id")
             editor.setValue(preload);
+        beaut();
     });
     doc.on("change", () => {
         if(!eid(`post-${writingid}`)) return;
@@ -402,6 +406,7 @@ function initediting() {
                 editor.setValue(article.innerHTML);
                 writingid = article.dataset.id;
                 editpost(writingid);
+                beaut();
             }
         }
     });

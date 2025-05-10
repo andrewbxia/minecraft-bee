@@ -102,7 +102,6 @@ wowwwooiejfiejfiejfeifjei
 
 //todo: maybe make this handle n images instead of 4 with programatic css
 
-if(params.has("b-edit")) script("./scripts/blog-editor.js", true);
 eid("blog").innerHTML = "";
 if(pageidx === null && postid === null)
     pageidx = 0;
@@ -116,4 +115,6 @@ if(pageidx === null && postid === null)
     err(error);
     eid("blog").innerHTML += `<center>posts didnt load...maybe ${mkhtml("a", "reload?", {href: ""}) }
     <br>.₊̣̇.ಇ/ᐠˬ ͜   ˬ ᐟ\∫.₊̣̇.</center>`;
+}).finally(() => {
+    if(params.has("b-edit")) script("./scripts/blog-editor.js", true);
 });

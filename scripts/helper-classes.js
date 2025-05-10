@@ -402,6 +402,10 @@ class KeySet{
         ["NumLock", "⇭"],
         ["ScrollLock", "⇳"],
     ]);
+    static #nope = new Set([
+        "\"", "\\",
+    ]);
+    // static #charmap = new Uint16Array(Math.pow(2,16));
 
     static onnewkey = () => {};
     static onoofkey = () => {};
@@ -422,7 +426,7 @@ class KeySet{
     }
     static keydown(e){
         let key = e.key;
-        if(key === "\"") return;
+        if(this.#nope.has(key)) return;
         // if(key.length > 1) {}
         if(this.spcontains(key)) key = this.#specialchars.get(key);
         else if(key.length > 1) return;
