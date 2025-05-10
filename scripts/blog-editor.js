@@ -15,6 +15,11 @@ const samplepost = `
 <p>Here is a link to <a href="https://www.example.com">example.com</a>.</p>
 <h2>Conclusion</h2>
 <p>Thank you for reading this sample post. Feel free to use these tags in your own posts.</p>
+<ol class="footnote-list">
+    <li> This is a footnote.</li>
+    <li> This is another footnote.</li>
+    <li> This is a third footnote.</li>
+</ol>
 
 -->
 

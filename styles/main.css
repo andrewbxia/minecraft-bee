@@ -4,6 +4,8 @@
 }
 html{
     scroll-behavior: smooth;
+    scroll-padding-top: var(--header-height);
+    scroll-padding-bottom: 2em;
 }
 
 #page{
@@ -383,6 +385,17 @@ html{
             text-indent: 0;
             hyphens: none;
             min-inline-size: 100%;
+        }
+        .footnote-list{
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                font-size: 0.5em;
+                flex-wrap: wrap;
+                gap: 4em;
+                >li{
+                        max-width: 25%;
+                }
         }
         pre{}
         table{}
