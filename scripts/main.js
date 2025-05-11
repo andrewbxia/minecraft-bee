@@ -1,5 +1,11 @@
 "use strict";
+// init funcs
 KeySet.init();
+checkvisit();
+
+
+
+
 const fpsm = new PerSec(1000);
 const dispfps = new MeteredTrigger(100, () => {eid("fps").innerText = fpsm.cntn();});
 let prevfps = 0, maxfps = 0;
@@ -34,6 +40,9 @@ KeySet.onoofkey = (key) => {
     const el = eq(`#keyset>[data-key="${key.ekey}"]`);
     if(el) el.remove();
 }
+
+
+
 // branding visuals
 document.title = baseurl; // later have this textanimate based on branding activeq
 const axia = eid("branding"), axiatxt = baseurl + "·∫:p_d_", axialen = axiatxt.length;
@@ -49,7 +58,6 @@ window.dispatchEvent(new Event("resize"));
 
 
 const bsplash = new RollingActives(axia, "active-100");
-
 styling(`
 #branding>span.b-ch{
     ${Array.from({length: 20}, (_, i) => `
@@ -102,6 +110,8 @@ function playbsplash() {
     }
 }
 playbsplash();
+
+
 
 //bg bars && theme transition
 function tohsl(cssColor, components = false){
@@ -292,6 +302,9 @@ function resetscrollbars(){
     bgbars(window.innerHeight + window.scrollY);
     scrollbarst.fire();
 }
+
+
+
 
 
 // once everything is loaded

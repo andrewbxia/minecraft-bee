@@ -403,6 +403,13 @@ html{
         figcaption{}
         hr{}
         a{}
+        fieldset{
+            border-color: var(--theme-dark-other);
+            >legend{
+                text-decoration: underline;
+                text-decoration-thickness: 0.1em;
+            }
+        }
     }
 }
 #demark-bar{

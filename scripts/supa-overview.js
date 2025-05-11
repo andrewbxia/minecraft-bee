@@ -71,3 +71,58 @@ numposts();
 // getpostsoverview().then(posts => {
 //     console.log(posts);
 // });
+let checkvisited = false;
+const visitorstats = {
+    visitor_count: -1,
+    visitor_unique: -1,
+};
+
+async function checkvisit(){
+    if(checkvisited) return;
+    checkvisited = true;
+    
+    const lastvisit = localStorage.getItem('lastvisit');
+    const now = Date.now();
+    localStorage.setItem('lastvisit', now);
+    const newvisit = lastvisit === null;
+
+    if(newvisit){
+        console.log("omg hihihihihihi");
+        fetch(`${supaurl}/rest/v1/rpc/inc_u`, {
+            method: "POST",
+                headers: {
+                apikey: publicanonkey,
+                "Authorization": `Bearer ${publicanonkey}`,
+                "Content-Type": "application/json"
+            }
+        });
+    }
+    const resp = await fetch(`${supaurl}/rest/v1/rpc/inc`, {
+        method: "POST",
+            headers: {
+            apikey: publicanonkey,
+            "Authorization": `Bearer ${publicanonkey}`,
+            "Content-Type": "application/json"
+        }
+    });
+    const json = await resp.json();
+    if(json.error){
+        console.error("uh oh", json.error);
+        console.error(json);
+    }
+    else{
+        visitorstats.visitor_count = json[0].visitor_count;
+        visitorstats.visitor_unique = json[0].visitor_unique;
+        document.dispatchEvent(new Event("visitorstats"));
+    }
+
+}
+
+setTimeout(() => {
+    if(!checkvisited){
+        console.error("checkvisit not called yett");
+    }
+    else{
+        console.log("woah");
+    }
+}, 5000);

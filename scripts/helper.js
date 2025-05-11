@@ -1,3 +1,6 @@
+const baseurl = window.location.host; // give them the port if they wanna!!!!
+const debug = baseurl !== "andrewb.xyz";
+
 const eid = (id) => document.getElementById(id);
 const eq = (query) => document.querySelector(query);
 const eqa = (query) => document.querySelectorAll(query);
@@ -5,7 +8,8 @@ const compst = (el) => window.getComputedStyle(el);
 const brect = (el) => el.getBoundingClientRect();
 const pint = (el, rad = 10) => parseInt(el, rad);
 const poat = (el) => parseFloat(el);
-const log = (...message) => console.trace(...message);
+const log = (...message) => debug ? console.trace(...message) : console.log(...message);
+const dlog = (...message) => {if(debug) log(...message)};
 const warn = (...message) => console.warn(...message);
 const err = (...message) => console.error(...message);
 const abs = (num) => Math.abs(num);
@@ -13,7 +17,6 @@ const pow = (num, exp) => Math.pow(num, exp);
 const assert = (condition, msg) => {if(!condition) throw new Error(msg);};
 const assertnotreached = (msg = "unreachable thingy reached") => assert(false, msg);
 
-const baseurl = window.location.host; // give them the port if they wanna!!!!
 const truheight = window.innerHeight * window.devicePixelRatio;
 const truwidth = window.innerWidth * window.devicePixelRatio;
 const sp = "&nbsp;";
