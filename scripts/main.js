@@ -22,7 +22,7 @@ function fps(){
 fps();
 
 const keyset = eid("keyset");
-const kps = new PerSec(1000);
+const kps = new PerSec(600);
 // const keysetsize = () => {
 //     keyset.style.fontSize = `${sqrt(kps.cntn())}ch`;
 //     window.requestAnimationFrame(keysetsize);

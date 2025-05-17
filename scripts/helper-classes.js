@@ -402,6 +402,8 @@ class KeySet{
         ["NumLock", "⇭"],
         ["ScrollLock", "⇳"],
     ]);
+    static #mspecialchars = new Map();
+    static resetkey = this.#specialchars.get("Escape");
     static #nope = new Set([
         "\"", "\\",
     ]);
@@ -430,6 +432,13 @@ class KeySet{
         // if(key.length > 1) {}
         if(this.spcontains(key)) key = this.#specialchars.get(key);
         else if(key.length > 1) return;
+        if(key === this.resetkey){
+            for(const k of this.#keys){
+                this.#keys.delete(k);
+                const ekey = this.#mspecialchars.has(k) ? this.#mspecialchars.get(k) : k;
+                this.onoofkey({key: k, ekey: ekey});
+            }
+        }
         if(this.contains(key)) return;
 
         this.#keys.add(key);
@@ -448,6 +457,10 @@ class KeySet{
     static init(){
         if(this.#initialized) return;
         this.#initialized = true;
+
+        for (const [k, v] of this.#specialchars) {
+            this.#mspecialchars.set(v, k);
+        }
         window.addEventListener("keydown", this.keydown.bind(this), {passive: true});
         window.addEventListener("keyup", this.keyup.bind(this), {passive: true});
     }

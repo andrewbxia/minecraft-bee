@@ -225,7 +225,7 @@ function savework(){
         if(resp === "draft"){
             resp = "";
             resp = prompt(`new draft or overwrite draft? (type anything for new draft, number for spec. draft id (max <=${savedata.drafts.length})`, editmode.id);
-            let draftsavingidx = editmode.id;
+            let draftsavingidx = resp;
 
             // draftsavingidx = savedata.drafts.length;
 
