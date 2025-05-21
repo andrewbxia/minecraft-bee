@@ -301,8 +301,11 @@ nekoStyle.innerHTML = `
   `;
 
 document.head.appendChild(nekoStyle);
+let wowow = 1;
 while(Math.random() < 0.5){
+  wowow += wowow;
   oneko(Math.floor(Math.random() * 10) + 5);
 }
+console.log(`1 in ${wowow}!`);
 oneko(7);
 oneko(12);

@@ -44,7 +44,7 @@ KeySet.onoofkey = (key) => {
 
 
 // branding visuals
-document.title = baseurl; // later have this textanimate based on branding activeq
+//document.title = baseurl; // later have this textanimate based on branding activeq
 const axia = eid("branding"), axiatxt = baseurl + "·∫:p_d_", axialen = axiatxt.length;
 axia.innerText = "";
 
@@ -231,6 +231,9 @@ styling(depths.map(depth => `.c-${depth}{
 `).join("\n"));
 
 let numbars = 0;
+const barkeyframes = [
+    "passdown", "passup", "passleft", "passright"
+];
 function bgbars(newheight){
     if (!eid("bg-bars")){
         log("nope");
@@ -244,7 +247,11 @@ function bgbars(newheight){
             const invdepth = max(.5, depths.length - depth);
             for (let cnt = 0; cnt <= Math.log(depth); cnt++){
                 numbars++;
-                const bar = mk("div", {class: `bg-bar bg-a-${randint(3, 1)}`});
+                const bar = mk("div", {class: `bg-bar`});
+                // bg-a-${randint(3,1)}
+                bar.style.animationName = randarrchoose(barkeyframes);
+                if(rand(1) < .25) bar.style.animationName += ", expand";
+                // log(bar.style.animationName);
                 const bgcolor = `hsl(${basecolor.h}, ${basecolor.s}%, ${rand( basecolor.l*invdepth / 5, basecolor.l * .75)}%)`;
 
                 bar.style.height = `${(depth) * rand(depth) + 4* depth}vh`;
@@ -449,3 +456,4 @@ function scrolltrack3(event){
 for(const track of track3){
     track.addEventListener("scroll", scrolltrack3);
 }
+//todo: maybe make this handle n images instead of 4 with programatic css

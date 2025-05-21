@@ -13,10 +13,10 @@ const overviewparameters = [
 const postparameters = [ "id", "created_at", "edited_at", "content", 
     "cover_url", "title", "tags", "description" ];
 const qlimit = 5;
-const pagelimit = 3;
+const pagelimit = 2;
 
 async function getpostsoverview(){
-    const response = await fetch(`${supaurl}/rest/v1/posts?select=${overviewparameters}&order=created_at.desc&limit=${qlimit}`, {
+    const response = await fetch(`${supaurl}/rest/v1/posts?select=${overviewparameters}&order=id.desc&limit=${qlimit}`, {
         headers: {
             apikey: publicanonkey,
             "Authorization": `Bearer ${publicanonkey}`,
@@ -29,7 +29,7 @@ async function getpostsoverview(){
 }
 
 async function getpage(pageidx){
-    const response = await fetch(`${supaurl}/rest/v1/posts?order=created_at.desc&limit=${pagelimit}&offset=${pageidx * pagelimit}`, {
+    const response = await fetch(`${supaurl}/rest/v1/posts?order=id.desc&limit=${pagelimit}&offset=${pageidx * pagelimit}`, {
         headers: {
             apikey: publicanonkey,
             "Authorization": `Bearer ${publicanonkey}`,
@@ -54,10 +54,11 @@ async function getpost(id){
     return data;
 }
 
+const minpostid = 1;
 let lastpostid = null;
 
 async function numposts(){
-    const response = await fetch(`${supaurl}/rest/v1/posts?select=id&order=created_at.desc&limit=1`, {
+    const response = await fetch(`${supaurl}/rest/v1/posts?select=id&order=id.desc&limit=1`, {
         headers: {
             apikey: publicanonkey,
             "Authorization": `Bearer ${publicanonkey}`,

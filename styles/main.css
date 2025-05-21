@@ -8,6 +8,17 @@ html{
     scroll-padding-bottom: 2em;
 }
 
+a{
+    transition: 0.75s ease;
+    transition-property: color, text-shadow, outline-color;
+    outline: 5px solid rgba(var(--theme-dark-vals), 0.1);
+    &:hover{
+        text-shadow: 0 0 0.25em var(--theme-dark);
+        outline-color: rgba(var(--theme-dark-vals), 0.25);
+        text-decoration-thickness: 0.1em;
+    }
+}
+
 #page{
     padding-top: 25px;
     width: 100%;
@@ -180,18 +191,50 @@ html{
 
 
 #page-left{
-    flex-grow: 0.78539; 
+    flex-grow: 0.79; 
     &.editing{
         display: flex;
         flex-direction: row;
     }
 }
+
+#left-menu-outer{
+    position: relative;
+    width: fit-content;
+    float: right;
+
+    border: var(--border);
+    border-width: 5px 0;
+    transform: translateZ(var(--z-offset));
+
+    >#left-menu-options{
+        transform-style: preserve-3d;
+        &:hover{
+
+        }
+        >div{
+            text-align: right;
+            background-color: inherit;
+        }
+    }
+    >#left-menu{
+        transform-style: preserve-3d;
+        transform-origin: 0% 0%;
+        
+
+
+        transition: transform 0.5s var(--ease-backtrack);
+    }
+}
+
+
 #page-right{
-    flex-grow: 1.61803;
+    flex-grow: 1.62;
     &.editing{
         display: none;
     }
 }
+
 #fps, #main{
     text-shadow: 2px 2px 0px var(--theme-light);
 }

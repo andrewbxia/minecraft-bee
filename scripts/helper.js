@@ -60,6 +60,8 @@ function extrrand(max) { // prefer extremes of distribution
     const bias = random < 0.5 ? pow(random, 2) : 1 - pow(1 - random, 2);
     return bias * max;
 }
+const chance = (onein = 2) => Math.random() < 1 / onein;
+
 const params = new URLSearchParams(window.location.search);
 document.addEventListener("DOMContentLoaded", function(){
     eqa("iframe").forEach(iframe => {

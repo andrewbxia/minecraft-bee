@@ -131,6 +131,9 @@ ol, ul{
 p{
     font-size: 0.85em;
 }
+a{
+    color: var(--theme-dark);
+}
 iframe{
     overflow: hidden;
 }

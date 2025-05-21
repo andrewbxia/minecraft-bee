@@ -10,7 +10,7 @@
     <meta name="author" name="Andrew Xia"/>
     <meta name="theme-color" content="rgb(114, 111, 255)"/>
     
-    <title>andrewb.xyz</title>
+    <title>Andrew Xia</title>
     <!-- axia.sh -->
     <!-- preload scripts -->
     <script src="./scripts/helper.js"></script>
@@ -126,19 +126,30 @@
         splashtxt = splashtxt.concat(splashtxt);
         const splashtxtchars = -1 + splashtxt.map((e) => e.length).reduce((a, b) => a + b, 0) + splashtxt.length;
         splashtxt = splashtxt.flatMap((e, i) => i < splashtxt.length ? [e, jointxt] : [e]);
+        
         const mainhnodes = nodelist(splashtxt.map((e) => {
             const node = mktxt("h1", e, {});
             if (e !== jointxt)
                 node.classList.add("main-h-text");
             return node;
         }));
-        eid("main-h").style.setProperty("--speed", `${splashtxtchars * 8.141592/95}s`);
 
+        eid("main-h").style.setProperty("--speed", `${splashtxtchars * 8.141592/95}s`);
         app(eid("main-h"), app(mk("div",{style: "min-width: fit-content;", id: "header-m-c"}), app(mk("span", {class: "marquee-100", id: "header-m"}), mainhnodes)));
 
     </script>
     <div id="page">
-        <div id="page-left"></div>
+        <div id="page-left">
+            <!-- <div id="left-menu-outer">
+                <div id="left-menu-options">
+                    <div class="credits">credits</div>
+                    <div class="gallery">gallery</div>
+                    <div class="test">test</div>
+                    <div class="test2">test2</div>
+                </div>
+                <div id="left-menu"></div>
+            </div> -->
+        </div>
         <!-- maybe have the border charging up something? its going to the right without bounds so maybe -->
         <div id="main" style="min-height: 15000px;" class="track-outer">
             
@@ -191,7 +202,9 @@
             
             <section id="blog"></section>
         </div>
-        <div id="page-right"></div>
+        <div id="page-right">
+            <div id="charge-up"></div>
+        </div>
     </div>
     <div id="cd-player">
         <div id="cd-vol-bar"></div>
@@ -275,7 +288,17 @@
     to{
         transform: translateX(-50%);
     }
-}#bg-bars{
+}
+@keyframes expand{
+    from{
+        width: 0;
+    }
+    to{
+        width: 156.25vw;
+    }
+}
+
+#bg-bars{
     z-index: -1;
     position: fixed;
     /* overflow: hidden; */
@@ -312,6 +335,13 @@
 }
 .bg-a-4{
     animation-name: passleft;
+}
+.bg-a-5{
+    animation-name: expand;
+}
+.bg-a-e{
+    animation-name: expand;
+    /* transform: translateX(-50%); */
 }
 
     </style>
