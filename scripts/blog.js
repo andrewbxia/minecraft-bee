@@ -128,6 +128,21 @@ function blogisfirst(){
         return pageidx === floor((lastpostid - 1) / pagepostlimit);
     }
 }
+function placenav(){
+        const nav = mk("nav", {id: "blog-nav"});
+        const previous = mk("button", {id: "blog-previous"});
+        const next = mk("button", {id: "blog-next"});
+        if(!blogisfirst()){
+            previous.innerText = `<<< older ${viewingmode}s`;
+            previous.onclick = () => displayblog("previous");
+        }
+        if(!blogislast()){
+            next.innerText = `fresher ${viewingmode}s >>>`;
+            next.onclick = () => displayblog("next");
+        }
+
+        app(eid("blog"), appmany(nav, [previous, next]));
+}
 
 
 let editorinit = false;
@@ -176,20 +191,14 @@ function displayblog(change = "none"){
             window.location.href = `#post-${postid}`;
         // else if(viewingmode === "page")
         //     window.location.href = `#post-${posts[0].id}`;
-       
-        const nav = mk("nav", {id: "blog-nav"});
-        const previous = mk("button", {id: "blog-previous"});
-        const next = mk("button", {id: "blog-next"});
-        if(!blogisfirst()){
-            previous.innerText = `<<< older ${viewingmode}s`;
-            previous.onclick = () => displayblog("previous");
+        if(lastpostid === null){
+            numposts().then(() => {
+                placenav();
+            });
         }
-        if(!blogislast()){
-            next.innerText = `fresher ${viewingmode}s >>>`;
-            next.onclick = () => displayblog("next");
+        else{
+            placenav();
         }
-
-        app(eid("blog"), appmany(nav, [previous, next]));
 
     }).catch(error => {
         err(error);
