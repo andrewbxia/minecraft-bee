@@ -13,7 +13,7 @@ const overviewparameters = [
 const postparameters = [ "id", "created_at", "edited_at", "content", 
     "cover_url", "title", "tags", "description" ];
 const qlimit = 5;
-const pagelimit = 2;
+const pagelimit = debug ? 2: 5;
 
 async function getpostsoverview(){
     const response = await fetch(`${supaurl}/rest/v1/posts?select=${overviewparameters}&order=id.desc&limit=${qlimit}`, {

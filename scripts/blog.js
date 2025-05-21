@@ -181,11 +181,11 @@ function displayblog(change = "none"){
         const previous = mk("button", {id: "blog-previous"});
         const next = mk("button", {id: "blog-next"});
         if(!blogisfirst()){
-            previous.innerText = `older ${viewingmode}s`;
+            previous.innerText = `<<< older ${viewingmode}s`;
             previous.onclick = () => displayblog("previous");
         }
         if(!blogislast()){
-            next.innerText = `fresher ${viewingmode}s`;
+            next.innerText = `fresher ${viewingmode}s >>>`;
             next.onclick = () => displayblog("next");
         }
 

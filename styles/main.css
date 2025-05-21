@@ -454,6 +454,21 @@ a{
             }
         }
     }
+    >nav{
+        display: flex;
+        justify-content: space-between;
+        >button{
+            /* all: unset;
+            box-shadow: none;
+            background: none;
+            border: none;
+            text-decoration: none;
+            outline: none; */
+            all: unset;
+            text-decoration: underline;
+            font-size: 0.75em;
+        }
+    }
 }
 #demark-bar{
     display: none;
