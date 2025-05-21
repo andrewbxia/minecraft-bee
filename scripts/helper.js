@@ -9,9 +9,12 @@ const brect = (el) => el.getBoundingClientRect();
 const pint = (el, rad = 10) => parseInt(el, rad);
 const poat = (el) => parseFloat(el);
 const log = (...message) => debug ? console.trace(...message) : console.log(...message);
-const dlog = (...message) => {if(debug) log(...message)};
+const dlog = (...message) => {if(debug) log(...message)}; // debug log
+const dlert = (...message) => {if(debug) alert(...message)};
 const warn = (...message) => console.warn(...message);
+const darn = (...message) => {if(debug) warn(...message)}; // lmao im keeping darn no dwarn here
 const err = (...message) => console.error(...message);
+const derr = (...message) => {if(debug) err(...message)};
 const abs = (num) => Math.abs(num);
 const pow = (num, exp) => Math.pow(num, exp);
 const assert = (condition, msg) => {if(!condition) throw new Error(msg);};

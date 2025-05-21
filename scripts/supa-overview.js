@@ -68,7 +68,7 @@ async function numposts(){
     const data = await response.json();
     lastpostid = data[0].id;
 }
-numposts();
+// numposts(); already done in index.html script
 // getpostsoverview().then(posts => {
 //     console.log(posts);
 // });
@@ -78,12 +78,19 @@ const visitorstats = {
     visitor_unique: -1,
 };
 
+const visitintervallimit = 1000 * 60 * 60; // 1 hour
 async function checkvisit(){
     if(checkvisited) return;
     checkvisited = true;
     
+    
     const lastvisit = localStorage.getItem('lastvisit');
     const now = Date.now();
+    if(lastvisit !== null && 
+        now - lastvisit < visitintervallimit) {
+        console.log("helo repeat customer :p");
+        return;
+    }
     localStorage.setItem('lastvisit', now);
     const newvisit = lastvisit === null;
 
