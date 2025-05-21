@@ -404,10 +404,19 @@ a{
         hyphens: auto;
         hyphenate-character: '-ඞ';
         word-wrap: break-word;
-        .post-header{
+        >.post-header{
             margin: 1em 0;
+            
         }
-        
+        .post-wordcount{
+            text-align: right; 
+            margin-right: 1em; 
+            margin-left: auto; 
+            text-indent: 0;
+            border: var(--border);
+            border-width: 2px 0;
+            width: fit-content;
+        }
     
         h1,h2,h3,h4,h5,h6{
             margin: 1em 0;
