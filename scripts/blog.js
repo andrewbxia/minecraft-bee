@@ -189,8 +189,8 @@ function displayblog(change = "none"){
         // window.location.href = "#blog";
         if(viewingmode === "post")
             window.location.href = `#post-${postid}`;
-        // else if(viewingmode === "page")
-        //     window.location.href = `#post-${posts[0].id}`;
+        else if(viewingmode === "page" && change !== "none")
+            window.location.href = `#post-${posts[0].id}`;
         if(lastpostid === null){
             numposts().then(() => {
                 placenav();
