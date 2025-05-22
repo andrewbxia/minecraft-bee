@@ -57,7 +57,10 @@ function resetsavedata(method){
 }
 function beaut(){
     if(!editor) return;
-    beautify.beautify(editor.session);
+    setTimeout(() => 
+            beautify.beautify(editor.session)
+    
+    ,100);
 }
 
 function savestatus(){
@@ -98,6 +101,10 @@ function addblankpost(){
     log(writingid);
     eid("blog").prepend(mk("article", {class: "post", id: `post-${writingid}`, "data-id": writingid}));
     eid(`post-${writingid}`).innerHTML = preload || samplepost;
+    
+    eid(`post-${writingid}`).addEventListener("bruh", () => {
+        setwordcount(eid(`post-${writingid}`));
+    });
 }
 
 function editpost(fetchid){
@@ -377,6 +384,8 @@ function initediting() {
     doc.on("change", () => {
         if(!eid(`post-${writingid}`)) return;
         eid(`post-${writingid}`).innerHTML = editor.getValue();
+        eid(`post-${writingid}`).dispatchEvent(new Event("bruh"));
+        
         saved = false;
         savemeter.fire();
     });

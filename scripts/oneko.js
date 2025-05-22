@@ -269,8 +269,10 @@ function oneko(speed = 10, color = false) {
     nekoPosX -= (diffX / distance) * nekoSpeed;
     nekoPosY -= (diffY / distance) * nekoSpeed;
 
-    nekoPosX = Math.min(Math.max(16, nekoPosX), window.innerWidth + window.scrollX - 16);
-    nekoPosY = Math.min(Math.max(16, nekoPosY), window.innerHeight + window.scrollY - 16);
+    // keep catz on screen
+    nekoPosX = Math.min(Math.max(16+window.scrollX, nekoPosX), window.innerWidth + window.scrollX - 16);
+    nekoPosY = Math.min(Math.max(16+window.scrollY, nekoPosY), window.innerHeight + window.scrollY - 16);
+
 
     nekoEl.style.left = `${nekoPosX - 16}px`;
     nekoEl.style.top = `${nekoPosY - 16}px`;

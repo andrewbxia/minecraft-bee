@@ -26,12 +26,22 @@ function clearblog(){
     eqa("#blog>*:not(#post-0), #blog-nav").forEach(el => el.remove());
 }
 
+function setwordcount(postel){
+    log(postel)
+    let wordcount = postel.innerHTML.split(" ").length;
+    postel.querySelector(".post-wordcount").innerText = `<<--|  ~${wordcount}±${(1-abs(Math.sin(wordcount)))
+        .toFixed(randint(2,2))}-ish words  |-->>`;
+}
+
 function addpost(postsidx){
     // log(postsidx);
     const post = posts[postsidx];
     const postel = generatepost(post);
     
     app(eid("blog"), postel);
+    postel.addEventListener("bruh", () => {
+        setwordcount(postel);
+    });
 }
 
 function dispposts(){
@@ -55,7 +65,7 @@ function generatepost(post){
     
     const postel = mk("article", {class: "post", "data-id": id, id: `post-${id}`});
     const posth = mk("center", {class: "post-header", title: title});
-    const postwc = mktxt("h6", `<<--|  ~${wordcount}±${(1-abs(Math.sin(wordcount))).toFixed(randint(2,2))}-ish words  |-->>`, {class: "post-wordcount"});
+    const postwc = mk("h6", {class: "post-wordcount"});
     const postc = mktxt("p", content, {class: "post-content"});
     const postt = app(mk("h2", {class: "post-title"}), link(`?post=${id}`, title, "_self"));
     app(posth, postt);
@@ -66,7 +76,7 @@ function generatepost(post){
     const hasedited = (created.getTime() + dayms / 2) < edited.getTime();
     const datestr = created.toDateString() + (hasedited ? ` (${edited.toDateString()})` : "");
     appmany(misc, 
-        [p(datestr), p(`${tags.join(" · ")}`), postwc]
+        [p(datestr), p(tags.join(" · ")), postwc]
     );
     
     app(posth, misc);

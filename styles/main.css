@@ -126,7 +126,7 @@ a{
     z-index: 1;
     top: calc(50px + var(--header-height)); /*2em (h1) + 0.67em from margin-block-startend  user-stylesheet*/
     right: 0px;
-    transform-origin: -50vw 50vh;
+    transform-origin: -50vw 50dvh; /* OH MY GOD THANK YOU LORD AND SAVIOR DVH CHROSIST OMG */
     transition: var(--speed) var(--ease-backtrack);
     transition-property: rotate, transform, top, right;
     width: 0;

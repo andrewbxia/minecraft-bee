@@ -5,7 +5,7 @@ checkvisit();
 
 
 
-
+// REJECT CAMEL CASE
 const fpsm = new PerSec(1000);
 const dispfps = new MeteredTrigger(100, () => {eid("fps").innerText = fpsm.cntn();});
 let prevfps = 0, maxfps = 0;
@@ -46,6 +46,11 @@ KeySet.onoofkey = (key) => {
 // branding visuals
 //document.title = baseurl; // later have this textanimate based on branding activeq
 const axia = eid("branding"), axiatxt = baseurl + "·∫:p_d_", axialen = axiatxt.length;
+// const axiachstyle = styling(`
+//     .b-ch{
+//         font-size: ${1000/axialen}%;
+//     }
+//     `);
 axia.innerText = "";
 
 for(let i = 0; i < axialen; i++){
@@ -344,10 +349,10 @@ const artzinfo = [
     // "IMG_.jpg",
     // "IMG_.jpg",
 ];
-artzinfo.sort(() => Math.random() - 0.5);
+artzinfo.sort(() => chance(2));
 const dirs = ["front", "back", "left", "right"];
 const poss = [0, 4, 6, 2, 1, 5, 7, 3];
-const imgprefix = "a";
+const imgprefix = "chich";
 
 function generateposs(cnt){
     const poss = [];
@@ -357,14 +362,18 @@ function generateposs(cnt){
 let trackimgcss = "", bgurlloaded = 0;
 async function artzurl(idx){
     if(idx >= artzinfo.length){
+        idx %= artzinfo.length;
         const catdata = await fetch("https://api.thecatapi.com/v1/images/search")
-            .then((response) => response.json());
-        const url = catdata[0].url;
-        return url;
+            .then(response => response.json()).catch(e => e);
+        
+        if(!catdata.message){
+            const url = catdata[0].url;
+            return url;
+        }
     }
-    else{
-        return baseartzlink + artzinfo[idx][0];
-    }
+    
+    return baseartzlink + artzinfo[idx][0];
+    
 }
 (async () => {
     for(let i = 0; i < dirs.length * 4; i++){
