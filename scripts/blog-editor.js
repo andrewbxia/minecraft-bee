@@ -1,3 +1,5 @@
+// ok ill be honest this code kinda sucks too but its my first time doing this kidna thing so cut me some slack
+
 const samplepost = `
 <!--
 <h1>Sample Blog Post</h1>
@@ -101,10 +103,6 @@ function addblankpost(){
     log(writingid);
     eid("blog").prepend(mk("article", {class: "post", id: `post-${writingid}`, "data-id": writingid}));
     eid(`post-${writingid}`).innerHTML = preload || samplepost;
-    
-    eid(`post-${writingid}`).addEventListener("bruh", () => {
-        setwordcount(eid(`post-${writingid}`));
-    });
 }
 
 function editpost(fetchid){
@@ -384,7 +382,6 @@ function initediting() {
     doc.on("change", () => {
         if(!eid(`post-${writingid}`)) return;
         eid(`post-${writingid}`).innerHTML = editor.getValue();
-        eid(`post-${writingid}`).dispatchEvent(new Event("bruh"));
         
         saved = false;
         savemeter.fire();

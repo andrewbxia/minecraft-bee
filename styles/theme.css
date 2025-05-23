@@ -62,7 +62,8 @@
     --theme-yellow: rgb(255, 255, 119);
     --theme-red: rgb(255, 85, 85);
     --theme-shade: rgba(0, 0, 0, 0.5);
-    --ease-morein-out: cubic-bezier(1, 0, 0.542, 1);
+    --ease-more-in: cubic-bezier(1, 0, 0.542, 1);
+    --ease-more-out: cubic-bezier(0, 1, .542, 1);
     --ease-lessout: cubic-bezier(0.36, 1, 0.36, 1);
     --ease-backtrack: cubic-bezier(.5,1.5,.5,1);
     --ease-doublebacktrack: cubic-bezier(.75,-.4,.2,1.2);
@@ -178,6 +179,9 @@ iframe{
     background-color: var(--theme-dark)
 }
 
+.comic-sans{
+    font-family: 'Comic Sans MS', "Comic Sans", cascadia-light, sans-serif;
+}
 
 .marquee{
     /* overflow: hidden; make sure to apply overflow hidden to this container*/

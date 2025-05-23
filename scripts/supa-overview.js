@@ -82,7 +82,7 @@ const visitintervallimit = 1000 * 60 * 60; // 1 hour
 async function checkvisit(){
     if(checkvisited) return;
     checkvisited = true;
-    
+    if(debug)return;
     
     const lastvisit = localStorage.getItem('lastvisit');
     const now = Date.now();

@@ -114,7 +114,7 @@ function playbsplash() {
         setTimeout(playbsplash, 1000);
     }
 }
-playbsplash();
+// playbsplash();
 
 
 
@@ -255,7 +255,7 @@ function bgbars(newheight){
                 const bar = mk("div", {class: `bg-bar`});
                 // bg-a-${randint(3,1)}
                 bar.style.animationName = randarrchoose(barkeyframes);
-                if(rand(1) < .25) bar.style.animationName += ", expand";
+                if(rand(1) < .35) bar.style.animationName += ", expand";
                 // log(bar.style.animationName);
                 const bgcolor = `hsl(${basecolor.h}, ${basecolor.s}%, ${rand( basecolor.l*invdepth / 5, basecolor.l * .75)}%)`;
 
@@ -289,10 +289,11 @@ const scrollbarst = new MeteredQueueTrigger(100, () => {
     for(let depth of depths){
         const invdepth = max(.5, depths.length - depth);
         const stopmult = maxfps / 12;
-        if(fpsm.cntn()+stopmult <= maxfps - invdepth * stopmult) return;
+        if(fpsm.cntn() + stopmult <= maxfps - invdepth * stopmult) return;
         eq("#bg-bars .c-" + depth).style.transform = `translateY(${(scroll * -panstrength * pow(invdepth, 2)) % min(maxscroll(),Infinity)}px)`;
     }
 });
+
 let logging = false;
 if(logging){
     setInterval(() => {
