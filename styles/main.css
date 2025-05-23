@@ -46,6 +46,15 @@ a{
         #page{
             overflow: visible;
         }
+        #page-left{
+            flex-grow: 1;
+            #left-menu-outer{
+                display: none;
+            }
+        }
+        #page-right{
+            flex-grow: 2;
+        }
         #main{
             /* width: 100%; */
             --bg-opacity: 0.25;
@@ -127,7 +136,8 @@ a{
     z-index: 2;
     top: calc(50px + var(--header-height)); /*2em (h1) + 0.67em from margin-block-startend  user-stylesheet*/
     right: 0px;
-    transform-origin: -50vw 50dvh; /* OH MY GOD THANK YOU LORD AND SAVIOR DVH CHROSIST OMG */
+    transform-origin: -50vw 50lvh; /* OH MY GOD THANK YOU LORD AND SAVIOR DVH CHROSIST OMG */
+    /* nvm dvh is like really laggy lol */
     transition: var(--speed) var(--ease-backtrack);
     transition-property: rotate, transform, top, right;
     width: 0;
@@ -192,7 +202,7 @@ a{
 
 
 #page-left{
-    flex-grow: 0.79;
+    flex-grow: 1;
     z-index: 1;
     &.editing{
         display: flex;
@@ -208,7 +218,8 @@ a{
 #left-menu-outer{
     position: relative;
     width: fit-content;
-    float: right;
+    margin-left: auto;
+    margin-right: 0;
 
     border: var(--border);
     border-width: 5px 0;
@@ -242,7 +253,7 @@ a{
                 height: 0px;
                 background-color: var(--theme-dark);
                     mix-blend-mode: plus-lighter;
-                pointer-events: none;
+                /* pointer-events: none; */
                 transition: height 0.45s var(--ease-more-out);
                 width: 100%;
             }
@@ -316,7 +327,7 @@ a{
 
 
 #page-right{
-    flex-grow: 1.62;
+    flex-grow: 12;
     &.editing{
         display: none;
     }
