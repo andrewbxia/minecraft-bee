@@ -114,7 +114,7 @@ function playbsplash() {
         setTimeout(playbsplash, 1000);
     }
 }
-// playbsplash();
+playbsplash();
 
 
 
