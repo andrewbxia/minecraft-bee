@@ -222,6 +222,10 @@ const step = 1150;
 const maxpxl = () => min(1080 * 5, truheight * 3.75);
 const maxscroll = () => window.innerHeight / truheight * maxpxl();
 const depths = [1, 2, 3, 4,];
+const bardepthpower = 1.5;
+const depthpows = depths.map(depth => pow(depth, bardepthpower));
+const invdepthpows = depths.map(depth => pow(max(.5, depths.length - depth), bardepthpower));
+
 depths.forEach(depth => {
     app(eid("bg-bars"), mk("div",{class: `c-${depth}` }));
 });
@@ -230,7 +234,7 @@ styling(depths.map(depth => `.c-${depth}{
     transition: transform ${depth * 0.6}s var(--ease-lessout);
 
     >div{
-        filter: blur(${min(10, pow(depth, 2))}px);
+        filter: blur(${min(7.5, depthpows[depth - 1])}px);
     }
 }
 `).join("\n"));
@@ -250,24 +254,32 @@ function bgbars(newheight){
         currpxl += step;
         for (let depth of depths){
             const invdepth = max(.5, depths.length - depth);
-            for (let cnt = 0; cnt <= Math.log(depth); cnt++){
+            for (let cnt = 0; cnt <= depth / 3; cnt++){
                 numbars++;
                 const bar = mk("div", {class: `bg-bar`});
                 // bg-a-${randint(3,1)}
                 bar.style.animationName = randarrchoose(barkeyframes);
-                if(rand(1) < .35) bar.style.animationName += ", expand";
+                if(chance(1.5)) bar.style.animationName += ", expand";
                 // log(bar.style.animationName);
-                const bgcolor = `hsl(${basecolor.h}, ${basecolor.s}%, ${rand( basecolor.l*invdepth / 5, basecolor.l * .75)}%)`;
+                // const bgcolor = `hsl(${basecolor.h }, ${basecolor.s}%, 
+                // ${rand(basecolor.l / (depth), basecolor.l * .6 + invdepth * 5)}%)`;
+                const bgcolor = `hsl(${basecolor.h}, ${basecolor.s}%, 
+                ${rand( basecolor.l*invdepth / 4, basecolor.l * .75)}%)`;
+
+
 
                 bar.style.height = `${(depth) * rand(depth) + 4* depth}vh`;
-                bar.style.rotate = `${rand(50, -25)*depth}deg`;
+                bar.style.rotate = `${rand(40, -20)*depth}deg`;
                 bar.style.left = `${rand(50, -25)}%`;
                 bar.style.backgroundColor = bgcolor;
                 bar.style.top = `${currpxl - rand(step, -0)}px`;
                 bar.style.opacity = (invdepth) * rand(.35 * invdepth, .45);
                 // bar.style.boxShadow = `0 0 ${pow((depth - 1), 2) * 10}px ${bgcolor}`; cool but laggy
                 bar.style.animationDuration = `${rand(1.5,.5)}s`;
-                app(eq("#bg-bars .c-" + depth), bar);
+                const barinterval = 300;
+                setTimeout(() => {
+                    app(eq("#bg-bars .c-" + depth), bar);
+                }, rand(barinterval/10, (depth - 2) * barinterval));
             }
         }
     }
@@ -288,9 +300,9 @@ const scrollbarst = new MeteredQueueTrigger(100, () => {
     const panstrength = 0.1;
     for(let depth of depths){
         const invdepth = max(.5, depths.length - depth);
-        const stopmult = maxfps / 12;
+        const stopmult = maxfps / 10;
         if(fpsm.cntn() + stopmult <= maxfps - invdepth * stopmult) return;
-        eq("#bg-bars .c-" + depth).style.transform = `translateY(${(scroll * -panstrength * pow(invdepth, 2)) % min(maxscroll(),Infinity)}px)`;
+        eq("#bg-bars .c-" + depth).style.transform = `translateY(${(scroll * -panstrength * invdepthpows[depth - 1]) % min(maxscroll(),Infinity)}px)`;
     }
 });
 
