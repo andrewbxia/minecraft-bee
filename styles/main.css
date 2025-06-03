@@ -24,9 +24,9 @@ a{
 }
 
 #page{
-    padding-top: 25px;
+    /* margin-top: var(--header-height); */
+    padding: var(--header-height) 0 0 0;
     width: 100%;
-    padding: 0;
     display: flex;
     flex-direction: row;
     overflow: hidden;
@@ -60,7 +60,7 @@ a{
         }
         #main{
             /* width: 100%; */
-            --bg-opacity: 0.25;
+            --bg-opacity: 0.5;
             width: calc(var(--main-width) - 100px);
             margin: 0 auto;
             >section{
@@ -229,10 +229,8 @@ a{
     transform: translateZ(var(--z-offset));
 
     >#left-menu-options{
-        transform-style: preserve-3d;
+        user-select: none;
         >div{
-            font-family: "Comic Sans MS", "Comic Sans", inherit;
-            /* specific options */
             &.credits{
                 a{
                     font-weight: bold;
@@ -246,9 +244,8 @@ a{
                 }
             }
             position: relative;
-            transform-style: preserve-3d;
             text-align: right;
-            perspective: 300px;
+            /* perspective: 300px; */
             transition: perspective 0.15s var(--ease-more-in);
             &::before, &::after{
                 content: '';
@@ -271,77 +268,104 @@ a{
             >span{
                 transition: color 0.35s;
             }
-            >.content{
-                z-index: 2;
-                text-align: left;
-                width: 30vw;
-                background-color: var(--theme-light);
-                border: 5px var(--border);
-                pointer-events: none;
-                position: absolute;
-                transition-property: transform, opacity;
-                transition: 0.35s var(--ease-backtrack);
-                left: 100%;
-                top: 0;
-                transform-style: preserve-3d;
-                transform-origin: 0% 0%;
-                opacity: 0;
-                transform: rotateX(0) rotateY(90deg) rotateZ(-180deg)
-                    translate3d(0, -100px, 100px);
-                &::before{
-                    content: '';
-                    position: absolute;
-                    background-color: rgba(var(--theme-dark-vals), 1);
-                    height: 100%;
-                    width: 100%;
-                    bottom: 0;
-                    transition: height 0.5s var(--ease-more-in);
-                    /* animation: border-anim-bt 5s var(--ease-more-in) infinite;
-                    animation-delay: 0.5s; */
-                }
-                &::after{
-                    content: '';
-                    position: absolute;
-                    background-color: rgba(var(--theme-dark-vals), .1);
-                    height: 100%;
-                    /* transform: skew(45deg); */
-                    top: 0;
-                    pointer-events: none;
-                    animation: border-anim-lr 5s var(--ease-more-in) infinite;
-                }
-            }
+            
             &:hover{
-                    perspective: 500px;
+                /* perspective: 500px; */
                 >span, >span>a{
                     color: var(--theme-light);
                 }
-                >.content{
-                    pointer-events: all;
-                    transform: rotateX(-5deg) rotateY(-10deg) rotateZ(1deg) 
-                    translate3d(-1px, -3px, 30px);
-                    opacity: 1;
-                    &::before{
-                        height: 0;
-                    }
-                }
                 &::before, &::after{
                     height: 100%;
-
                 }
             }
         }
+        
     }
     >#left-menu{
+        pointer-events: none;
         transform-style: preserve-3d;
-        transform-origin: 0% 0%;
-        
-
-
-        transition: transform 0.5s var(--ease-backtrack);
+        position: absolute;
+        top: 100%;
+        left: 100%;
+        display: flex;
+        flex-direction: column;
+        width: 600px;
+        /* background-color: var(--theme-light); */
+        >*{
+            width: 100%;
+            border: 5px var(--border);
+            transform-origin: 50% 100%;
+            background-color: var(--theme-light);
+            transition: var(--doublebacktrack);
+            transition-property: transform, filter;
+            transition-duration: 0.5s, 1s;
+            filter: brightness(0.75);
+            /* transition: opacity 0.15s ease-out; */
+            &::before, &::after{
+                content: '';
+                position: absolute;
+                height: 100%;
+            }
+            /* &::before{
+                width: 100%;
+                bottom: 0;
+                transition: height .5s var(--ease-more-in);
+                background-color: var(--theme-dark);
+            } */
+            &::after{
+                top: 0;
+                pointer-events: none;
+                background-color: rgba(var(--theme-dark-vals), 0.1);
+            }
+        }
+        >.active{
+            transform: rotateX(-35deg);
+            filter: brightness(1.05);
+            text-shadow: 0 0 2px var(--theme-dark);
+            /* &::before{
+                height: 0;
+            } */
+            &::after{
+                animation: border-anim-lr 5s var(--ease-more-in) infinite;
+            }
+        }
+        /* opacity: 0; */
+        transform-origin: 50% 0%;
+        transform: rotateX(35deg) translateY(100vh);
+        transition: var(--ease-backtrack);
+        transition-property: transform, opacity;
+        transition-duration: 0.5s, 0.15s;
+        opacity: 0;
+        /* animation: perspective-shift 2s infinite alternate; */
+        >div.credits{
+            p{
+                &::before{
+                    content: '//';
+                }
+                margin: 0.5em 0;
+                text-indent: 1em;
+            }
+        }
+    }
+    
+    perspective: 1000px;
+    perspective-origin: 100% 100%;
+    &:hover>#left-menu{
+        pointer-events: all;
+        opacity: 1;
+        transform: rotateX(35deg) translateY(0%);
+        top: -5px;
+        /* animation: perspective-shift 2s infinite alternate; */
     }
 }
+@keyframes perspective-shift{
+    0%{
 
+        transform: rotateX(35deg) translateY(-18%);    }
+    100%{
 
+        transform: rotateX(35deg) translateY(-50%);    }
+}
 #page-right{
     flex-grow: 12;
     &.editing{
@@ -519,6 +543,9 @@ a{
         word-wrap: break-word;
         >.post-header{
             margin: 1em 0;
+            >.post-misc>p{
+                text-indent: 0;
+            }
         }
         .post-wordcount{
             text-align: right; 

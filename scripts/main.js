@@ -479,3 +479,49 @@ for(const track of track3){
     track.addEventListener("scroll", scrolltrack3);
 }
 //todo: maybe make this handle n images instead of 4 with programatic css
+eqa("#left-menu-options>div").forEach(e => {
+    const option = e;
+    const name = option.dataset.name;
+    const menuitem = eq(`#left-menu>.${name}`);
+    
+    const rotation = 35;
+    const rotationr = rotation * deg2rad;
+    option.classList.add(name);
+
+    option.onmouseover = () => {
+        menuitem.classList.add("active");
+
+        // Get the perspective value from #left-menu
+        const perspective = 1000;
+        const realheight = brect(eid("left-menu")).height;
+        // ((menuitem.clientHeight + menuitem.offsetTop) / eid("left-menu").clientHeight);
+        // log(perspective);
+
+        // perspective scaling code from chatgpt
+        // Calculate the offset considering the perspective and rotation
+        // Project the offsetTop into the transformed space
+        // Approximate: scale offset by perspective / (perspective - z)
+        // where z = menuitem.clientHeight * sin(rotationr)
+        const z = menuitem.clientHeight * sin(rotationr);
+        const scale = perspective / (perspective - z);
+
+        const offset = (
+            (menuitem.offsetTop * 1 / scale - option.offsetTop / cos(rotationr) 
+                - (2 * menuitem.clientHeight * sin(rotationr / 2) * sin(rotationr / 2)) /
+                sin((90 - rotation) * deg2rad) 
+            ) 
+        );
+
+        eid("left-menu").style.transform = `
+            rotateX(${rotation}deg) 
+            translateY(${-offset}px)
+        `;
+        // eid("left-menu-outer").style.perspective = `${perspective}px`;
+        log(scale, offset);
+    };
+    menuitem.onmouseover = option.onmouseover; // hacky fix i think
+    option.onmouseout = () => {
+        menuitem.classList.remove("active");
+    };
+    menuitem.onmouseout = option.onmouseout;
+});

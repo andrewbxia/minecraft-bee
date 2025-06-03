@@ -83,6 +83,9 @@
             white-space: nowrap;
         }
         #main-h{
+            position: absolute;
+            top: 0;
+            left: 0;
             --speed: 20s;
             overflow: hidden;
             width: 100%;
@@ -139,10 +142,10 @@
         app(eid("main-h"), app(mk("div",{style: "min-width: fit-content;", id: "header-m-c"}), app(mk("span", {class: "marquee-100", id: "header-m"}), mainhnodes)));
 
     </script>
-    <div id="page">
+    <div id="page" style="">
         <div id="page-left">
             <div id="left-menu-outer">
-                <div id="left-menu-options">
+                <div id="left-menu-options" class="comic-sans">
                     
             <!-- until i work on this its just gonna be comments for now -->
             <!-- prob gonna be a side menu in #page-left -->
@@ -151,33 +154,38 @@
             <!-- https://parkalex.dev for the theme-icon svgs and being a supportive fellow -->
             <!-- https://anthropocenereviewedbook.com John Green for inspiring my own writing style -->
             <!-- hosted on github pages (link here) -->
-                    <div class="credits">
+                    <div data-name="credits">
                         <span>credits</span>
-                        <div class="content comic-sans">
+                        
+                    </div>
+                    <div data-name="gallery">
+                        <span>gallery</span>
+                    </div>
+                    <div data-name="guestbook">
+                        <span>❤️<a href="https://andrewbxia.atabook.org/">guestbook!</a></span>
+                        
+                    </div>
+                    <div data-name="test2">
+                        <span>test2</span>
+                    </div>
+                </div>
+                    <div id="left-menu">
+                        <div class="content credits">
                             <p><a href="https://parkzer.com">Adam Parkzer</a> for the blog-centric design inspo</p>
                             <p><a href="https://tanza.me">Tanza</a> for that cool 3d img track thing thats so cool</p>
                             <p><a href="https://parkalex.dev">ඞlex Pඞrk</a> for the theme-icon svgs and being a supportive fellow</p>
                             <p><a href="https://anthropocenereviewedbook.com">John Green</a> for inspiring my own writing style</p>
                             <p>hosted on <a href="https://pages.github.com/">github pages</a></p>
                         </div>
-                    </div>
-                    <div class="gallery">
-                        <span>gallery</span>
-                        <p class="content">test content afd sasf daf sd afds adfs dfas dfas dafsd afs dfas dafs adfs dafs adfs fads dfsa adfs fads adsf afsd afdsthing</p>
-                    </div>
-                    <div class="guestbook">
-                        <span>❤️<a href="https://andrewbxia.atabook.org/">guestbook!</a></span>
-                        <p class="content">
+                        <p class="content gallery">test content afd sasf daf sd afds adfs dfas dfas dafsd afs dfas dafs adfs dafs adfs fads dfsa adfs fads adsf afsd afdsthing</p>
+                        <p class="content guestbook">
                             come <a class="prominent" href="https://andrewbxia.atabook.org/">sign my guestbook!</a> i'm always excited to see other people!
                         </p>
+                        <p class="content test2">test content thing</p>
+
                     </div>
-                    <div class="test2">
-                        <span>test2</span>
-                        <p class="content">test content thing</p>
-                    </div>
-                </div>
-                <div id="left-menu"></div>
             </div>
+            
         </div>
         <!-- maybe have the border charging up something? its going to the right without bounds so maybe -->
         <div id="main" style="min-height: 15000px;" class="track-outer">

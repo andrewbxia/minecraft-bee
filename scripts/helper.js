@@ -17,6 +17,12 @@ const err = (...message) => console.error(...message);
 const derr = (...message) => {if(debug) err(...message)};
 const abs = (num) => Math.abs(num);
 const pow = (num, exp) => Math.pow(num, exp);
+const pi = Math.PI
+const deg2rad = pi / 180;
+const rad2deg = 180 / pi;
+const sin = (rads) => Math.sin(rads);
+const cos = (rads) => Math.cos(rads);
+const tan = (rads) => Math.tan(rads);
 const assert = (condition, msg) => {if(!condition) throw new Error(msg);};
 const assertnotreached = (msg = "unreachable thingy reached") => assert(false, msg);
 
