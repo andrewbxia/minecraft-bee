@@ -2,6 +2,15 @@
 // init funcs
 KeySet.init();
 checkvisit();
+document.addEventListener("visitorstats", () => {
+    eq("#visitor-stats span.total").innerText = visitorstats.visitor_count;
+    eq("#visitor-stats span.unique").innerText = visitorstats.visitor_unique;
+    const visitorid = pint(localStorage.getItem("visitorid"));
+    log("visitorid", visitorid);
+    if(visitorid){
+        eq("#visitor-stats span.unique").setAttribute("data-hover", `(ur the ${numsuffix(visitorid)}!)`);
+    }
+})
 
 
 
@@ -68,13 +77,13 @@ styling(`
     ${Array.from({length: 20}, (_, i) => `
         &.active-${(i + 1) * 10}{
             &::before{
-            height: ${10 * (i + 2)}%;
+                height: ${10 * (i + 2)}%;
+            }
+            &::after{
+                bottom: ${100 - (i + 2) * 10}%;
+                height: ${max(6, (i + 1) * .6)}px;
+            }
         }
-        &::after{
-            bottom: ${100 - (i + 2) * 10}%;
-            height: ${max(6, (i + 1) * .6)}px;
-        }
-    }
     `).reverse().join('')}
 }
 `);
@@ -517,7 +526,7 @@ eqa("#left-menu-options>div").forEach(e => {
             translateY(${-offset}px)
         `;
         // eid("left-menu-outer").style.perspective = `${perspective}px`;
-        log(scale, offset);
+        // log(scale, offset);
     };
     menuitem.onmouseover = option.onmouseover; // hacky fix i think
     option.onmouseout = () => {
@@ -525,3 +534,12 @@ eqa("#left-menu-options>div").forEach(e => {
     };
     menuitem.onmouseout = option.onmouseout;
 });
+eid("left-menu-outer").onmouseout = (e) => {
+
+    // idk what chatgpt cooked up here but ti woirks
+    // Only reset if the mouse actually leaves the container, not just moves between children
+    if (!e.relatedTarget || !eid("left-menu-outer").contains(e.relatedTarget)) {
+        eid("left-menu").style.transform = "";
+        log("resetting left menu transform");
+    }
+}

@@ -51,12 +51,15 @@ a{
         }
         #page-left{
             flex-grow: 1;
-            #left-menu-outer{
+            >*{
                 display: none;
             }
         }
         #page-right{
             flex-grow: 2;
+            >*{
+                display: none;
+            }
         }
         #main{
             /* width: 100%; */
@@ -207,6 +210,14 @@ a{
 #page-left{
     flex-grow: 1;
     z-index: 1;
+    /* width: fit-content; */
+    width: 250px;
+    max-width: 250px;
+    >*{
+        margin-left: auto;
+        margin-right: 0;
+        text-align: right;
+    }
     &.editing{
         display: flex;
         flex-direction: row;
@@ -243,10 +254,9 @@ a{
                     text-indent: 1em;
                 }
             }
+
             position: relative;
             text-align: right;
-            /* perspective: 300px; */
-            transition: perspective 0.15s var(--ease-more-in);
             &::before, &::after{
                 content: '';
                 position: absolute;
@@ -259,19 +269,19 @@ a{
             }
             &::before{
                 top: 0;
-                /* left: 0; */
             }
             &::after{
                 bottom: 0;
                 right: 0;
             }
             >span{
-                transition: color 0.35s;
+                font-variation-settings: var(--fw-light);
+                transition: color .35s, font-variation-settings .75s;
             }
             
             &:hover{
-                /* perspective: 500px; */
                 >span, >span>a{
+                    font-variation-settings: var(--fw-bold);
                     color: var(--theme-light);
                 }
                 &::before, &::after{
@@ -292,11 +302,12 @@ a{
         width: 600px;
         /* background-color: var(--theme-light); */
         >*{
+            text-align: left;
             width: 100%;
             border: 5px var(--border);
             transform-origin: 50% 100%;
             background-color: var(--theme-light);
-            transition: var(--doublebacktrack);
+            transition: ease;
             transition-property: transform, filter;
             transition-duration: 0.5s, 1s;
             filter: brightness(0.75);
@@ -331,10 +342,10 @@ a{
         }
         /* opacity: 0; */
         transform-origin: 50% 0%;
-        transform: rotateX(35deg) translateY(100vh);
+        transform: rotateX(35deg) translateY(-1000px);
         transition: var(--ease-backtrack);
-        transition-property: transform, opacity;
-        transition-duration: 0.5s, 0.15s;
+        transition-property: transform, top;
+        transition-duration: 0.5s, 0.5s;
         opacity: 0;
         /* animation: perspective-shift 2s infinite alternate; */
         >div.credits{
@@ -358,14 +369,50 @@ a{
         /* animation: perspective-shift 2s infinite alternate; */
     }
 }
-@keyframes perspective-shift{
-    0%{
 
-        transform: rotateX(35deg) translateY(-18%);    }
-    100%{
-
-        transform: rotateX(35deg) translateY(-50%);    }
+#visitor-stats{
+    font-size: 16px;
+    max-width: 100%;
+    /* overflow-x: hidden; */
+    >p{
+        width: max-content;
+        background-color: var(--theme-dark);
+        color: var(--theme-light);
+        >span{
+                white-space: nowrap;
+            &::after{
+                display: inline;
+                content: attr(data-hover);
+                font-size: 0;
+                transition: font-size 0.25s;
+                white-space: nowrap;
+            }
+            transition: font-variation-settings 0.25s var(--ease-doublebacktrack);
+        }
+        &:hover{
+            >span{
+                &::after{
+                    font-size: 1em;
+                }
+                font-variation-settings: var(--fw-bold);
+            }
+        }
+    }
+    >*{
+        margin-left: inherit;
+        margin-right:inherit;
+    }
+    
+    ::selection{
+        background-color: var(--theme-light);
+        color: var(--theme-dark);
+        text-shadow: none;
+    }
 }
+
+
+
+
 #page-right{
     flex-grow: 12;
     &.editing{
@@ -462,6 +509,7 @@ a{
         position: relative;
         
         width: 100%;
+        transition: font-variation-settings 0.5s;
         font-size: inherit;
         text-align: center;
         &::before, &::after{

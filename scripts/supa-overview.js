@@ -79,33 +79,47 @@ const visitorstats = {
 };
 
 const visitintervallimit = 1000 * 60 * 60; // 1 hour
+let newvisit = false;
 async function checkvisit(){
     if(checkvisited) return;
     checkvisited = true;
-    if(debug)return;
     
     const lastvisit = localStorage.getItem('lastvisit');
     const now = Date.now();
+    let repeat = false;
     if(lastvisit !== null && 
         now - lastvisit < visitintervallimit) {
-        console.log("helo repeat customer :p");
-        return;
+            console.log("helo repeat customer :p");
+            repeat = true
     }
-    localStorage.setItem('lastvisit', now);
-    const newvisit = lastvisit === null;
+    newvisit = lastvisit === null;
+    if(!debug){
+        if(newvisit){
+            console.log("omg hihihihihihi");
+            fetch(`${supaurl}/rest/v1/rpc/inc_u`, {
+                method: "POST",
+                    headers: {
+                    apikey: publicanonkey,
+                    "Authorization": `Bearer ${publicanonkey}`,
+                    "Content-Type": "application/json"
+                }
+            });
+        }
+        if(!repeat){ // new visit
+            localStorage.setItem('lastvisit', now);
+            fetch(`${supaurl}/rest/v1/rpc/inc`, {
+                method: "POST",
+                    headers: {
+                    apikey: publicanonkey,
+                    "Authorization": `Bearer ${publicanonkey}`,
+                    "Content-Type": "application/json"
+                }
+            });
+        }
+    }
 
-    if(newvisit){
-        console.log("omg hihihihihihi");
-        fetch(`${supaurl}/rest/v1/rpc/inc_u`, {
-            method: "POST",
-                headers: {
-                apikey: publicanonkey,
-                "Authorization": `Bearer ${publicanonkey}`,
-                "Content-Type": "application/json"
-            }
-        });
-    }
-    const resp = await fetch(`${supaurl}/rest/v1/rpc/inc`, {
+
+    const resp = await fetch(`${supaurl}/rest/v1/rpc/get`, {
         method: "POST",
             headers: {
             apikey: publicanonkey,
@@ -113,6 +127,7 @@ async function checkvisit(){
             "Content-Type": "application/json"
         }
     });
+
     const json = await resp.json();
     if(json.error){
         console.error("uh oh", json.error);
@@ -121,6 +136,9 @@ async function checkvisit(){
     else{
         visitorstats.visitor_count = json[0].visitor_count;
         visitorstats.visitor_unique = json[0].visitor_unique;
+
+        if(newvisit && localStorage.getItem("visitorid") === null)
+            localStorage.setItem("visitorid", json[0].visitor_unique);
         document.dispatchEvent(new Event("visitorstats"));
     }
 

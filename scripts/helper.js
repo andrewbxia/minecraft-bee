@@ -100,6 +100,21 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 });
 
+// based off of https://github.com/stephenmathieson/ordinal-number-suffix
+function numsuffix(num, onlysuffix = false){
+    const prefix = onlysuffix ? "" : num + "";
+    num %= 100
+    return prefix + (floor(num / 10) === 1
+      ? 'th'
+      : (num % 10 === 1
+        ? 'st'
+        : (num % 10 === 2
+          ? 'nd'
+          : (num % 10 === 3
+            ? 'rd'
+            : 'th'))));
+}
+
 function addclicklistener(query, callback){
     document.addEventListener("click", (e) => {
         if(e.target.matches(query)){
