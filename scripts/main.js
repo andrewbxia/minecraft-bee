@@ -10,6 +10,10 @@ document.addEventListener("visitorstats", () => {
     if(visitorid){
         eq("#visitor-stats span.unique").setAttribute("data-hover", `(ur the ${numsuffix(visitorid)}!)`);
     }
+    else{
+        // huh
+        localStorage.removeItem("lastvisit");
+    }
 })
 
 
