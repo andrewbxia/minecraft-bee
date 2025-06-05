@@ -126,7 +126,7 @@ body{
     image-rendering: auto;
 }
 
-::selection, ::-moz-selection {
+::selection{
     background-color: var(--theme-dark);
     color: var(--theme-light);
     text-shadow: none;
