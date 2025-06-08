@@ -391,22 +391,23 @@ function generateposs(cnt){
 
 let trackimgcss = "", bgurlloaded = 0;
 async function artzurl(idx){
-    if(idx >= artzinfo.length){
-        idx %= artzinfo.length;
-        const catdata = await fetch("https://api.thecatapi.com/v1/images/search")
-            .then(response => response.json()).catch(e => e);
+    // if(idx >= artzinfo.length){
+    //     idx %= artzinfo.length;
+    //     const catdata = await fetch("https://api.thecatapi.com/v1/images/search")
+    //         .then(response => response.json()).catch(e => e);
         
-        if(!catdata.message){
-            const url = catdata[0].url;
-            return url;
-        }
-    }
+    //     if(!catdata.message){
+    //         const url = catdata[0].url;
+    //         return url;
+    //     }
+    // }
     
-    return baseartzlink + artzinfo[idx][0];
+    return baseartzlink + artzinfo[idx % artzinfo.length][0];
     
 }
-(async () => {
-    for(let i = 0; i < dirs.length * 4; i++){
+(async () =>{
+    const upper = dirs.length * 4;
+    for(let i = 0; i < upper; i++){
         const url = await artzurl(i);
         trackimgcss += `
         .${imgprefix}${i} {
@@ -427,12 +428,13 @@ async function artzurl(idx){
         // log(bimgurl);
         img.src = bimgurl;
     });
-});
+})();
 
 function trackitem(idx, transition = "none"){
     let desc = "";
-    if(idx >= artzinfo.length) desc = "index overflow cat!!";
-    else desc = artzinfo[idx][1];
+    // if(idx >= artzinfo.length) desc = "index overflow cat!!";
+    // else 
+    desc = artzinfo[idx % artzinfo.length][1];
     return app(mk("div",{class: `${dirs[idx % dirs.length]}` }), 
         app(
             mk("div",
