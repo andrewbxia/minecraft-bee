@@ -73,33 +73,6 @@ function extrrand(max) { // prefer extremes of distribution
 const chance = (onein = 2) => Math.random() < 1 / onein;
 
 const params = new URLSearchParams(window.location.search);
-document.addEventListener("DOMContentLoaded", function(){
-    eqa("iframe").forEach(iframe => {
-        iframe.onload = () => {
-            // set the height of the iframe as 
-            // the height of the iframe content
-            try{
-                iframe.style.height = iframe.contentWindow.document.body.scrollHeight +'px';
-                iframe.contentWindow.document.addEventListener("googies_loaed", () => {
-                    iframe.style.height = iframe.contentWindow.document.body.scrollHeight +'px';
-                    iframe.parentNode.style.height = iframe.contentWindow.document.body.scrollHeight +'px';
-                    // iframe.style.width  = iframe.contentWindow.document.body.scrollWidth + 15 + 'px';
-    
-                });
-                log("ok good");
-                log(iframe.style.height);
-            }
-            catch(e){
-                // err(e);
-                err("prob some cross ogigin thing: " +  e.message);
-            }
-            // iframe.style.height = "196px";
-            // set the width of the iframe as the 
-            // width of the iframe content
-            // iframe.style.width  = iframe.contentWindow.document.body.scrollWidth + 15 + 'px';
-        }
-    });
-});
 
 // based off of https://github.com/stephenmathieson/ordinal-number-suffix
 function numsuffix(num, onlysuffix = false){
@@ -259,3 +232,13 @@ function putheader(){
 function putfooter(){
     document.body.insertAdjacentHTML("beforeend", footer);
 }
+
+
+// things to do when thing loads or some thing
+document.addEventListener("DOMContentLoaded", () =>{
+    eqa("img").forEach(img => {
+        if(!img.hasAttribute("loading")){
+            img.setAttribute("loading", "lazy");
+        }
+    })
+});
