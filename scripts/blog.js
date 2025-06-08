@@ -70,6 +70,10 @@ function generatepost(post){
     appmany(misc, 
         [p(datestr), p(tags.join(" · ")), postwc]
     );
+
+    postc.querySelectorAll("img").forEach(img => {
+        imglazy(img);
+    });
     
     app(posth, misc);
     app(postel, posth);

@@ -235,10 +235,14 @@ function putfooter(){
 
 
 // things to do when thing loads or some thing
+function imglazy(img){
+    if(!img.hasAttribute("loading")){
+        img.setAttribute("loading", "lazy");
+    }
+    return img;
+}
 document.addEventListener("DOMContentLoaded", () =>{
     eqa("img").forEach(img => {
-        if(!img.hasAttribute("loading")){
-            img.setAttribute("loading", "lazy");
-        }
+        imglazy(img);
     })
 });

@@ -581,6 +581,7 @@ a{
     mix-blend-mode: multiply !important;
 }
 #blog{
+    padding-bottom: 8px; /* scroll progress bar height */
     >article{
         line-height: var(--line-height);
         border: var(--border); /*border placeholder*/
