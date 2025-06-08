@@ -78,7 +78,7 @@ const visitorstats = {
     visitor_unique: -1,
 };
 
-const visitintervallimit = 1000 * 60 * 60; // 1 hour
+const visitintlimit = 1000 * 60 * 60; // 1 hour
 let newvisit = false;
 async function checkvisit(){
     if(checkvisited) return;
@@ -88,7 +88,7 @@ async function checkvisit(){
     const now = Date.now();
     let repeat = false;
     if(lastvisit !== null && 
-        now - lastvisit < visitintervallimit) {
+        now - lastvisit < visitintlimit) {
             console.log("helo repeat customer :p");
             repeat = true
     }

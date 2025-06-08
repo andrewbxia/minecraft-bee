@@ -1,5 +1,6 @@
 const baseurl = window.location.host; // give them the port if they wanna!!!!
 const debug = baseurl !== "andrewb.xyz";
+// helper code i wrote to make everything(javascript) either less horrible or more unreadable with the terseness of whatever declaratinons come out of me utilizing this
 
 const eid = (id) => document.getElementById(id);
 const eq = (query) => document.querySelector(query);

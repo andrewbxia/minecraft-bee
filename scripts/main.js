@@ -1,4 +1,8 @@
 "use strict";
+
+
+// hi debugger if its saturday for you rn u get a cookie
+// also i explicitly state where in this code chatgpt was used n stuffies
 // init funcs
 KeySet.init();
 checkvisit();
@@ -423,7 +427,7 @@ async function artzurl(idx){
         // log(bimgurl);
         img.src = bimgurl;
     });
-})();
+});
 
 function trackitem(idx, transition = "none"){
     let desc = "";
@@ -453,6 +457,7 @@ function addtotrack(track, classadd = 0){
         app(track, titem);
     }
 }
+
 eqa(".track-outer .track-1.track:not(.other)").forEach((e) => {
     addtotrack(e);
 });
@@ -465,6 +470,7 @@ eqa(".track-outer .track-2.track:not(.other)").forEach((e) => {
 eqa(".track-outer .track-2.track.other").forEach((e) => {
     addtotrack(e, dirs.length * 3);
 });
+
 // eqa(".track-outer .track-3.track:not(.other)").forEach((e) => {
 //     addtotrack(e, dirs.length * 1);
 // });

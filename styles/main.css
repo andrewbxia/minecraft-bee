@@ -51,7 +51,7 @@ a{
         }
         #page-left{
             flex-grow: 1;
-            >*{
+            >*:not(#blog-writing .editing){
                 display: none;
             }
         }
@@ -220,6 +220,7 @@ a{
     &.editing{
         display: flex;
         flex-direction: row;
+        max-width: unset;
     }
 }
 :root.dark #left-menu-options>div{
@@ -420,7 +421,7 @@ a{
 }
 
 #fps, #main{
-    text-shadow: 2px 2px 0px var(--theme-light);
+    text-shadow: .05em .05em 0px var(--theme-light);
 }
 
 #keyset{
