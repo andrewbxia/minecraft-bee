@@ -103,7 +103,11 @@ const listen = (event, callback, element = document) => {
     return () => element.removeEventListener(event, callback);
 }
 
-const toggletheme = () => document.documentElement.classList.toggle("dark"); 
+let thememode = "light";
+const toggletheme = () => {
+    document.documentElement.classList.toggle("dark"); 
+    thememode = document.documentElement.classList.contains("dark") ? "dark" : "light";
+}
 // light mode better tho :sunglasses: :sunglasses:
 if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
     toggletheme();

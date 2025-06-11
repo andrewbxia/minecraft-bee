@@ -205,8 +205,16 @@ window.addEventListener("scroll", () => {
     scrollprogress.fire();
 });
 
+function togglewcb(){
+    if(thememode === "dark")
+        eid("wcb").classList.add("wcb-d");
+    else
+        eid("wcb").classList.remove("wcb-d");
+}
+togglewcb();
 const triggertheme = new MeteredTrigger(250, () => {
     toggletheme();
+    togglewcb();
     // setTimeout(() => {
         resetscrollbars();
     // }, 250);
