@@ -141,7 +141,21 @@ br{
 }
 code{
     font-family: monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
+textarea{
+    font-family: inherit;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    resize: vertical;
+    background-color: var(--theme-light-other);
+    color: var(--theme-dark-other);
+    border: 2px solid var(--theme-dark);
+}
+
 h1, h2, h3, h4, h5, h6{
     font-family: cascadia;
     font-variation-settings: var(--fw-bold);
@@ -158,6 +172,15 @@ p{
 }
 a{
     color: var(--theme-dark);
+    transition: 0.75s ease;
+    transition-property: color, text-shadow, outline-color;
+    outline: 5px solid rgba(var(--theme-dark-vals), 0.1);
+    text-shadow: 0 0 0.05em var(--theme-dark);
+    &:hover{
+        text-shadow: 0 0 0.25em var(--theme-dark);
+        outline-color: rgba(var(--theme-dark-vals), 0.25);
+        text-decoration-thickness: 0.1em;
+    }
 }
 iframe{
     overflow: hidden;
@@ -170,6 +193,14 @@ iframe{
     }
     to{
         padding-left: 100%;
+    }
+}
+@keyframes marquee-p {
+    from{
+        margin-left: 0%; /* had to sub 1ch in the past */
+    }
+    to{
+        margin-left: calc(-50% - 0ch);
     }
 }
 @keyframes marquee-rev{
@@ -216,19 +247,21 @@ iframe{
     white-space: nowrap;
     width: 100%;
     overflow: hidden;
-    animation: marquee 10s linear infinite;
+    animation: marquee var(--speed) linear infinite;
 }
 .marquee-rev{
     white-space: nowrap;
     max-width: 100%;
     overflow: hidden;
-    animation: marquee-rev 20s linear infinite;
+    animation: marquee-rev var(--speed) linear infinite;
 }
-.marquee-rev-full{
+.marquee-p{
+    animation: marquee-p var(--speed) infinite linear;
+    display: flex;
+    flex-direction: row;
     white-space: nowrap;
-    min-width: 100%;
-    animation: marquee-rev-full 30s linear infinite;
 }
+
 .marquee-stop:hover{
     animation-play-state: paused;
 }

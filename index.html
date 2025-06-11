@@ -30,7 +30,7 @@
     </script>
     <!-- things that actutally depend on body -->
     <script defer src="./scripts/main.js"></script>
-    <script defer src="./scripts/cd.js"></script>
+    <!-- <script defer src="./scripts/cd.js"></script> -->
     <script defer src="./scripts/blog.js"></script>
     <!-- <script defer src="./scripts/oneko.js" data-cat="./assets/imgs/oneko.png"></script> -->
 
@@ -60,14 +60,6 @@
     </div>
     
     <style>
-        @keyframes marquee-2{
-            from{
-                margin-left: 0%; /* had to sub 1ch in the past */
-            }
-            to{
-                margin-left: calc(-50% - 0ch);
-            }
-        }
         @keyframes background-shift-y{
             from{
                 background-position-y: -100%;
@@ -76,12 +68,7 @@
                 background-position-y: 100%;
             }
         }
-        .marquee-100{
-            animation: marquee-2 var(--speed) infinite linear;
-            display: flex;
-            flex-direction: row;
-            white-space: nowrap;
-        }
+        
         #main-h{
             position: absolute;
             top: 0;
@@ -139,7 +126,7 @@
         }));
 
         eid("main-h").style.setProperty("--speed", `${splashtxtchars * 8.141592/95}s`);
-        app(eid("main-h"), app(mk("div",{style: "min-width: fit-content;", id: "header-m-c"}), app(mk("span", {class: "marquee-100", id: "header-m"}), mainhnodes)));
+        app(eid("main-h"), app(mk("div",{style: "min-width: fit-content;", id: "header-m-c"}), app(mk("span", {class: "marquee-p", id: "header-m"}), mainhnodes)));
 
     </script>
     <div id="page" style="">
@@ -200,8 +187,49 @@
                 <p>visitors: <span data-hover=" :&#41;" class="total">-1</span></p>
                 <p>uniq. visitors: <span data-hover=" :D" class="unique">-1</span></p>
             </div>
+            <div id="self-88x31">
+                <h3 style="text-decoration: underline;">my 88x31 buttons!</h3>
+                <div class="track-88x31">
+                    <span><img src="./88x31/88x31_border.webp" draggable="false"
+                        title="has top/bottom border" class="selected"></span>
+                    <span><img src="./88x31/88x31.webp" draggable="false" title="no border'd"></span>
+                </div>
+                <p style="width:fit-content;margin-left:auto;
+                    border:dotted 2px var(--theme-dark);
+                    border-width:2px 0 0 2px;">&nbsp;▶ feel free to hotlink!</p>
+                <textarea readonly class="output" style="font-size: 1.1em; resize: none; max-width: 100%;"></textarea>
+                <script>
+                    const imgquery8831 = "#self-88x31 .track-88x31 img";
+                    const spanquery8831 = "#self-88x31 .track-88x31 span";
+                    eqa(spanquery8831).forEach((el) => {
+                        const image = el.querySelector("img");
+                        el.onclick = (e) => {
+                            eq("#self-88x31>.output").innerText = 
+                                tohtml(app(link(baseurl), img(image.src)));
+                            eqa(spanquery8831).forEach((el) => {
+                                el.classList.remove("selected");
+                            });
+                            el.classList.add("selected");
+                        }
+                    })
+                    eq(spanquery8831).dispatchEvent(new MouseEvent("click"));
+                </script>
+            </div>
+            <!-- giving up on using marquee classes easy -->
+            <marquee id="track-88x31" behavior="alternate" 
+                onmouseenter="this.stop();"
+                onmouseleave="this.start();"
+                scrollamount="4" loop="infinite">
+                <img src="./88x31/jhlee.gif">
+                <img src="./88x31/firefox.gif">
+                <img src="88x31/despacito.png">
+                <a href="parkalex.dev" target="_blank">
+                    <img src="./88x31/sirenemoji.png">
+                </a>
+                <iframe src="//incr.easrng.net/badge?key=changeme" style="background: url(//incr.easrng.net/bg.gif)" title="increment badge" width="88" height="31" frameborder="0"></iframe>
+            </marquee>
         </div>
-        <!-- maybe have the border charging up something? its going to the right without bounds so maybe -->
+        <!-- maybe have the border charging up something? -->
         <div id="main" style="min-height: 15000px;" class="track-outer">
             
             <!-- <div class="track track-3"></div>
@@ -217,7 +245,7 @@
             <div class="track track-1 backface"></div>
             <div class="track track-1 other"></div>
             <div class="track track-1 other backface last"></div>
-            <div id="demark-bar"></div>
+            <div id="demark-bar" title="ABANDON HOPE ALL YE WHO ENTER HERE."></div>
             
                 <!-- <div class="track-outer"> -->
                     <!-- <div class="cover"></div> -->

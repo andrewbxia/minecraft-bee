@@ -62,7 +62,10 @@ KeySet.onoofkey = (key) => {
 
 // branding visuals
 //document.title = baseurl; // later have this textanimate based on branding activeq
-const axia = eid("branding"), axiatxt = baseurl + "·∫:p_d_", axialen = axiatxt.length;
+const axia = eid("branding"), 
+    axiatxt = baseurl + "·∫:p_d_", 
+    axialen = axiatxt.length;
+    // "axia.sh"
 // const axiachstyle = styling(`
 //     .b-ch{
 //         font-size: ${1000/axialen}%;
@@ -555,3 +558,4 @@ eid("left-menu-outer").onmouseout = (e) => {
         log("resetting left menu transform");
     }
 }
+
