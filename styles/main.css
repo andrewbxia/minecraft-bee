@@ -467,6 +467,13 @@ a{
     }
 }
 
+#wcb_p{
+    width: fit-content;
+    margin-left: 15px;
+}
+
+
+
 #fps, #main{
     text-shadow: .05em .05em 0px var(--theme-light);
 }
