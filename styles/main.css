@@ -412,26 +412,33 @@ a{
 #self-88x31{
     margin-top: 30px;
     font-size: 16px;
+    --size: 40px;
     .track-88x31{
         margin: 5px 0;
+        margin-bottom: var(--size);
     }
     img:hover{
         cursor: pointer;
     }
     span.selected{
         position: relative;
-        --size: 40px;
         &::before, &::after{
             position: absolute;
             font-size: var(--size);
-            bottom: calc(16px - var(--size)/2);
+            bottom: calc(16px - var(--size) / 2);
             pointer-events: none;
         }
-        &::before{
+        &::before, &:nth-child(1)::after{
+            content:'☝';
+            left: calc(50% - var(--size) / 2);
+            bottom: calc(-1 * var(--size));
+        }
+        &:nth-child(1)::before{
             content: '☞';
             left: calc(-1 * var(--size));
+            bottom: calc(16px - var(--size) / 2);
         }
-        &::after{
+        &:nth-last-child(1)::after{
             content: '☜';
             right: calc(-1 * var(--size));
         }
