@@ -467,11 +467,16 @@ a{
     }
 }
 
+#wcb.carbonbadge{
+    width: fit-content;
+}
 #wcb_p{
     width: fit-content;
-    margin-left: 15px;
+    margin: 5px 15px 0 15px;
 }
-
+#wcb #wcb_2, #wcb #wcb_a, #wcb #wcb_g{
+    font-family: inherit !important;
+}
 
 
 #fps, #main{
