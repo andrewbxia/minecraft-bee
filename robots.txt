@@ -1,6 +1,17 @@
 User-agent: indieseas
 Allow: /
 
+User-agent: Googlebot-Image
+Disallow: /
+
+User-agent: Bingbot-Image
+Disallow: /
+
+User-agent: YandexImages
+Disallow: /
+
+User-agent: Baiduspider-image
+Disallow: /
 
 User-agent: *
 Allow: /
