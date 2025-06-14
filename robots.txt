@@ -97,3 +97,5 @@ Disallow: /
 
 User-agent: *
 Allow: /
+
+Sitemap: https://andrewb.xyz/sitemap.xml
