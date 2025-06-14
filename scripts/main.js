@@ -63,7 +63,7 @@ KeySet.onoofkey = (key) => {
 // branding visuals
 //document.title = baseurl; // later have this textanimate based on branding activeq
 const axia = eid("branding"), 
-    axiatxt = baseurl + "·∫:p_d_", 
+    axiatxt = minurl + "·∫:p_d_", 
     axialen = axiatxt.length;
     // "axia.sh"
 // const axiachstyle = styling(`
