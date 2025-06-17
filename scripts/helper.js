@@ -1,7 +1,7 @@
 const minurl = window.location.host; // give them the port if they wanna!!!!
 const baseurl = window.location.origin;
 const fullurl = baseurl + window.location.pathname;
-const debug = baseurl !== "andrewb.xyz";
+const debug = minurl !== "andrewb.xyz";
 // helper code i wrote to make everything(javascript) either less horrible or more unreadable with the terseness of whatever declaratinons come out of me utilizing this
 
 const eid = (id) => document.getElementById(id);
@@ -174,6 +174,19 @@ function appmany(parent, children){
     children.forEach(child => app(parent, child));
     return parent;
 }
+function prep(parent, child){
+    if (child instanceof Node) {
+        parent.prepend(child);
+    } else {
+        err("arg 2 is not an object");
+    }
+    return parent;
+}
+function prepmany(parent, children){
+    children.forEach(child => prep(parent, child));
+    return parent;
+}
+
 const fromhtml = (txt) => mktxt("template", txt).content.firstChild;
 const tohtml = (el) => el.outerHTML;
 

@@ -405,7 +405,7 @@ a{
 #track-88x31, #self-88x31{
     img{
         image-rendering: pixelated;
-        width: 88px;
+        /* width: 88px; */
         height: 31px;
     }
 }
@@ -450,7 +450,7 @@ a{
 #track-88x31{
     padding-left: 44px;
     padding-right: 44px;
-    max-height: 88px;
+    max-height: 31px;
     font-size: 5px;
     /* overflow-x: hidden; */
     --speed: 1s;
