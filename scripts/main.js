@@ -567,3 +567,21 @@ eid("left-menu-outer").onmouseout = (e) => {
     }
 }
 
+// https://www.npmjs.com/package/ani-cursor/v/0.0.5
+const ani2css = (selector, data) => window.AniCursor.convertAniBinaryToCSS(selector, data);
+async function appcursor(selector, url) {
+    const response = await fetch(url);
+    const data = new Uint8Array(await response.arrayBuffer());
+
+    styling(ani2css(selector, data));
+}
+//default
+appcursor("body, ::-webkit-scrollbar-track", "../assets/cursors/don-chan/通常.ani");
+//pointer
+appcursor("a, button, ::-webkit-scrollbar-thumb, #self-88x31 img, #blog>nav>button, #theme-switch", "../assets/cursors/don-chan/リンクの選択.ani");
+//text
+appcursor("textarea, input, select, [contenteditable]", "../assets/cursors/don-chan/テキスト選択.ani");
+//ew-resize
+appcursor("#slider", "../assets/cursors/don-chan/左右に拡大縮小.ani");
+//move
+appcursor("#slider.grab", "../assets/cursors/don-chan/移動.ani");

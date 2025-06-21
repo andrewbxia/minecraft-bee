@@ -288,7 +288,7 @@ if (params.has("b-edit")){
     slider.addEventListener("mousedown", (event) => {
         dragging = true;
         prevwidths = [event.clientX, eid(editorcntid).offsetWidth];
-        slider.style.cursor = "grabbing";
+        slider.classList.add("grab");
     });
 
     const mainwidth = pint(docproperty("--main-width"));
@@ -306,7 +306,7 @@ if (params.has("b-edit")){
     
     document.addEventListener("mouseup", () => {
         dragging = false;
-        slider.style.cursor = "ew-resize";
+        slider.classList.remove("grab");
     });
 
     p_aceurls.forEach(url =>{

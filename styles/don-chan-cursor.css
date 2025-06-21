@@ -1,0 +1,33 @@
+/*
+cursor: url("../assets/cursors/don-chan/テキスト選択.ani"), text;
+    cursor: url("../assets/cursors/don-chan/バックグラウンドで作業中.ani"), wait;
+    cursor: url("../assets/cursors/don-chan/待ち状態.ani"), progress;
+    cursor: url("../assets/cursors/don-chan/ヘルプの選択.ani"), help;
+    cursor: url("../assets/cursors/don-chan/リンクの選択.ani"), pointer;
+    cursor: url("../assets/cursors/don-chan/上下に拡大縮小.ani"), ns-resize;
+    cursor: url("../assets/cursors/don-chan/左右に拡大縮小.ani"), ew-resize;
+    cursor: url("../assets/cursors/don-chan/斜めに拡大縮小1.ani"), nwse-resize;
+    cursor: url("../assets/cursors/don-chan/斜めに拡大縮小2.ani"), nesw-resize;
+    cursor: url("../assets/cursors/don-chan/移動.ani"), move;
+    cursor: url("../assets/cursors/don-chan/通常.ani"), default;
+    cursor: url("../assets/cursors/don-chan/領域選択.ani"), crosshair;
+    cursor: url("../assets/cursors/don-chan/代替選択.cur"), alias;
+    cursor: url("../assets/cursors/don-chan/利用不可.cur"), not-allowed;
+
+
+*/
+/* body{
+    cursor: url("../assets/cursors/don-chan/通常.ani"), default;
+}
+a, button{
+    cursor: url("../assets/cursors/don-chan/リンクの選択.ani"), pointer;
+}
+textarea, input, select{
+    cursor: url("../assets/cursors/don-chan/テキスト選択.ani"), text;
+}
+#slider{
+    cursor: url("../assets/cursors/don-chan/左右に拡大縮小.ani"), ew-resize !important;
+    &.grab{
+        cursor: url("../assets/cursors/don-chan/移動.ani"), move !important;
+    }
+} */
