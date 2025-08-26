@@ -1,0 +1,62 @@
+<html>
+
+<body>
+
+<ul>
+</ul>
+
+<script>
+const glist = 
+`blackbox
+bridges
+cube
+dominosa
+fifteen
+filling
+flip
+flood
+galaxies
+guess
+inertia
+keen
+lightup
+loopy
+magnets
+map
+mines
+mosaic
+net
+netslide
+palisade
+pattern
+pearl
+pegs
+range
+rect
+samegame
+signpost
+singles
+sixteen
+slant
+solo
+tents
+towers
+tracks
+twiddle
+undead
+unequal
+unruly
+untangle`.split("\n");
+const ul = document.querySelector("ul");
+glist.forEach(g => {
+ul.innerHTML += `<li>
+<a href="./${g}/${g}-kaios.html"> ${g} </a>
+</li>`;
+
+});
+</script>
+
+
+</body>
+
+</html>
