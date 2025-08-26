@@ -119,8 +119,8 @@ axia.addEventListener("click", (e) => {
 
 const bsplashrand = new WeightedChoices([
     [() => max(bsplash.pass({reverse: 0}), bsplash.pass({reverse: 1})), 2],
-    [() => max(bsplash.pass({reverse: 1, nucleationsites: 1, delay: 70}),
-        bsplash.pass({reverse: 0, nucleationsites: 1, delay: 70})), 1],
+    [() => max(bsplash.pass({reverse: 1, nucleationsites: 1, delay: 370}),
+        bsplash.pass({reverse: 0, nucleationsites: 1, delay: 370})), 1],
 ]);
 
 function playbsplash() {
@@ -128,7 +128,7 @@ function playbsplash() {
         const t = bsplashrand.spinthelottery()();
         setTimeout(() => {
             playbsplash();
-        }, t + randint(700, 300));
+        }, t + 10 * randint(700, 300));
     }
     else{
         setTimeout(playbsplash, 1000);
