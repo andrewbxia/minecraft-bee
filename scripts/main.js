@@ -394,7 +394,7 @@ const artzinfo = [
     } I think I like doing pixel art now :p`],
     ["miao_sticker.png", `printed out a bunch of stickers of a cat I drew in roblox spray paint like 2 years ago lmao, 
         here's the proof ${linkhtml("https://stickermule.com", "StickerMule")} sent me`],
-    ["IMG_2954.webp", `just bought acryllic markers and cooked on the BOOom`],
+    ["IMG_2954.jpg", `just bought acryllic markers and cooked on the BOOom`],
     ["sewh_shark.jpg", `played ${linkhtml("https://sewh.miraheze.org/wiki/Main_Page",
         'S.E.W.H.'
     )} and liked it a lot! ${linkhtml("https://joeylent.dev/", 
