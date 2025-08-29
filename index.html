@@ -189,11 +189,12 @@
                 <p>visitors: <span data-hover=" :&#41;" class="total">-1</span></p>
                 <p>uniq. visitors: <span data-hover=" :D" class="unique">-1</span></p>
             </div>
-            <div id="self-88x31">
+            <div id="self-88x31" style="user-select: none;">
                 <h3 style="text-decoration: underline;">my 88x31 buttons!</h3>
                 <div class="track-88x31">
-                    <span><img src="./88x31/88x31_border.webp" draggable="false"
-                        title="has top/bottom border" class="selected"></span>
+                    <span class="selected">
+                        <img src="./88x31/88x31_border.webp" draggable="false"
+                        title="has top/bottom border"></span>
                     <span><img src="./88x31/88x31.webp" draggable="false" title="no border'd"></span>
                 </div>
                 <textarea readonly class="output" style="font-size: 1.1em; resize: none; max-width: 100%;"></textarea>
@@ -204,7 +205,11 @@
                     const spanquery8831 = "#self-88x31 .track-88x31 span";
                     eqa(spanquery8831).forEach((el) => {
                         const image = el.querySelector("img");
+
                         el.onclick = (e) => {
+                            if(!el.matches(".selected")){
+                                triggertheme?.fire();
+                            }
                             eq("#self-88x31>.output").innerText = 
                                 tohtml(app(link(baseurl), img(image.src)));
                             eqa(spanquery8831).forEach((el) => {

@@ -368,9 +368,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 const baseartzlink = "../assets/imgs/artz/";
+
+// have fun seeing the art i commented out
 const artzinfo = [
-    ["IMG_1106.jpg", `old ahh 60 second portrait of me`],
-    ["IMG_1366.jpg", `doodle for irl friend madeleine !!`],
+    // ["IMG_1106.jpg", `old ahh 60 second portrait of me`],
+    ["IMG_1366.jpg", `old doodle for irl friend madeleine !!`],
     ["IMG_1378.jpg", `ORIIIIIIIIIIIIIIIIIIII`],
     ["IMG_1698.jpg", `${linkhtml("https://www.youtube.com/@RandomCatOnRoblox", "randomcat")} 
         fanart while i still thought he was cool`],
@@ -381,16 +383,30 @@ const artzinfo = [
     ["IMG_2119.jpg", `vandalizing my own 
         <i>${linkhtml(baseartzlink + "IMG_2119_og.jpg", "vandalized",{title: "trust me"})}</i> 
         ap chem booklet (jk thx alx and rachel i like it lol)`],
-    ["IMG_2231.jpg", `christmas doodle 4 online kiddos`],
+    // ["IMG_2231.jpg", `christmas doodle 4 online kiddos`],
     ["IMG_2380.jpg", `ap chemistry collab`],
     ["IMG_2000.jpg", `my first dip into digital art (god why didnt i use any blending for the lighting lol),
          birthday piece done for online friend`],
+    ["plutonium.png", `did a bunch of the pixel art on ${
+        linkhtml("https://wplace.live/?lat=35.85735782205856&lng=-106.30502962822266&zoom=16.18", 
+            " the wplace periodic table at los alamos!"
+        )
+    } I think I like doing pixel art now :p`],
+    ["miao_sticker.png", `printed out a bunch of stickers of a cat I drew in roblox spray paint like 2 years ago lmao, 
+        here's the proof ${linkhtml("https://stickermule.com", "StickerMule")} sent me`],
+    ["IMG_2954.webp", `just bought acryllic markers and cooked on the BOOom`],
+    ["sewh_shark.jpg", `played ${linkhtml("https://sewh.miraheze.org/wiki/Main_Page",
+        'S.E.W.H.'
+    )} and liked it a lot! ${linkhtml("https://joeylent.dev/", 
+        "Joey")} told me to add the (poorly drawn) blahaj lol`]
+
     // "IMG_.jpg",
     // "IMG_.jpg",
     // "IMG_.jpg",
     // "IMG_.jpg",
 ];
-artzinfo.sort(() => chance(2));
+
+artzinfo.sort(() => chance(2)); // big brain
 const dirs = ["front", "back", "left", "right"];
 const poss = [0, 4, 6, 2, 1, 5, 7, 3];
 const imgprefix = "chich";
@@ -402,6 +418,7 @@ function generateposs(cnt){
 
 let trackimgcss = "", bgurlloaded = 0;
 async function artzurl(idx){
+    // // uncomment this out to have overflow cats but it eats up bandwidth which I dont feel good doing
     // if(idx >= artzinfo.length){
     //     idx %= artzinfo.length;
     //     const catdata = await fetch("https://api.thecatapi.com/v1/images/search")

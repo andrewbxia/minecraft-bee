@@ -1,5 +1,5 @@
 :root{
-    --main-width: 1000px;
+    --main-width: 875px;
     --header-height: 2.67em;
 }
 html{
@@ -198,12 +198,18 @@ a{
     }
 }
 
-
 #page-left{
     flex-grow: 1;
+}
+#page-right{
+    flex-grow: 7;
+}
+
+#page-left{
+    /* flex-grow: 1; done above */
     z-index: 1;
     /* width: fit-content; */
-    max-width: 250px;
+    /* max-width: 225px; */
     >*{
         margin-left: auto;
         margin-right: 0;
@@ -403,11 +409,16 @@ a{
 }
 
 #track-88x31, #self-88x31{
+    max-width: 250px;
     img{
         image-rendering: pixelated;
         /* width: 88px; */
         height: 31px;
     }
+}
+#track-88x31{
+    float: right;
+    min-width: 100%;
 }
 #self-88x31{
     margin-top: 30px;
@@ -448,8 +459,8 @@ a{
     }
 }
 #track-88x31{
-    padding-left: 44px;
-    padding-right: 44px;
+    /* padding-left: 44px; */
+    /* padding-right: 44px; */
     max-height: 31px;
     font-size: 5px;
     /* overflow-x: hidden; */
@@ -461,7 +472,6 @@ a{
 
 
 #page-right{
-    flex-grow: 12;
     &.editing{
         display: none;
     }
@@ -645,7 +655,7 @@ a{
         line-height: var(--line-height);
         border: var(--border); /*border placeholder*/
         padding: 30px 145px;
-        font-size: 0.75em;
+        font-size: 0.875em;
         hyphens: auto;
         hyphenate-character: '-ඞ';
         word-wrap: break-word;
