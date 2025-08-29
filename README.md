@@ -2,4 +2,4 @@
 
 jk this is like the bad culmination of me learnign js for like 3 days god i hate this language
 
-![Minecraft Bee](./assets/imgs/bee-minecraft.jpg)
+![Minecraft Bee](./assets/imgs/bee-minecraft.webp)

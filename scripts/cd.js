@@ -6,7 +6,7 @@
 // prob the worst code ive ever written, dont reuse for your own projects lmao
 // prob the worst code ive ever written, dont reuse for your own projects lmao
 // prob the worst code ive ever written, dont reuse for your own projects lmao
-
+throw new Error("deleted all the cd files since im not using them and theyre taking up space")
 const cds = { // implement artist and desc and source laterz
     chill:[
         ['palescreen_jacket.jpg', 'palescreen.mp3'],
