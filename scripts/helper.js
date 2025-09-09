@@ -1,7 +1,7 @@
 const minurl = window.location.host; // give them the port if they wanna!!!!
 const baseurl = window.location.origin;
 const fullurl = baseurl + window.location.pathname;
-const debug = minurl !== "andrewb.xyz";
+const debug = minurl !== "andrewb.xyz" && minurl !== "axia.sh";
 // helper code i wrote to make everything(javascript) either less horrible or more unreadable with the terseness of whatever declaratinons come out of me utilizing this
 
 const eid = (id) => document.getElementById(id);
