@@ -30,7 +30,6 @@ var ENVIRONMENT_IS_SHELL = false;
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: /home/andrew/Downloads/puzzles-20250730.a7c7826/emccpre.js
 /*
  * emccpre.js: one of the Javascript components of an Emscripten-based
  * web/Javascript front end for Puzzles.
@@ -781,7 +780,6 @@ function post_init() {
   // Default to giving keyboard focus to the puzzle.
   onscreen_canvas.focus();
 }
-// end include: /home/andrew/Downloads/puzzles-20250730.a7c7826/emccpre.js
 
 var arguments_ = [];
 var thisProgram = './this.program';
