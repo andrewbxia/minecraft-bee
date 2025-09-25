@@ -1,0 +1,27 @@
+node_modules/
+**/node_modules/**
+.env
+package=lock.json
+yarn.lock
+**/dist/**
+~/
+**/.turbo/**
+
+rammerhead-packages/*.d.ts
+rammerhead-packages/*.d.ts.map
+
+#Rammerhead specific stuff
+# don't commit generated builds or env files
+rammerhead/src/client/*.min.*
+rammerhead/src/client/hammerhead.js
+rammerhead/src/client/worker-hammerhead.js
+rammerhead/src/client/transport-worker.js
+rammerhead/.env
+# don't commit session and cache data
+rammerhead/sessions/*
+rammerhead/cache-js/*
+# but commit the empty folders
+!rammerhead/sessions/.gitkeep
+!rammerhead/cache-js/.gitkeep
+# ignore any custom configurations
+rammerhead/config.js

@@ -1,0 +1,38 @@
+{
+    "name": "rammerhead-packages",
+    "version": "1.0.0",
+    "description": "Monorepo for easy setup of Rammerhead",
+    "contributors": [
+        "MotorTruck1221 (https://github.com/motortruck1221)",
+        "Simon Cheng <simoncheng559@gmail.com> (https://github.com/binary-person)"
+    ],
+    "scripts": {
+        "preinstall": "npx -y only-allow pnpm",
+        "version": "changeset version",
+        "build": "turbo build", 
+        "format:code": "biome format . --write",
+        "format:imports": "biome check . --write",
+        "format": "pnpm run format:code && pnpm run format:imports"
+    },
+    "keywords": [
+        "monorepo",
+        "javascript",
+        "typescript",
+        "cli",
+        "rammerhead",
+        "proxy",
+        "backend"
+    ],
+    "license": "MIT",
+    "packageManager": "pnpm@9.7.0",
+    "dependencies": {
+        "@rubynetwork/rh": "workspace:*",
+        "@rubynetwork/rammerhead": "workspace:*",
+        "@rubynetwork/rammerhead-browser": "workspace:*"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^1.8.3",
+        "@changesets/cli": "^2.27.7",
+        "turbo": "^2.0.12"
+    }
+}
