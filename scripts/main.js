@@ -398,7 +398,9 @@ const artzinfo = [
     ["sewh_shark.jpg", `played ${linkhtml("https://sewh.miraheze.org/wiki/Main_Page",
         'S.E.W.H.'
     )} and liked it a lot! ${linkhtml("https://joeylent.dev/", 
-        "Joey")} told me to add the (poorly drawn) blahaj lol`]
+        "Joey")} told me to add the (poorly drawn) blahaj lol`],
+    ["IMG_3150.webp", `scuffed yveltal planner doodle ! !`],
+    ["IMG_3151.webp", `other scuffed planner doodle`]
 
     // "IMG_.jpg",
     // "IMG_.jpg",
