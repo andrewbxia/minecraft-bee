@@ -1,0 +1,307 @@
+const keysoundInput = document.getElementById("keysound");
+const selectKeysoundForm = document.getElementById("select-keysound");
+const customKeysoundSelect = document.getElementById("custom-keysound-select");
+let selectedKeysound = null;
+let defaultKeysound = 0;
+// let wantCustomKeysound = false;
+
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const audioBuffers = {};
+
+const audioFiles = {
+    osu: new Audio("sounds/osu.wav"),
+    pop: new Audio("sounds/pop.wav"),
+    laser: new Audio("sounds/laser.wav"),
+    snap: new Audio("sounds/snap.wav"),
+    amogus: new Audio("sounds/amogus.mp3"),
+    piano: "elise",
+    random: "random"
+};
+const defaultKeysoundLen = Object.keys(audioFiles).length;
+
+
+
+const customFunctions = {
+    "elise": {
+        eliseNotes: [
+            "E", 0,
+            "D#", 0,
+            "E", 0,
+            "D#", 0,
+            "E", 0,
+            "B", -1,
+            "D", 0,
+            "C", 0,
+            "A", -1,
+            "E", -2,
+            "C", -1,
+            "E", -1,
+            "A", -1,
+            "B", -1, 
+            "E", -1,
+            "G#", -1,
+            "B", -1,
+            "C", 0,
+            "E", -1,
+            "E", 0,
+            "D#", 0,
+            "E", 0,
+            "D#", 0,
+            "E", 0,
+            "B", -1,
+            "D", 0,
+            "C", 0,
+            "A", -1,
+            "E", -2,
+            "C", -1,
+            "E", -1,
+            "A", -1,
+            "B", -1, 
+            "E", -1,
+            "G#", -1,
+            "B", -1,
+            "C", 0,
+            "E", -1,
+            "E", 0,
+            "D#", 0,
+            "E", 0,
+            "D#", 0,
+            "E", 0,
+            "B", -1,
+            "D", 0,
+            "C", 0,
+            "A", -1,
+            "E", -2,
+            "C", -1,
+            "E", -1,
+            "A", -1,
+            "B", -1, 
+            "E", -1,
+            "C", 0,
+            "B", -1,
+            "A", -1,
+            "A", -2,
+            "B", -1,
+            "C", 0,
+            "D", 0,
+            "E", 0,
+            "A", -2,
+            "C", -1,
+            "G", -1,
+            "F", 0,
+            "E", 0,
+            "D", 0,
+            "G", -2,
+            "B", -2,
+            "F", -1,
+            "E", 0,
+            "D", 0,
+            "C", 0,
+            "E", -2,
+            "A", -2,
+            "E", -1,
+            "D", 0,
+            "C", 0,
+            "B", -1,
+            "E", -1,
+            "E", -1,
+            "E", 0,
+            "E", -1,
+            "E", 0,
+            "E", 0,
+            "E", 1,
+            "D#", 0,
+            "E", 0,
+            "D#", 0,
+            "E", 0,
+            "D#", 0,
+            "E", 0,
+            "D#", 0,
+            // "E", 0,
+            // "D#", 0,
+            // "E", 0,
+            // "D#", 0,
+            // "E", 0,
+        
+        
+        
+        
+        ],
+
+        init: function (){
+            this.eliseNotes.forEach((note, i) => {
+                if(typeof note === "string"){
+                    this.eliseNotes[i] = note.toLowerCase();
+                }
+            });
+        },
+        eliseOctave: 5,
+        progress: 0,
+        modProgress: function (){
+            return this.progress % (this.eliseNotes.length / 2);
+        },
+        playNote: function (element) {
+            const stop = 0.5;
+            const attack = 0.01;
+            const decay = 0.9;
+            const osc = audioContext.createOscillator();
+            
+            osc.type = "sine";
+            
+            const currTime = audioContext.currentTime;
+            const gainNode = audioContext.createGain();
+            gainNode.gain.setValueAtTime(0, currTime);
+            gainNode.gain.linearRampToValueAtTime(.5, currTime + attack);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, currTime + decay);
+        
+            const octave = this.eliseNotes[this.modProgress() * 2 + 1] + this.eliseOctave;
+            const note = this.eliseNotes[this.modProgress() * 2];
+            osc.frequency.value = noteFrequencies[octave][note];
+        
+            osc.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            osc.start(0);
+            osc.stop(currTime + stop);
+
+            if (element) {
+                const elementTextElement = element.querySelector(".key-text");
+                elementTextElement.innerText = note + "-" + octave;
+            
+                setTimeout(() => {
+                    elementTextElement.innerText = element.dataset.trueKey;
+                }, stop * 1000);
+            }
+        
+            this.progress++;
+        }
+    },
+    "random": {
+        wantCustomKeysound: false,
+        init: function () {
+            customKeysoundSelect.addEventListener("input", (e) => {
+                this.wantCustomKeysound = e.currentTarget.checked;
+            });
+        },
+        playNote: function (){
+            const keys = Object.keys(audioFiles);
+            if(this.wantCustomKeysound && (keys.length - defaultKeysoundLen) === 0){
+                return;
+            }
+            const randInd = this.wantCustomKeysound ? (Math.floor(Math.random() * (keys.length - defaultKeysoundLen)) + defaultKeysoundLen) : Math.floor(Math.random() * keys.length);
+            const randomSelect = keys[randInd];
+            playKeysound({manualKeysound: randomSelect});
+        }
+    }
+}
+
+for(const key in customFunctions){
+    customFunctions[key].init();
+}
+async function loadAudioFile(audioObj, key) {
+    if(typeof audioObj === "string"){
+        return;
+    }
+
+    // attempt at getting this to run locally without http-server
+    
+    const response = await new Promise((res, rej) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", audioObj.src, true);
+        xhr.responseType = "arraybuffer";
+        xhr.onload = () => res(xhr.response);
+        xhr.onerror = rej;
+        xhr.send();
+    })
+    audioBuffers[key] = await audioContext.decodeAudioData(response);
+    
+}
+
+for(const key in audioFiles){
+    loadAudioFile(audioFiles[key], key);
+}
+
+function playKeysound({element = null, manualKeysound = null}) {
+    console.log(selectedKeysound)
+    // console.warn(performance.now());
+    let keysound = manualKeysound || selectedKeysound;
+    if(typeof audioFiles[keysound] === "string"){
+        keysound = audioFiles[keysound];
+    }
+    if(customFunctions[keysound]){
+        customFunctions[keysound].playNote(element);
+        return;
+    }
+    console.log(audioBuffers[keysound]);
+    
+    console.log("playing keysound " + keysound);
+    if (keysound === "none" || !audioBuffers[keysound]) return;
+    const source = audioContext.createBufferSource();
+    source.buffer = audioBuffers[keysound];
+    source.connect(audioContext.destination);
+    source.start();
+}
+
+function addAudioOption(name) {
+    // if(customFunctions[name]){
+    //     return;
+    // }
+    console.log("adding " + name)
+    const label = document.createElement("label");
+    label.innerText = name;
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.value = name;
+    input.name = "keysound";
+    input.checked = true;
+    selectedKeysound = name;
+    playKeysound({});
+    label.appendChild(input);
+    selectKeysoundForm.appendChild(label);
+    
+}
+
+keysoundInput.addEventListener("input", (e) => {
+    console.log("input")
+    const audioFile = e.currentTarget.files[0];
+    if(audioFile){
+        const audioObj = new Audio(URL.createObjectURL(audioFile));
+        const audioName = audioFile.name.split(".")[0];
+        let add = "";
+        if(audioFiles[audioName + add]){
+            while(audioFiles[audioName + add]){
+                const num = parseInt(add.substring(1)) || 0;
+                // console.log(parseInt(add))
+                add = `(${num + 1})`;
+            }
+        }
+        audioFiles[audioName + add] = audioObj;
+        addAudioOption(audioName + add);
+        loadAudioFile(audioObj, audioName + add);
+        // playKeysound(audioName + add);
+    }
+});
+
+
+
+// selectKeysoundForm.addEventListener("change", (e) => {
+//     selectedKeysound = e.target.value;
+//     // playKeysound({});
+// });
+
+window.addEventListener("click", (e) => {
+    if(selectKeysoundForm.contains(e.target) && e.target.nodeName === "INPUT"){
+        selectedKeysound = e.target.value;
+        if(typeof audioFiles[selectedKeysound] === "string"){
+            selectedKeysound = audioFiles[selectedKeysound];
+        }
+        playKeysound({});
+        // playKeysound(true);
+    }
+    console.log(e.target.nodeName)
+})
+
+for(const keysoundname in audioFiles){
+    addAudioOption(keysoundname);
+}
+selectKeysoundForm.querySelectorAll("input")[defaultKeysound].checked = true;
+selectedKeysound = selectKeysoundForm.querySelectorAll("input")[defaultKeysound].value;
