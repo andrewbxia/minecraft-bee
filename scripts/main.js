@@ -551,7 +551,6 @@ const lmenuvis = new MeteredPatientTrigger(lmenutime, () => {
 const lmenuretract = new MeteredPatientTrigger(lmenulife, () => {
     setTimeout(() => {
         if(lmenuhover()) return;
-    log("ok");
         lmenuvis.fire();
     }, lmenulife);
 });
