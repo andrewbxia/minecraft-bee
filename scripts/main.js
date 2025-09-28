@@ -223,7 +223,8 @@ const triggertheme = new MeteredTrigger(250, () => {
 
 
 const barsizealert = () => {
-    if(truheight / window.innerHeight < 0.75){
+    // if(truheight / window.innerHeight < 0.75){
+    if(false){
         alert(`
             hi! thanks for checking out my site :)\n
             with some browsers like firefox, the nifty background effect you see here may get pretty laggy when you zoom out a lot since they dont handle zoomed-out vw-scaled elements well, 
