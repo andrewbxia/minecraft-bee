@@ -138,8 +138,8 @@ function blogisfirst(){
 }
 function placenav(){
         const nav = mk("nav", {id: "blog-nav"});
-        const previous = mk("button", {id: "blog-previous"});
-        const next = mk("button", {id: "blog-next"});
+        const previous = mk("button", {id: "blog-previous", title: "older posts"});
+        const next = mk("button", {id: "blog-next", title: "fresher posts"});
         if(!blogisfirst()){
             previous.innerText = `<<< older ${viewingmode}s`;
             previous.onclick = () => displayblog("previous");

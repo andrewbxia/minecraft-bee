@@ -372,30 +372,30 @@ const baseartzlink = "../assets/imgs/artz/";
 // have fun seeing the art i commented out
 const artzinfo = [
     // ["IMG_1106.jpg", `old ahh 60 second portrait of me`],
-    ["IMG_1366.jpg", `old doodle for irl friend madeleine !!`],
-    ["IMG_1378.jpg", `ORIIIIIIIIIIIIIIIIIIII`],
-    ["IMG_1698.jpg", `${linkhtml("https://www.youtube.com/@RandomCatOnRoblox", "randomcat")} 
+    ["IMG_1366.webp", `old doodle for irl friend madeleine !!`],
+    ["IMG_1378.webp", `ORIIIIIIIIIIIIIIIIIIII`],
+    ["IMG_1698.webp", `${linkhtml("https://www.youtube.com/@RandomCatOnRoblox", "randomcat")} 
         fanart while i still thought he was cool`],
-    ["IMG_1795.jpg", `rainstorm sh4rk doodle (saltwater boi)`],
-    ["IMG_1853.jpg", `half shitty merc fleet doodle half learning impact frames 
+    ["IMG_1795.webp", `rainstorm sh4rk doodle (saltwater boi)`],
+    ["IMG_1853.webp", `half shitty merc fleet doodle half learning impact frames 
         (i think the gun is pretty cool beans tho)`],
-    ["IMG_1861.jpg", `yveltal slurp(ee)`],
-    ["IMG_2119.jpg", `vandalizing my own 
-        <i>${linkhtml(baseartzlink + "IMG_2119_og.jpg", "vandalized",{title: "trust me"})}</i> 
+    ["IMG_1861.webp", `yveltal slurp(ee)`],
+    ["IMG_2119.webp", `vandalizing my own 
+        <i>${linkhtml(baseartzlink + "IMG_2119_og.webp", "vandalized",{title: "trust me"})}</i> 
         ap chem booklet (jk thx alx and rachel i like it lol)`],
     // ["IMG_2231.jpg", `christmas doodle 4 online kiddos`],
-    ["IMG_2380.jpg", `ap chemistry collab`],
-    ["IMG_2000.jpg", `my first dip into digital art (god why didnt i use any blending for the lighting lol),
+    ["IMG_2380.webp", `ap chemistry collab`],
+    ["IMG_2000.webp", `my first dip into digital art (god why didnt i use any blending for the lighting lol),
          birthday piece done for online friend`],
-    ["plutonium.png", `did a bunch of the pixel art on ${
+    ["plutonium.webp", `did a bunch of the pixel art on ${
         linkhtml("https://wplace.live/?lat=35.85735782205856&lng=-106.30502962822266&zoom=16.18", 
             " the wplace periodic table at los alamos!"
         )
     } I think I like doing pixel art now :p`],
-    ["miao_sticker.png", `printed out a bunch of stickers of a cat I drew in roblox spray paint like 2 years ago lmao, 
+    ["miao_sticker.webp", `printed out a bunch of stickers of a cat I drew in roblox spray paint like 2 years ago lmao, 
         here's the proof ${linkhtml("https://stickermule.com", "StickerMule")} sent me`],
-    ["IMG_2954.jpg", `just bought acryllic markers and cooked on the BOOom`],
-    ["sewh_shark.jpg", `played ${linkhtml("https://sewh.miraheze.org/wiki/Main_Page",
+    ["IMG_2954.webp", `just bought acryllic markers and cooked on the BOOom`],
+    ["sewh_shark.webp", `played ${linkhtml("https://sewh.miraheze.org/wiki/Main_Page",
         'S.E.W.H.'
     )} and liked it a lot! ${linkhtml("https://joeylent.dev/", 
         "Joey")} told me to add the (poorly drawn) blahaj lol`],
@@ -452,6 +452,7 @@ async function artzurl(idx){
         const bimgurl = bimg.substring(5, bimg.length - 2);
     
         const img = new Image();
+        imglazy(img);
         img.onload = () => {
             e.style.aspectRatio = `${img.width} / ${img.height}`;
         };

@@ -1,9 +1,10 @@
 :root{
     --main-width: 875px;
-    --header-height: 2.67em;
+    --header-height: calc(2.67em * var(--heading-scale));
+    /* https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/Heading_Elements#specifying_a_uniform_font_size_for_h1 */
+     /* calc(2.67 * 1.5rem); */
 }
 html{
-    scroll-behavior: smooth;
     scroll-padding-top: var(--header-height);
     scroll-padding-bottom: 2em;
 }
@@ -17,7 +18,8 @@ a{
 
 #page{
     /* margin-top: var(--header-height); */
-    padding: var(--header-height) 0 0 0;
+    /* padding: var(--header-height) 0 0 0; */
+    padding: 0;
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -33,7 +35,7 @@ a{
 }
 
 /* cd is 338 px */
-@media screen and (max-width: 1350px){
+@media screen and (max-width: 1250px){
     body{
         .track{
             display: none;
@@ -58,6 +60,7 @@ a{
             --bg-opacity: 0.5;
             width: calc(var(--main-width) - 100px);
             margin: 0 auto;
+            font-size: 1.25em;
             >section{
                 /* backdrop-filter: blur(8px); */
             }
@@ -68,7 +71,11 @@ a{
         }
         #blog{
             >article{
-                padding: 30px 75px;
+                padding: 30px 25px;
+                p{
+
+                /* font-size: 1em; */
+                }
             }
         }
     }
@@ -110,24 +117,9 @@ a{
         }
     }
 }
-#theme-switch:hover{
-    cursor: pointer;
-    transform: translate(-1vw, 1vh);
-    >.ts-container{
-        rotate: -3deg;
-        >.container>svg{
-            animation-play-state: paused !important;
-            rotate: 270deg;
-            &#sun-svg{
-                rotate: -270deg;
-            }
-            filter: drop-shadow(0px 0px 3px var(--theme-dark-other));
-        }
-    }
-}
 
 #theme-switch{
-    --scale: 3;
+    /* --scale: 3; scale blurs out the svg */
     --slant: 15deg;
     --speed: .75s;
     position: fixed;
@@ -186,14 +178,33 @@ a{
             transform-origin: 50% 50%;
             transition: 1.6s var(--ease-backtrack);
             transition-property: rotate, filter;
-            scale: var(--scale);
+            /* scale: var(--scale); */
             fill: var(--theme-dark-other);
-            height: 1.5rem;
-            width:  1.5rem;
-            filter: drop-shadow(0px 0px 1px var(--theme-dark-other));
+            height: 72px;
+            width:  72px;
+            /* Ensure the SVG viewBox matches the aspect ratio and size in your HTML:
+               <svg viewBox="0 0 24 24" ...> for a 1:1 ratio */
+        
+            filter: drop-shadow(0px 0px 2px var(--theme-dark-other));
         }
         #sun-svg{
             animation-direction: reverse;
+        }
+    }
+}
+
+#theme-switch:hover{
+    cursor: pointer;
+    transform: translate(-1vw, 1vh);
+    >.ts-container{
+        rotate: -3deg;
+        >.container>svg{
+            animation-play-state: paused !important;
+            rotate: 270deg;
+            &#sun-svg{
+                rotate: -270deg;
+            }
+            filter: drop-shadow(0px 0px 4px var(--theme-dark-other));
         }
     }
 }
