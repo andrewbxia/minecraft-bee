@@ -70,7 +70,6 @@ class MeteredPatientTrigger{
     #lastfire = -1;
     #lastattempt = -1;
     #limit = 100;
-    #q = new PerSec();
     #callback = () => new Error("not set yet noobb");
     #trigger = setTimeout(() => {}, 0);
     #log = false;
@@ -78,15 +77,13 @@ class MeteredPatientTrigger{
     constructor(limit, callback, log = false){
         this.#limit = limit;
         this.#callback = callback;
-        this.#q.setwindow(limit);
         this.#lastfire = 0;
         this.#log = log;
     }
 
     fire(...args){
-        this.#q.shift();
-        this.#lastattempt = performance.now();
-        if(this.#q.getq().length === 0){
+        const now = performance.now();
+        if(this.#lastattempt + this.#limit <= now){
             if(this.#log) console.log("fired");
             this.#callback(...args);
             this.#lastfire = this.#lastattempt;
@@ -98,7 +95,7 @@ class MeteredPatientTrigger{
             }, this.#limit);
 
         }
-        this.#q.add();
+        this.#lastattempt = now;
 
     }
 

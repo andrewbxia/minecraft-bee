@@ -531,6 +531,21 @@ for(const track of track3){
     track.addEventListener("scroll", scrolltrack3);
 }
 //todo: maybe make this handle n images instead of 4 with programatic css
+
+
+const lmenu = eid("left-menu");
+const lmenuops = eid("left-menu-options");
+const lmenutime = 750;
+
+const lmenuvis = new MeteredPatientTrigger(750, () => {
+    setTimeout(() => {
+        if(lmenu.matches(":hover") || lmenuops.matches(":hover")) return;
+        lmenu.style.opacity = "0";
+    }, lmenutime);
+});
+
+
+
 eqa("#left-menu-options>div").forEach(e => {
     const option = e;
     const name = option.dataset.name;
@@ -541,6 +556,7 @@ eqa("#left-menu-options>div").forEach(e => {
     option.classList.add(name);
 
     option.onmouseover = () => {
+        lmenu.style.opacity = "1";
         menuitem.classList.add("active");
 
         // Get the perspective value from #left-menu
@@ -558,7 +574,7 @@ eqa("#left-menu-options>div").forEach(e => {
         const scale = perspective / (perspective - z);
 
         const offset = (
-            (menuitem.offsetTop * 1 / scale - option.offsetTop / cos(rotationr) 
+            (menuitem.offsetTop * scale - option.offsetTop / cos(rotationr) 
                 - (2 * menuitem.clientHeight * sin(rotationr / 2) * sin(rotationr / 2)) /
                 sin((90 - rotation) * deg2rad) 
             ) 
@@ -574,6 +590,7 @@ eqa("#left-menu-options>div").forEach(e => {
     menuitem.onmouseover = option.onmouseover; // hacky fix i think
     option.onmouseout = () => {
         menuitem.classList.remove("active");
+        lmenuvis.fire();
     };
     menuitem.onmouseout = option.onmouseout;
 });
