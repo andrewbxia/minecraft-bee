@@ -296,10 +296,11 @@ a{
         
     }
     >#left-menu{
-        pointer-events: none;
+        /* pointer-events: none; */
         transform-style: preserve-3d;
         position: absolute;
-        top: 100%;
+        /* top: 100%; */
+        top: -5px;
         left: 100%;
         display: flex;
         flex-direction: column;
@@ -346,7 +347,7 @@ a{
         }
         /* opacity: 0; */
         transform-origin: 50% 0%;
-        transform: rotateX(35deg) translateY(-1000px);
+        transform: rotateX(35deg) translateY(-750px);
         transition: var(--ease-backtrack);
         transition-property: transform, top;
         transition-duration: 0.5s, 0.5s;
@@ -368,7 +369,7 @@ a{
     &:hover>#left-menu{
         pointer-events: all;
         /* opacity: 1; */
-        transform: rotateX(35deg) translateY(0%);
+        /* transform: rotateX(35deg) translateY(0%); */
         top: -5px;
         /* animation: perspective-shift 2s infinite alternate; */
     }

@@ -82,8 +82,13 @@ class MeteredPatientTrigger{
     }
 
     fire(...args){
+        this.#exec(...args);
+        this.#lastattempt = performance.now();
+    }
+    #exec(...args){
         const now = performance.now();
-        if(this.#lastattempt + this.#limit <= now){
+        const diff = now - this.#lastattempt;
+        if(diff <= this.#limit){
             if(this.#log) console.log("fired");
             this.#callback(...args);
             this.#lastfire = this.#lastattempt;
@@ -91,12 +96,10 @@ class MeteredPatientTrigger{
         else{
             if(this.#trigger) clearTimeout(this.#trigger);
             this.#trigger = setTimeout(() => {
-                this.fire(...args);
-            }, this.#limit);
+                this.#exec(...args);
+            }, this.#limit - diff + 1);
 
         }
-        this.#lastattempt = now;
-
     }
 
     getrecent(){

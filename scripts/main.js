@@ -537,15 +537,34 @@ for(const track of track3){
 const lmenu = eid("left-menu");
 const lmenuops = eid("left-menu-options");
 const lmenutime = 750;
+const lmenulife = 600;
+const lmenuhover = () => lmenu.matches(":hover") || lmenuops.matches(":hover");
 
-const lmenuvis = new MeteredPatientTrigger(750, () => {
+const lmenuvis = new MeteredPatientTrigger(lmenutime, () => {
     setTimeout(() => {
-        if(lmenu.matches(":hover") || lmenuops.matches(":hover")) return;
+        if(lmenuhover()) return;
+        log("ok")
         lmenu.style.opacity = "0";
     }, lmenutime);
 });
 
+const lmenuretract = new MeteredPatientTrigger(lmenulife, () => {
+    setTimeout(() => {
+        if(lmenuhover()) return;
+    log("ok");
+        lmenuvis.fire();
+    }, lmenulife);
+});
 
+lmenu.onmouseover = lmenuops.onmouseover = () => {
+    lmenu.style.opacity = "1";
+    // lmenu.style.transform = "rotateX(35deg) translateY(0px)"
+}
+lmenu.onmouseout = lmenuops.onmouseout = () => {
+    if(lmenuhover()) return;
+        lmenu.style.transform = "";
+        lmenuvis.fire();
+}
 
 eqa("#left-menu-options>div").forEach(e => {
     const option = e;
@@ -557,7 +576,6 @@ eqa("#left-menu-options>div").forEach(e => {
     option.classList.add(name);
 
     option.onmouseover = () => {
-        lmenu.style.opacity = "1";
         menuitem.classList.add("active");
 
         // Get the perspective value from #left-menu
@@ -581,7 +599,7 @@ eqa("#left-menu-options>div").forEach(e => {
             ) 
         );
 
-        eid("left-menu").style.transform = `
+        lmenu.style.transform = `
             rotateX(${rotation}deg) 
             translateY(${-offset}px)
         `;
@@ -591,18 +609,17 @@ eqa("#left-menu-options>div").forEach(e => {
     menuitem.onmouseover = option.onmouseover; // hacky fix i think
     option.onmouseout = () => {
         menuitem.classList.remove("active");
-        lmenuvis.fire();
     };
     menuitem.onmouseout = option.onmouseout;
 });
 eid("left-menu-outer").onmouseout = (e) => {
 
-    // idk what chatgpt cooked up here but ti woirks
-    // Only reset if the mouse actually leaves the container, not just moves between children
-    if (!e.relatedTarget || !eid("left-menu-outer").contains(e.relatedTarget)) {
-        eid("left-menu").style.transform = "";
-        log("resetting left menu transform");
-    }
+    // // idk what chatgpt cooked up here but ti woirks
+    // // Only reset if the mouse actually leaves the container, not just moves between children
+    // if (!e.relatedTarget || !eid("left-menu-outer").contains(e.relatedTarget)) {
+    //     eid("left-menu").style.transform = "";
+    //     dlog("resetting left menu transform");
+    // }
 }
 
 // https://www.npmjs.com/package/ani-cursor/v/0.0.5
