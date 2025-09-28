@@ -7,7 +7,6 @@
 
     /* main theme colors */
     /* light */
-    --heading-scale: 1;
 
     --theme-white-vals: 220, 233, 248;
     --theme-black-vals: 9, 29, 44;
@@ -125,7 +124,6 @@ h1, h2, h3, h4, h5, h6{
 }
 h1, h2, h3, h4, h5, h6, p{
     margin: 0;
-    font-size: calc(2em * var(--heading-scale));
 }
 ol, ul{
     margin: 0;
