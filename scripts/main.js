@@ -1,8 +1,14 @@
 "use strict";
 
-
+// attachdebug(compst(eid("abt-me")).getPropertyValue("border"), "ok");
+setInterval(() => attachdebug(compst(eid("abt-me")).getPropertyValue("border-width"),
+    compst(eid("abt-me")).getPropertyValue("border-style"),
+    compst(eid("abt-me")).getPropertyValue("border-color"),
+    compst(eid("abt-me")).getPropertyValue("border-width"),
+    compst(document.documentElement).getPropertyValue("--border")
+    ), 1000);
 // hi debugger if its saturday for you rn u get a cookie
-// also i explicitly state where in this code chatgpt was used n stuffies
+// i explicitly state where in this code chatgpt was used n stuffies
 // init funcs
 KeySet.init();
 checkvisit();
@@ -57,8 +63,6 @@ KeySet.onoofkey = (key) => {
     const el = eq(`#keyset>[data-key="${key.ekey}"]`);
     if(el) el.remove();
 }
-
-
 
 // branding visuals
 //document.title = baseurl; // later have this textanimate based on branding activeq

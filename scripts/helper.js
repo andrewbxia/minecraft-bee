@@ -33,7 +33,6 @@ const truheight = window.innerHeight * window.devicePixelRatio;
 const truwidth = window.innerWidth * window.devicePixelRatio;
 const sp = "&nbsp;";
 
-
 function max(...args){
     if(args.length === 0) return null;
     let max = args[0];
@@ -233,7 +232,7 @@ const styling = (sty) => {
 const img = (src) => mk("img", {src});
 const imghtml = (src) => `<img src="${src}" />`;
 const p = (txt, attr = {}) => mktxt("p", txt, attr);
-const li = (el) => app(mk("li"), el);
+const li = (txt) => mktxt("li", txt);
 
 
 // header & footer templates
@@ -265,3 +264,21 @@ document.addEventListener("DOMContentLoaded", () =>{
         imglazy(img);
     })
 });
+
+
+function attachdebug(...messages){
+    // if(!debug) return;
+    const el = eid("debug");
+    const debugmessage = `debug mode enabled, if you're not me 
+        and you see this you can blame my bad coding`;
+    
+    if(!el) return;
+    el.innerHTML = "";
+
+    app(el, mktxt("h4", debugmessage));
+    const list = mk("ul");
+    messages.forEach(m => {
+        app(list, li(m));
+    });
+    app(el, list);
+}
