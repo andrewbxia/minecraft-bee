@@ -1,12 +1,26 @@
 "use strict";
 
+function getstylesheets(){
+    let str = ``;
+    eqa("style").forEach(st => {
+        str += st.innerHTML;
+    });
+    return str;
+}
+
 // attachdebug(compst(eid("abt-me")).getPropertyValue("border"), "ok");
 setInterval(() => attachdebug(compst(eid("abt-me")).getPropertyValue("border-width"),
     compst(eid("abt-me")).getPropertyValue("border-style"),
     compst(eid("abt-me")).getPropertyValue("border-color"),
     compst(eid("abt-me")).getPropertyValue("border-width"),
-    compst(document.documentElement).getPropertyValue("--border")
+    compst(document.documentElement).getPropertyValue("--border"),
+    getstylesheets(),
     ), 1000);
+
+
+
+
+
 // hi debugger if its saturday for you rn u get a cookie
 // i explicitly state where in this code chatgpt was used n stuffies
 // init funcs
