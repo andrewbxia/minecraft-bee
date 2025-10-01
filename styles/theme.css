@@ -44,7 +44,8 @@
     --ease-backtrack: cubic-bezier(.5,1.5,.5,1);
     --ease-doublebacktrack: cubic-bezier(.75,-.4,.2,1.2);
     --ease-backtrack-test: cubic-bezier(.75,-.4,.2,1.); /* breaks the transition funny*/
-    --border: double var(--theme-dark);
+    --border-dark: double var(--theme-dark);
+    --border-light: double var(--theme-light);
     /* maybe do border sides like https://natu.moe/cool */
     --toggle-timing: 0.75s var(--ease-backtrack);
 

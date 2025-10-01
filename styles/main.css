@@ -239,7 +239,7 @@ a{
     margin-left: auto;
     margin-right: 0;
 
-    border: var(--border);
+    border: var(--border-dark);
     border-width: 5px 0;
     transform: translateZ(var(--z-offset));
 
@@ -309,7 +309,7 @@ a{
         >*{
             text-align: left;
             width: 100%;
-            border: 5px var(--border);
+            border: 5px var(--border-dark);
             transform-origin: 50% 100%;
             background-color: var(--theme-light);
             transition: ease;
@@ -540,7 +540,7 @@ a{
     transition: var(--toggle-timing);
     transition-property: background-color, color;
     /* box-shadow: 0px 5px 10px 5px var(--theme-light); */
-    border: var(--border);
+    border: var(--border-dark);
     border-width: 0 5px;
     h1{
         font-size: 2.5em;
@@ -660,7 +660,7 @@ a{
     padding-bottom: 8px; /* scroll progress bar height */
     >article{
         line-height: var(--line-height);
-        border: var(--border); /*border placeholder*/
+        border: var(--border-dark); /*border placeholder*/
         padding: 30px 145px;
         font-size: 0.875em;
         hyphens: auto;
@@ -677,7 +677,7 @@ a{
             margin-right: 1em; 
             margin-left: auto; 
             text-indent: 0;
-            border: var(--border);
+            border: var(--border-dark);
             border-width: 2px 0;
             width: fit-content;
         }

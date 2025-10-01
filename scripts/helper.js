@@ -229,6 +229,21 @@ const styling = (sty) => {
     app(document.head, st);
     return st;
 }
+
+const getstylesheets = () => {
+    let str = ``;
+    eqa("style").forEach(st => {
+        str += st.innerHTML;
+    });
+    return str;
+    // --border variable on my website got overridden since im using 
+    // this on my crappy school issued chromebok where there are 
+    // literally 9 spyware extensions on this thing, anyways the very very
+    // very smart IT people who put stylelint tailwind classes on this
+    // did a very good job at overriding my --border variable 
+    // ugh
+}
+
 const img = (src) => mk("img", {src});
 const imghtml = (src) => `<img src="${src}" />`;
 const p = (txt, attr = {}) => mktxt("p", txt, attr);
@@ -267,7 +282,7 @@ document.addEventListener("DOMContentLoaded", () =>{
 
 
 function attachdebug(...messages){
-    // if(!debug) return;
+    if(!debug) return;
     const el = eid("debug");
     const debugmessage = `debug mode enabled, if you're not me 
         and you see this you can blame my bad coding`;
