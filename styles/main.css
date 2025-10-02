@@ -657,6 +657,7 @@ a{
     mix-blend-mode: multiply !important;
 }
 #blog{
+    position: relative;
     padding-bottom: 8px; /* scroll progress bar height */
     >article{
         line-height: var(--line-height);
@@ -727,6 +728,29 @@ a{
             }
         }
     }
+
+    >#blog-loading{
+        >img{
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, 0) rotate(10deg);
+            height: 350px;
+            width: auto;
+
+        }
+        >#blog-loading-txt{
+            z-index: 2;
+            position: absolute;
+            top: 300px;
+            left: 50%;
+            transform: translate(-50%, 0);
+            rotate: 10deg;
+            color: var(--theme-dark-other);
+
+        }
+    }
+
     >nav{
         display: flex;
         justify-content: space-between;
@@ -744,6 +768,10 @@ a{
         }
     }
 }
+
+
+
+
 #demark-bar{
     display: none;
     &.editing{

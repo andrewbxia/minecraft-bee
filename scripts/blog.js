@@ -6,20 +6,6 @@ let postid =  nullnum(pint(params.get("post")));
 
 const posts = [];
 
-// if(pageidx !== null){
-//     getpage(pageidx).then(data => {
-//         posts.push(...data);
-//         dispposts();
-//         if(postid !== null)
-//             window.location.href = `#${postid}`;
-//     });
-// }
-// else if(postid !== null){
-//     getpost(postid).then(data => {
-//         posts.push(data[0]);
-//         dispposts();
-//     });
-// }
 
 function clearblog(){
     log("clearing blog");
@@ -52,7 +38,7 @@ function generatepost(post){
     // log(created.getTime(), edited.getTime(), edited);
     const cover = post.cover_url;
     const content = post.content || "AMAZING CONTENT";
-    const wordcount = content.split(" ").length;
+    const wordcount = content.split(" ").length; // lazy but gets the job done heheheheheh
     
     const postel = mk("article", {class: "post", "data-id": id, id: `post-${id}`});
     const posth = mk("center", {class: "post-header", title: title});
@@ -91,7 +77,7 @@ text text yap yap yap
 
 para(text yap yap yap
 
-wowwwooiejfiejfiejfeifjei
+wowwwooiejfiejfiejdifjei
 
 )
 para(text yap yap yap)
@@ -154,6 +140,7 @@ function placenav(){
 
 
 let editorinit = false;
+let blogstate = 0; // 0 = hasnt fetched, 1 = fetching, 2 = fetched
 eid("blog").innerHTML = "";
 if(pageidx === null && postid === null)
     pageidx = 0;
@@ -191,6 +178,16 @@ function displayblog(change = "none"){
 
 
     clearblog();
+    // const int = displayloading();
+
+    setTimeout(() => {
+        if(blogstate === 2) return;
+        clearInterval(int);
+        if(blogstate === 1) return;
+        eid("blog-loading-txt").innerText = "loading is taking longer than usual...try reloading?";
+        // add fail img
+    }, blogttl);
+    blogstate = 1;
     (viewingmode === "post" ? getpost(postid) : getpage(pageidx)).then(data => {
         posts.push(...data);
         dispposts();
@@ -212,13 +209,79 @@ function displayblog(change = "none"){
         err(error);
         eid("blog").innerHTML += `<center>posts didnt load...maybe ${mkhtml("a", "reload?", {href: ""}) }
         <br>.₊̣̇.ಇ/ᐠˬ ͜   ˬ ᐟ\∫.₊̣̇.</center>`;
+        blogstate = 0;
     }).finally(() => {
+        blogstate = 2;
+        // clearInterval(int);
         if(params.has("b-edit") && !editorinit){
             script("./scripts/blog-editor.js", true);
             editorinit = true;
         }
     });
 }
+
+
+const blogttl = 10000; // 10s
+
+
+const bloadimgs = ["/assets/imgs/loadings/yveltal/loading.webp",];
+const byayimg = "/assets/imgs/loadings/yveltal/success.webp";
+
+let blogcnter = 0;
+
+
+function displayloading(){
+    // get fail later
+
+    app(eid("blog"), app(mk("div", {id: "blog-loading"}), mktxt("h3", "loading posts...", {id: "blog-loading-txt"})));
+    
+    function instimg(){
+        const clss = "blog-loading-img-" + blogcnter;
+        prep(eid("blog-loading"), img(randarrchoose(bloadimgs), {class: clss}));
+        return clss;
+    }
+
+
+    const int = setInterval(() => {
+
+        const clss = "blog-loading-img-" + blogcnter;
+        
+        blogcnter++;
+        instimg();
+
+        new Ani(`.${clss}`)
+            .then(() => {
+                eq(`.${clss}`).style.rotate = "0deg"; // have to put as zero
+            })
+            .delay(1000)
+            .rule({
+                from: [{top: "0px", left: "0%", rotate: "0deg"}],
+                to: [{top: "-100px", left: "10%", rotate: "20deg"}],
+                duration: 400,
+                easing: "ease-out",
+                forwards: true,
+                additive: [true, true],
+            })
+            .rule({
+                from: [{top: "0px", left: "0%", opacity: 0, rotate: "0deg"}],
+                to: [{top: "400px", left: "16%", opacity: -1, rotate: "60deg"}],
+                duration: 1800,
+                easing: "ease",
+                forwards: true,
+                additive: [true, true],
+            })
+            .then(() => {
+                log("removing img");
+                eq(`.${clss}`).remove();
+            });
+
+    }, 1900);
+    return int;
+
+}
+
+
+
 
 
 displayblog("none");

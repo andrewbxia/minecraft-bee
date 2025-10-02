@@ -244,7 +244,7 @@ const getstylesheets = () => {
     // ugh
 }
 
-const img = (src) => mk("img", {src});
+const img = (src, attr = {}) => mk("img", {src, ...attr});
 const imghtml = (src) => `<img src="${src}" />`;
 const p = (txt, attr = {}) => mktxt("p", txt, attr);
 const li = (txt) => mktxt("li", txt);
