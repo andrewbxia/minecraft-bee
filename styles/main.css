@@ -735,18 +735,20 @@ a{
             top: 0;
             left: 50%;
             transform: translate(-50%, 0) rotate(10deg);
+            min-height: 350px;
             height: 350px;
             width: auto;
+            border: 2px solid black;
 
         }
         >#blog-loading-txt{
             z-index: 2;
             position: absolute;
-            top: 300px;
+            top: 150px;
             left: 50%;
             transform: translate(-50%, 0);
             rotate: 10deg;
-            color: var(--theme-dark-other);
+            color: var(--theme-dark);
 
         }
     }

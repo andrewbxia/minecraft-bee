@@ -140,6 +140,7 @@ function placenav(){
 
 
 let editorinit = false;
+let blogcnter = 0;
 let blogstate = 0; // 0 = hasnt fetched, 1 = fetching, 2 = fetched
 eid("blog").innerHTML = "";
 if(pageidx === null && postid === null)
@@ -148,7 +149,7 @@ if(pageidx === null)
     viewingmode = "post";
 
 function displayblog(change = "none"){
-
+    blogstate = 0;
     if(change !== "none")
         posts.length = 0;
 
@@ -177,9 +178,141 @@ function displayblog(change = "none"){
     params.set(viewingmode, viewingmode === "post" ? postid : pageidx);
 
 
+    blogstate = 1;
+    blogcnter = 0;
     clearblog();
-    // const int = displayloading();
+    dispblogload();
 
+    
+    setTimeout(() => {
+
+        (viewingmode === "post" ? getpost(postid) : getpage(pageidx)).then(data => {
+            // throw new Error();
+            posts.push(...data);
+            dispposts();
+            // window.location.href = "#blog";
+            if(viewingmode === "post")
+                window.location.href = `#post-${postid}`;
+            else if(viewingmode === "page" && change !== "none")
+                window.location.href = `#post-${posts[0].id}`;
+            if(lastpostid === null){
+                numposts().then(() => {
+                    placenav();
+                });
+            }
+            else{
+                placenav();
+            }
+            blogstate = 2;
+        }).catch(error => {
+            err(error);
+            eid("blog").innerHTML += `<center>posts didnt load...maybe ${mkhtml("a", "reload?", {href: ""}) }
+            <br>.₊̣̇.ಇ/ᐠˬ ͜   ˬ ᐟ\∫.₊̣̇.</center>`;
+            blogstate = 0;
+            // addblogloadimg(blogstate);
+        }).finally(() => {
+            if(params.has("b-edit") && !editorinit){
+                script("./scripts/blog-editor.js", true);
+                editorinit = true;
+            }
+        });
+    }, 5000)
+}
+
+
+const blogttl = 10000; // 10s
+const blogimglifetime = 1900;
+
+const bloadimgs = ["/assets/imgs/loadings/yveltal/loading.webp",];
+const byayimg = "/assets/imgs/loadings/yveltal/success.webp";
+const bnayimg = "";
+
+blogcnter = 0;
+
+function addblogloadimg(state = 1, id = blogcnter++, lifetime = blogimglifetime){
+    const cssid = "blog-loading-img-" + id;
+    const yay = state == 2 ? 1 : 0;
+    const imgsrc = 
+        state == 0 ? 
+            // randarrchoose(bloadimgs)
+            ""
+        : state == 1 ? 
+            randarrchoose(bloadimgs)
+        : state == 2 ? 
+            byayimg
+        : "bruh";
+    
+    prep(eid("blog-loading"), img(imgsrc, {id: cssid, class: "blog-loading-img"}));
+    attachdebug(
+        state
+    );
+    const dur = new Ani(`#${cssid}`)
+        .then(() => {
+            eq(`#${cssid}`).style.rotate = "0deg"; // have to put as zero
+        })
+        .delay(id === 0 ? 0 : lifetime)
+        .rule({
+            from: [{top: "0px", left: `0px`, rotate: "0deg", height: "0px"}],
+            to: [{top: `${-100 - yay * 100}`, left: `${yay * -300}px`, rotate: `${20 * -yay}deg`, height: `${yay * 100}px`}],
+            duration: 400 + yay * 100,
+            easing: "ease",
+            forwards: true,
+            additive: [true, true],
+        })
+        .rule({
+            from: [{top: "0px", left: "0%", opacity: 0, rotate: "0deg", height: "0px"}],
+            to: [{top: `${300 + yay * 400}`, left: "16%", opacity: -1, 
+                rotate: `${60 - 120 * yay}deg`, height: `${yay * 200}px`}],
+            duration: 1800,
+            easing: "ease-in",
+            forwards: true,
+            additive: [true, true],
+        })
+        .then(() => {
+            eq(`#${cssid}`).remove();
+        })
+        .finish()
+        .whendone();
+    return dur;
+}
+
+
+function dispblogload(){
+    // get fail later
+    if(!eid("blog-loading"))
+        app(eid("blog"), app(mk("div", {id: "blog-loading"}), mktxt("h3", "loading posts...", {id: "blog-loading-txt"})));
+
+
+    addblogloadimg(blogstate);
+    addblogloadimg(blogstate);
+    const int = setInterval(() => {
+        let dur = addblogloadimg(blogstate);
+
+        if(blogstate === 2){
+            eid("blog-loading-txt").innerText = "yay yyaay";
+
+            const btxtdur = new Ani("#blog-loading-txt")
+                .delay(blogimglifetime)
+                .then(() => {
+                    eid("blog-loading-txt").innerText = "loaded!"
+                }, 100)
+                .rule({
+                    from: [{rotate: "0deg", opacity: 0, top: "0px", fontSize: "0px"}],
+                    to: [{rotate: "260deg", opacity: -1, top: "-600px", fontSize: "200px"}],
+                    duration: 1000,
+                    easing: "ease-out",
+                    additive: [true, true],
+                    forwards: true
+                })
+                .finish()
+                .whendone();
+            clearInterval(int);
+            setTimeout(() => {
+                eid("blog-loading").remove();
+                attachdebug(dur);
+            }, dur);
+        }
+    }, blogimglifetime);
     setTimeout(() => {
         if(blogstate === 2) return;
         clearInterval(int);
@@ -187,101 +320,7 @@ function displayblog(change = "none"){
         eid("blog-loading-txt").innerText = "loading is taking longer than usual...try reloading?";
         // add fail img
     }, blogttl);
-    blogstate = 1;
-    (viewingmode === "post" ? getpost(postid) : getpage(pageidx)).then(data => {
-        posts.push(...data);
-        dispposts();
-        // window.location.href = "#blog";
-        if(viewingmode === "post")
-            window.location.href = `#post-${postid}`;
-        else if(viewingmode === "page" && change !== "none")
-            window.location.href = `#post-${posts[0].id}`;
-        if(lastpostid === null){
-            numposts().then(() => {
-                placenav();
-            });
-        }
-        else{
-            placenav();
-        }
-
-    }).catch(error => {
-        err(error);
-        eid("blog").innerHTML += `<center>posts didnt load...maybe ${mkhtml("a", "reload?", {href: ""}) }
-        <br>.₊̣̇.ಇ/ᐠˬ ͜   ˬ ᐟ\∫.₊̣̇.</center>`;
-        blogstate = 0;
-    }).finally(() => {
-        blogstate = 2;
-        // clearInterval(int);
-        if(params.has("b-edit") && !editorinit){
-            script("./scripts/blog-editor.js", true);
-            editorinit = true;
-        }
-    });
-}
-
-
-const blogttl = 10000; // 10s
-
-
-const bloadimgs = ["/assets/imgs/loadings/yveltal/loading.webp",];
-const byayimg = "/assets/imgs/loadings/yveltal/success.webp";
-
-let blogcnter = 0;
-
-
-function displayloading(){
-    // get fail later
-
-    app(eid("blog"), app(mk("div", {id: "blog-loading"}), mktxt("h3", "loading posts...", {id: "blog-loading-txt"})));
-    
-    function instimg(){
-        const clss = "blog-loading-img-" + blogcnter;
-        prep(eid("blog-loading"), img(randarrchoose(bloadimgs), {class: clss}));
-        return clss;
-    }
-
-
-    const int = setInterval(() => {
-
-        const clss = "blog-loading-img-" + blogcnter;
-        
-        blogcnter++;
-        instimg();
-
-        new Ani(`.${clss}`)
-            .then(() => {
-                eq(`.${clss}`).style.rotate = "0deg"; // have to put as zero
-            })
-            .delay(1000)
-            .rule({
-                from: [{top: "0px", left: "0%", rotate: "0deg"}],
-                to: [{top: "-100px", left: "10%", rotate: "20deg"}],
-                duration: 400,
-                easing: "ease-out",
-                forwards: true,
-                additive: [true, true],
-            })
-            .rule({
-                from: [{top: "0px", left: "0%", opacity: 0, rotate: "0deg"}],
-                to: [{top: "400px", left: "16%", opacity: -1, rotate: "60deg"}],
-                duration: 1800,
-                easing: "ease",
-                forwards: true,
-                additive: [true, true],
-            })
-            .then(() => {
-                log("removing img");
-                eq(`.${clss}`).remove();
-            });
-
-    }, 1900);
-    return int;
 
 }
-
-
-
-
 
 displayblog("none");

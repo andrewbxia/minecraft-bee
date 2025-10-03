@@ -18,8 +18,10 @@
     <script src="/scripts/helper-classes.js"></script>
     <script src="/scripts/supa-overview.js"></script>
     <script src="/scripts/dev-detect.js"></script>
-    <script src="/scripts/anicursor.js"></script>
+    <script  src="/scripts/anicursor.js"></script>
     <script src="/scripts/animation3.js"></script>
+    <link rel="prefetch" as="image" href="/assets/imgs/loadings/yveltal/loading.webp">
+    <link rel="prefetch" as="image" href="/assets/imgs/loadings/yveltal/success.webp">
     <script>
         window.addEventListener('devtoolschange', event => {
             if (event.detail.isOpen) {
@@ -43,7 +45,7 @@
 
 </head>
 <body>
-    <script src="/scripts/oneko.js" data-cat="/assets/imgs/oneko.png"></script>
+    <script defer src="/scripts/oneko.js" data-cat="/assets/imgs/oneko.png"></script>
     <div id="theme-switch" onclick="triggertheme.fire()">
         <div class="ts-container">
             <div class="container" id="c-moon" title="clik 4 dark mode">
@@ -307,7 +309,7 @@
         </div>
         <div id="page-right">
             <div id="wcb" class="carbonbadge"></div>
-            <script src="https://unpkg.com/website-carbon-badges@1.1.3/b.min.js" defer></script>
+            <!-- <script src="https://unpkg.com/website-carbon-badges@1.1.3/b.min.js" defer></script> -->
         </div>
     </div>
     <!-- <div id="cd-player">

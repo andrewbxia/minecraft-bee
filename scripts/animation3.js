@@ -106,10 +106,13 @@ class Ani{
         return `${newValue}${unit}`;
     }
 
-    contif(condition){
+    contif(conditionfunc, falsefunc){
         return this.#queuePromise(() => {
-            console.log(condition());   
-            this.#done = this.#done || !condition();
+            // console.log(conditionfunc());   
+            this.#done = this.#done || !conditionfunc();
+            if(!this.#done){
+                falsefunc(this);
+            }
         });
     }
 
@@ -123,6 +126,19 @@ class Ani{
         return this.#queuePromise(() => {
             callback(this);
         }, duration);
+    }
+
+    def(){
+        const defprops = {
+            rotate: 0,
+
+        };
+        document.querySelectorAll(this.#query).forEach(el => {
+            for(const key in defprops){
+                el.style[key] = defprops[key];
+            }
+        });
+        return this.delay(0);
     }
 
     reset(overwrite = {}){

@@ -276,7 +276,8 @@ function imglazy(img){
 }
 document.addEventListener("DOMContentLoaded", () =>{
     eqa("img").forEach(img => {
-        imglazy(img);
+        if(!img.classList.contains("nl"))
+            imglazy(img);
     })
 });
 

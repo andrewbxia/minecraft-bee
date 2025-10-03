@@ -1,11 +1,5 @@
 "use strict";
 // attachdebug(compst(eid("abt-me")).getPropertyValue("border"), "ok");
-attachdebug(
-    debug,
-    minurl,
-    baseurl,
-    fullurl,
-);
 
 // hi debugger if its saturday for you rn u get a cookie
 // i explicitly state where in this code chatgpt was used n stuffies
