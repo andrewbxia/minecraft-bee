@@ -148,7 +148,7 @@ if(pageidx === null && postid === null)
 if(pageidx === null)
     viewingmode = "post";
 
-function displayblog(change = "none"){
+function displayblog(change = "none", delay = 0){
     blogstate = 0;
     if(change !== "none")
         posts.length = 0;
@@ -216,7 +216,7 @@ function displayblog(change = "none"){
                 editorinit = true;
             }
         });
-    }, 5000)
+    }, delay)
 }
 
 
