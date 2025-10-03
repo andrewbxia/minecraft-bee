@@ -738,7 +738,7 @@ a{
             min-height: 350px;
             height: 350px;
             width: auto;
-            border: 2px solid black;
+            user-select: none;
 
         }
         >#blog-loading-txt{
