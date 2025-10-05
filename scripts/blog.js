@@ -182,10 +182,13 @@ function displayblog(change = "none", delay = 0){
     clearblog();
     blogloadcnt++;
     dispblogload();
-    window.location.href = "#blog";
+
+    if(viewingmode === "post")
+        window.location.href = "#blog";
+    else if(viewingmode === "page" && change !== "none")
+        window.location.href = "#blog";
     setTimeout(() => {
         (viewingmode === "post" ? getpost(postid) : getpage(pageidx)).then(data => {
-            // throw new Error();
             posts.push(...data);
             dispposts();
             // if(viewingmode === "post")
@@ -204,7 +207,7 @@ function displayblog(change = "none", delay = 0){
             blogstate = 2;
         }).catch(error => {
             err(error);
-            eid("blog").innerHTML += `<center>posts didnt load...maybe ${mkhtml("a", "reload?", {href: ""}) }
+            eid("blog").innerHTML += `<center style="margin-top:350px;">posts didnt load...maybe ${mkhtml("a", "reload?", {href: ""}) }
             <br>.₊̣̇.ಇ/ᐠˬ ͜   ˬ ᐟ\∫.₊̣̇.</center>`;
             blogstate = 0;
             // addblogloadimg(blogstate);
@@ -225,8 +228,8 @@ const blogimglifetime = 1900;
 const bloadimgs = ["/assets/imgs/loadings/yveltal/loading.webp",];
 const byayimg = "/assets/imgs/loadings/yveltal/success.webp";
 [byayimg, ...bloadimgs].forEach(src => { // preload imgs
-    const imgEl = new Image();
-    imgEl.src = src;
+    const img = new Image();
+    img.src = src;
 });
 
 const bnayimg = "";
@@ -241,15 +244,15 @@ const bloadtimes = [() => 0,
 
 function addblogloadimg(state = 1, first = false){
     const clss = "b-load-" + state + (first ? " first" : "");
-    const yay = state == 2 ? 1 : 0;
+    const yay = state === 2 ? 1 : 0;
     const lifetime = bloadtimes[state]() + (state === 1) * bimgdelay;
     const imgsrc = 
-        state == 0 ? 
-            // randarrchoose(bloadimgs)
-            ""
-        : state == 1 ? 
+        state === 0 ? 
+        //  ""
             randarrchoose(bloadimgs)
-        : state == 2 ? 
+        : state === 1 ? 
+            randarrchoose(bloadimgs)
+        : state === 2 ? 
             byayimg
         : "bruh";
 
