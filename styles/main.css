@@ -337,7 +337,7 @@ a{
         >.active{
             transform: rotateX(-35deg);
             filter: brightness(1.05);
-            text-shadow: 0 0 2px var(--theme-dark);
+            /* text-shadow: 0 0 2px var(--theme-dark); */
             /* &::before{
                 height: 0;
             } */
