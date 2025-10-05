@@ -23,10 +23,7 @@ const samplepost = `
     <li> This is a third footnote.</li>
 </ol>
 
--->
-
-.
-`;
+-->`;
 
 
 
@@ -308,6 +305,8 @@ if (params.has("b-edit")){
         dragging = false;
         slider.classList.remove("grab");
     });
+
+    style("/styles/blog-editor.css");
 
     p_aceurls.forEach(url =>{
         const script = document.createElement("script");

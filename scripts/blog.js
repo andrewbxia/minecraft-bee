@@ -227,7 +227,25 @@ const bloadimgs = ["/assets/imgs/loadings/yveltal/loading.webp",];
 const byayimg = "/assets/imgs/loadings/yveltal/success.webp";
 const bnayimg = "";
 
+
+
+
+
+
+
+
+
 blogcnter = 0;
+
+
+
+
+
+
+
+
+
+
 
 function addblogloadimg(state = 1, id = blogcnter++, lifetime = blogimglifetime){
     const cssid = "blog-loading-img-" + id;
@@ -253,7 +271,7 @@ function addblogloadimg(state = 1, id = blogcnter++, lifetime = blogimglifetime)
         .delay(id === 0 ? 0 : lifetime)
         .rule({
             from: [{top: "0px", left: `0px`, rotate: "0deg", height: "0px"}],
-            to: [{top: `${-100 - yay * 100}`, left: `${yay * -300}px`, rotate: `${20 * -yay}deg`, height: `${yay * 100}px`}],
+            to: [{top: `${-100 - yay * 100}px`, left: `${yay * -300}px`, rotate: `${20 * -yay}deg`, height: `${yay * 100}px`}],
             duration: 400 + yay * 100,
             easing: "ease",
             forwards: true,

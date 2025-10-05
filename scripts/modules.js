@@ -1,1 +1,0 @@
-import {convertAniBinaryToCSS} from './anicursor.js';
