@@ -119,17 +119,20 @@
             }
         }
     }
-
-    >#blog-loading{
+    >#blog-loading-wrapper{
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+    }
+    #blog-loading{
         pointer-events: none;
         overflow: visible;
+        position: absolute;
+        inset: 0;
+        height: 0;
         --b-load-1-delay: 1.9s;
         --b-load-1-time: 2s;
         --b-load-2-time: 2.2s;
-        --test-x: .2;
-        --test-y: .2;
-        --test-symmetric-curve: cubic-bezier(var(--test-x), var(--test-y), calc(1 - var(--test-x)), calc(1 - var(--test-y)));
-    
         >img{
             position: absolute;
             top: 0;
@@ -158,6 +161,7 @@
         >#blog-loading-txt{
             z-index: 2;
             position: absolute;
+            pointer-events: none;
             top: 200px;
             left: 50%;
             transform: translate(-50%, 0) rotate(-15deg);

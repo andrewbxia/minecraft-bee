@@ -87,6 +87,7 @@ body{
     height: fit-content;
     min-height: max-content;
     image-rendering: auto;
+    overflow-x: hidden;
 }
 
 ::selection{
