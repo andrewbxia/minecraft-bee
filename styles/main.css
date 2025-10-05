@@ -5,7 +5,7 @@
      /* calc(2.67 * 1.5rem); */
 }
 html{
-    scroll-padding-top: var(--header-height);
+    scroll-padding-top: calc(4 * var(--line-height) + var(--header-height));
     scroll-padding-bottom: 2em;
 }
 

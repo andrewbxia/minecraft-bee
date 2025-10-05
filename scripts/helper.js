@@ -11,8 +11,8 @@ const compst = (el) => window.getComputedStyle(el);
 const brect = (el) => el.getBoundingClientRect();
 const pint = (el, rad = 10) => parseInt(el, rad);
 const poat = (el) => parseFloat(el);
-const log = (...message) => debug ? console.trace(...message) : console.log(...message);
-const dlog = (...message) => {if(debug) log(...message)}; // debug log
+const log = (...message) => console.log(...message);
+const dlog = (...message) => {if(debug) console.trace(performance.now(), ...message)}; // debug log
 const dlert = (...message) => {if(debug) alert(...message)};
 const warn = (...message) => console.warn(...message);
 const darn = (...message) => {if(debug) warn(...message)}; // lmao im keeping darn no dwarn here
@@ -113,11 +113,14 @@ const toggletheme = () => {
 if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
     toggletheme();
 }
-const docproperty = (property) => compst(document.documentElement).getPropertyValue(property);
-const setdocproperty = (element = document.documentElement, property, value = null) => {
+
+const elprop = (element, property) => poat(compst(element).getPropertyValue(property));
+const elpropstr = (element, property) => compst(element).getPropertyValue(property);
+const docprop = (property) => elpropstr(document.documentElement, property);
+const setelprop = (element = document.documentElement, property, value = null) => {
     if(value !== null)
         element.style.setProperty(property, value);
-    return docproperty(property);
+    return docprop(property);
 }
 
 function isnum(num){

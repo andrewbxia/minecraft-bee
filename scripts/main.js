@@ -270,7 +270,11 @@ let numbars = 0;
 const barkeyframes = [
     "passdown", "passup", "passleft", "passright"
 ];
+
+let bgbarsinitallowed = false;
+
 function bgbars(newheight){
+    if(!bgbarsinitallowed) return;
     if (!eid("bg-bars")){
         log("nope");
         return;
@@ -347,7 +351,7 @@ window.addEventListener("scroll", () => {
 function resetscrollbars(){
     currpxl = 0;
     numbars = 0;
-    basecolor = tohsl(compst(document.documentElement).getPropertyValue("--theme-light"), true);
+    basecolor = tohsl(docprop("--theme-light"), true);
     eqa("#bg-bars>div").forEach((e) => {
         e.innerHTML = "";
     });
@@ -360,7 +364,11 @@ function resetscrollbars(){
 
 
 // once everything is loaded
-document.addEventListener("DOMContentLoaded", () => {
+// document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("blogloaded", () => {
+    if(bgbarsinitallowed) return;
+    bgbarsinitallowed = true;
+    dlog("bgbars init allowed");
     bgbars(currpxl);
     window.dispatchEvent(new Event("scroll"));
 });

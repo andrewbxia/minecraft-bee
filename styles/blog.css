@@ -1,51 +1,48 @@
-@keyframes b-load-1{
+@keyframes b-load-in{
     0%{
-
+        height: 0;
+        opacity: 0;
     }
-    45%{
-        top: initial;
-    }
-    65%{
-        top: -100px;
-        left: initial;
-        rotate: initial;
-        opacity: 1;
+}
+@keyframes b-load-1{
+    50%{
+        top: -50px;
+        /* rotate: 0deg; */
+        /* opacity: 1; */
     }
     100%{
-        top: 200px;
-        left: 16%;
-        rotate: 60deg;
+        top: -20px;
+        left: 70%;
+        rotate: 30deg;
         opacity: 0;
-
-
     }
 }
 
 @keyframes b-load-2{
-
-    0%{
-
-    }
-    45%{
-        top: initial;
-        left: initial;
-        transform: initial;
-        rotate: initial;
-    }
-    65%{
-        top: -200px;
-        left: -300px;
-        transform: translate(0, 0);
-        rotate: -20deg;
+    30%{
+        top: -150px;
+        /* left: 00px; */
         opacity: 1;
     }
     100%{
-        top: 300px;
-        left: 16%;
-        rotate: 60deg;
+        top: -125px;
+        transform: translate(0, 0);
+        left: -200px;
+        height: 500px;
+        rotate: -25deg;
         opacity: 0;
-
-
+    }
+}
+@keyframes b-txt-yay{
+    20%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+        top: 100px;
+        left: 100%;
+        font-size: 100px;
+        rotate: 50deg;
     }
 }
 
@@ -124,6 +121,15 @@
     }
 
     >#blog-loading{
+        pointer-events: none;
+        overflow: visible;
+        --b-load-1-delay: 1.9s;
+        --b-load-1-time: 2s;
+        --b-load-2-time: 2.2s;
+        --test-x: .2;
+        --test-y: .2;
+        --test-symmetric-curve: cubic-bezier(var(--test-x), var(--test-y), calc(1 - var(--test-x)), calc(1 - var(--test-y)));
+    
         >img{
             position: absolute;
             top: 0;
@@ -133,18 +139,34 @@
             height: 350px;
             width: auto;
             user-select: none;
-            animation: b-load-1 1.9s ease forwards;
+            animation: forwards ease-out;
+            &.b-load-1{
+                animation-name: b-load-1;
+                animation-delay: var(--b-load-1-delay);
+                animation-duration: var(--b-load-1-time);
+            }
+            
+            &.b-load-2{
+                animation-name: b-load-2;
+                animation-duration: var(--b-load-2-time);
+            }
 
+        }
+        &.yay > img.b-load-1{
+            animation-delay: 0s;
         }
         >#blog-loading-txt{
             z-index: 2;
             position: absolute;
-            top: 150px;
+            top: 200px;
             left: 50%;
-            transform: translate(-50%, 0);
-            rotate: 10deg;
+            transform: translate(-50%, 0) rotate(-15deg);
             color: var(--theme-dark);
-
+            white-space: nowrap;
+            &.yay{
+                animation: b-txt-yay var(--b-load-2-time)
+                    ease-out forwards;
+            }
         }
     }
 
