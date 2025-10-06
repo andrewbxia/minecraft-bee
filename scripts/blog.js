@@ -284,11 +284,9 @@ function dispblogload(){
             clearInterval(int);
             dlog("detected stopping", blogstate, cnt, blogloadcnt);
             setTimeout(() => {
-                if(cnt !== blogloadcnt) return; // loaded, do cnt + 1
-                dlog("removing loading", cnt);
-                eid("blog-loading").remove();
+                if(cnt !== blogloadcnt) return;
 
-            }, bloadtimes[2]() + 1000); // lag compensation
+            }, bloadtimes[2]() + 500); // lag compensation
             return;
         }
         

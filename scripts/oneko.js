@@ -89,18 +89,18 @@ function oneko(speed = 10, color = false) {
   };
 
   function init() {
-    nekoEl.id = "oneko";
+    nekoEl.class = "oneko";
     nekoEl.ariaHidden = true;
     nekoEl.style.width = "32px";
     nekoEl.style.height = "32px";
     nekoEl.style.position = "absolute";
-    nekoEl.style.pointerEvents = "auto";
+    nekoEl.style.pointerEvents = "none";
     nekoEl.style.imageRendering = "pixelated";
     nekoEl.style.left = `${nekoPosX - 16}px`;
     nekoEl.style.top = `${nekoPosY - 16}px`;
     nekoEl.style.zIndex = Number.MAX_VALUE;
 
-    let nekoFile = "./assets/imgs/oneko.png";
+    let nekoFile = "/assets/imgs/oneko.png";
     const curScript = document.currentScript;
     if (curScript && curScript.dataset.cat) {
       nekoFile = curScript.dataset.cat
