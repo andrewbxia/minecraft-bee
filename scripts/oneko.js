@@ -1,6 +1,6 @@
 
 
-function oneko(speed = 10, color = false) {
+function oneko(speed = 10, color = false, pointerevents = false) {
   const isReducedMotion =
     window.matchMedia(`(prefers-reduced-motion: reduce)`) === true ||
     window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true;
@@ -94,7 +94,7 @@ function oneko(speed = 10, color = false) {
     nekoEl.style.width = "32px";
     nekoEl.style.height = "32px";
     nekoEl.style.position = "absolute";
-    nekoEl.style.pointerEvents = "none";
+    nekoEl.style.pointerEvents = pointerevents ? "auto" : "none";
     nekoEl.style.imageRendering = "pixelated";
     nekoEl.style.left = `${nekoPosX - 16}px`;
     nekoEl.style.top = `${nekoPosY - 16}px`;
