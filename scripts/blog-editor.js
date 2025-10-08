@@ -288,7 +288,7 @@ if (params.has("b-edit")){
         slider.classList.add("grab");
     });
 
-    const mainwidth = pint(docproperty("--main-width"));
+    const mainwidth = pint(docprop("--main-width"));
     const extrawidth = 5*2 + 15; // 5 padding 15 slider width
     
     document.addEventListener("mousemove", (event) => {
