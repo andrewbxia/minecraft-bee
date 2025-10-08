@@ -59,10 +59,6 @@ class PerSec{
     cntn(){
         return this.cnt() * this.#windowdefualt / this.#window;
     }
-
-    getq(){
-        return this.#q;
-    }
 }
 
 
@@ -187,34 +183,6 @@ class RollingAvg{
     }
 }
 
-
-// class MeteredDelayTrigger extends MeteredTrigger{
-//     fire(...args){
-//         this.#q.shift();
-//         log(performance.now());log(this.#q.getq())
-//         if(this.#q.getq().length === 0){
-//             this.#callback(...args);
-//         }
-//         else{
-//             /*
-//             this.#next = this.#next.then(() => new Promise((resolve) => {
-//                     action();
-//                     setTimeout(() => {
-//                         resolve();
-//                     }, duration);
-//                 }));
-            
-//             */
-//             const timeleft = this.#q.getq().at(-1) + this.#limit - performance.now() +1;
-//             if(this.#trigger) clearTimeout(this.#trigger);
-//             this.#trigger = setTimeout(() => {
-//                 this.fire(...args);
-//             }, this.#limit);
-
-//         }
-//     }
-// }
-
 // requires some methods from helper.js
 class RollingActives{
     len = axiatxt.length;
@@ -302,8 +270,6 @@ class RollingActives{
         end = min(end, this.len);
         const maxstart = end - (nucleationsites - 1) * step;
         const rev = reverse ? -1 : 1;
-        let omg = false;
-        let prevstart = start;
         if(start === -1)
             start = randint(maxstart);
         else{

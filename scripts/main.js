@@ -54,8 +54,10 @@ KeySet.onnewkey = (key) => {
 
 }
 KeySet.onoofkey = (key) => {
-    const el = eq(`#keyset>[data-key="${key.ekey}"]`);
-    if(el) el.remove();
+    setTimeout(() => {
+        const el = eq(`#keyset>[data-key="${key.ekey}"]`);
+            if(el) el.remove()
+    }, 50);
 }
 
 // branding visuals
