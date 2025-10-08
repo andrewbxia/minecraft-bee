@@ -105,15 +105,19 @@ const listen = (event, callback, element = document) => {
     return () => element.removeEventListener(event, callback);
 }
 
-let thememode = "light";
+let thememode = localStorage.getItem("theme") || "light";
 const toggletheme = () => {
     document.documentElement.classList.toggle("dark"); 
     thememode = document.documentElement.classList.contains("dark") ? "dark" : "light";
+    localStorage.setItem("theme", thememode);
+    document.documentElement.setAttribute("data-theme", thememode);
 }
 // light mode better tho :sunglasses: :sunglasses:
 if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
     toggletheme();
 }
+localStorage.setItem("theme", thememode);
+document.documentElement.setAttribute("data-theme", thememode);
 
 const elprop = (element, property) => poat(compst(element).getPropertyValue(property));
 const elpropstr = (element, property) => compst(element).getPropertyValue(property);
