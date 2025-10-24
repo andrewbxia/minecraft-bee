@@ -8,10 +8,11 @@ body{
 
 #main{
     transform-style: preserve-3d;
-    perspective: 1000px;
+    perspective: 10000px;
     position: relative;
     width: 100%;
     height: 100vh;
+    overflow: hidden;
 }
 
 @keyframes p-change{
@@ -36,15 +37,16 @@ body{
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 50px;
-    height: 50px;
-    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) 
+    width: 0;
+    height: 0;
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(90deg) perspective(calc(var(--size) / 2))
         translate(calc(-1 * var(--size) / 2), calc(-1 * var(--size) / 2));
     transform-style: preserve-3d;
     --size: 900px;
     transition: transform .5s ease-out;
     perspective: 1000px;
-    perspective-origin: 450px 450px;
+    perspective-origin: 50% 50%;
+    transform-origin: center center;
     padding: 0;
     margin: 0;
     border: 5px var(--border-dark);
@@ -63,23 +65,35 @@ body{
     transform-style: preserve-3d;
     position: absolute;
     transform-origin: center center;
+    /* backface-visibility: hidden; */
     width: var(--size);
     height: var(--size);
     >div{
+        position: relative;
         transform: translate3d(0, 0, calc(var(--size) / 2));
-        width: 100%;
-        height: 100%;
+        /* background-color: var(--theme-dark-other); */
         transform-origin: 50% 50%;
+        width: 100%;
+        height:100%;
         /* display: flex;
         align-items: center;
         justify-content: center; */
-        border: 2px var(--border-dark);
 
     }
+    >div>div{
+        position: absolute;
+        border: 2px var(--border-dark);
+        width: var(--size);
+        height: var(--size);
+    }
     &.front, &.left, &.top{
-        >div{
-        transform: rotateX(180deg);
-
+        >div>div{
+            /* backface-visibility: visible; */
+            /* animation: changey 10s linear infinite; */
+            transform: rotateY(180deg);
+            /* animation: changex 10s linear infinite; */
+            transform-origin: center center;
+            
         }
     }
     &.front{
@@ -90,7 +104,6 @@ body{
     }
     &.left{
         transform: rotateY(-90deg);
-        text-align: right;
     }
     &.right{
         transform: rotateY(90deg);
@@ -103,5 +116,23 @@ body{
     &.bottom{
         transform: rotateX(-90deg);
 
+    }
+}
+@keyframes changex{
+    from{
+        transform: rotateX(0deg);
+
+    }
+    to{
+        transform: rotateX(180deg);
+
+    }
+}
+@keyframes changey{
+    from{
+        transform: rotateY(0deg);
+    }
+    to{
+        transform: rotateY(180deg);
     }
 }
