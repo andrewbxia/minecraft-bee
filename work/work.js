@@ -9,14 +9,15 @@ const size = pint(elprop(cube, "--size"));
 attachdebug(size, "size");
 
 const returncubetransform = (props = {}) => {
-    const rotatex = props.rotatex || 90;
+    const rotatex = props.rotatex || 0;
     const rotatey = props.rotatey || 0;
     const rotatez = props.rotatez || 0;
-    const perspective = props.perspective || size / 2;
-    const translatex = props.translatex || size / 2;
-    const translatey = props.translatey || size / 2;
+    // const perspective = props.perspective || 10000;
+    const translatex = props.translatex || 0;
+    const translatey = props.translatey || 0;
+    const translatez = props.translatez || size;
 
-    return `rotateX(${rotatex}deg) rotateY(${rotatey}deg) rotateZ(${rotatez}deg) perspective(${perspective}px) translate(calc(-1 * ${translatex}px), calc(-1 * ${translatey}px))`;
+    return `translate(-50%, -50%) rotateX(${rotatex}deg) rotateY(${rotatey}deg) rotateZ(${rotatez}deg) translate3d(calc(-1 * ${translatex}px), calc(-1 * ${translatey}px), ${translatez}px)`;
 }
 
 document.addEventListener("mousemove", (e) => {
@@ -26,15 +27,15 @@ document.addEventListener("mousemove", (e) => {
     const midwidth = window.innerWidth / 2;
     const xdiff = e.clientX - midwidth;
     const ydiff = e.clientY - midheight;
-    const rotateX = (ydiff / midheight) * 90;
-    const rotateY = (xdiff / midwidth) * 90;
+    const rotateX = (ydiff / midheight) * 90*2;
+    const rotateY = (xdiff / midwidth) * 90*2;
 
     cube.style.transform = returncubetransform({
-        translatex: x * size,
-        translatey: y * size,
-        // rotatex: rotateX,
-        // rotatey: rotateY
+        // translatex: x * size,
+        // translatey: y * size,
+        rotatex: rotateX,
+        rotatey: rotateY
     });
 });
 
-document.dispatchEvent(new MouseEvent("mousemove"));
+// document.dispatchEvent(new MouseEvent("mousemove"));
