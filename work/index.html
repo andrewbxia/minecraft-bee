@@ -27,18 +27,21 @@
 
 
         <div class="cube">
-            <!-- orientation, offset, scale  -->
-            <div class="front">  <div><div>fro</div></div></div>
-            <div class="back">   <div><div>bac</div></div></div>
-            <div class="left">   <div><div>lef</div></div></div>
-            <div class="right">  <div><div>rig</div></div></div>
-            <div class="top">    <div><div>top</div></div></div>
-            <div class="bottom"> <div><div>bot</div></div></div>
+            <!-- orientation, offset, scale, ind. rotation  -->
+            <div class="front"> <div><div><div>fro</div></div></div></div>
+            <div class="back">  <div><div><div>bac</div></div></div></div>
+            <div class="left">  <div><div><div>lef</div></div></div></div>
+            <div class="right"> <div><div><div>rig</div></div></div></div>
+            <div class="top">   <div><div><div>top</div></div></div></div>
+            <div class="bottom"><div><div><div>bot</div></div></div></div>
         </div>
 
+        <script>
+            eqa(".cube>div").forEach(side => {
+                side.dataset.side = side.className;
+            })
+        </script>
     </div>
-    <script>
-    </script>
     
 </body>
 </html>

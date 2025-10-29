@@ -37,10 +37,11 @@ body{
 
 
 .cube{
+    pointer-events: none;
     position: absolute;
     top: 50%;
     left: 50%;
-    --size: 900px;
+    --size: 1200px;
     --size-h: calc(var(--size) / 2);
     width: var(--size);
     height: var(--size);
@@ -48,6 +49,7 @@ body{
     transform: translate(-50%, -50%);
     transform-origin: 50% 50%;
     border: 5px solid black;
+    transition: transform .2s ease-out;
     /* perspective: 1000px;
     perspective-origin: center center; */
     div{
@@ -58,11 +60,21 @@ body{
         border: 1px solid red;
     }
     >div{
-
+        /* pointer-events: none; */
+        /* orientation */
         >div{
+            /* offset */
+                pointer-events: all;
             transform: translateZ(var(--size-h));
             >div{
-                /* backface-visibility: hidden; */
+                /* scale */
+                pointer-events: all;
+                backface-visibility: hidden;
+                background-color: grey;
+                >div{
+                    /* ind. rotation */
+                    pointer-events: all;
+                }
             }
         }
 
@@ -87,6 +99,10 @@ body{
         }
         &.bottom{
             transform: rotateX(-90deg);
+        }
+        &.inactive{
+            display: none;
+            pointer-events: none;
         }
 
 
