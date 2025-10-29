@@ -45,7 +45,7 @@ document.addEventListener("mousemove", (e) => {
         // perspective: abs(rotateX*rotateY) + 500, // funny rendering mode
     });
 });
-
+ 
 // document.dispatchEvent(new MouseEvent("mousemove"));
 const sidesdata = {
     front: {
