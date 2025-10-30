@@ -305,7 +305,7 @@ function attachdebug(...messages){
     app(el, mktxt("h4", debugmessage));
     const list = mk("ul");
     messages.forEach(m => {
-        app(list, li(m));
+        app(list, mktxt("li", m, true));
     });
     app(el, list);
 }

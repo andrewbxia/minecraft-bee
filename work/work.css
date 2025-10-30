@@ -1,10 +1,10 @@
 body{
     width: 100%;
     height: 100vh;
-
 }
 
 #main{
+    pointer-events:none;
     transform-style: preserve-3d;
     /* perspective: 1500px; set in html */
     transition: perspective .35s ease-out;
@@ -38,7 +38,7 @@ body{
 
 
 .cube{
-    pointer-events: none;
+    pointer-events:none;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -50,7 +50,7 @@ body{
     transform: translate(-50%, -50%);
     transform-origin: 50% 50%;
     /* border: 5px solid black; */
-    transition: transform 1.5s var(--ease-more-out);
+    transition: transform 1.5s cubic-bezier(0.25, 1, 0.542, 1);
     /* perspective: 1000px;
     perspective-origin: center center; */
     >div, >div>div, >div>div>div, >div>div>div>div{ /* lmao */
@@ -69,15 +69,38 @@ body{
             &.top, &.bottom{
                 /* transform:  */
             }
+            
+            &:not(.active):not(.inactive){
+                >div{
+                    font-variation-settings: var(--fw-light);
+                }
+                &:hover{
+                    width: var(--width);
+                    height: var(--height);
+                    >div{
+                        font-variation-settings: var(--fw-normal);
+                        transform: translateZ(calc(var(--width) * 0.05));
+                        color: var(--theme-dark-other);
+                        >div{
+                            cursor: pointer;
+                            outline: 10px solid var(--theme-light-other);
+                            box-shadow: inset 0 0 40px 10px rgba(var(--theme-light-other-vals), 0.9);
+
+                        }
+                    }
+                }
+            }
+            
             >div{
                 /* scale */
-                backface-visibility: hidden;
+                /* backface-visibility: hidden; makes pointer events not work in chrome? */
                 /* background-color: grey; */
+                transition: transform .35s var(--ease-backtrack);
                 >div{
                     /* ind. rotation / transforms */
                     &.active{
 
-                    box-shadow: inset 0 0 40px 10px rgba(var(--theme-dark-vals), 0.9);
+                        box-shadow: inset 0 0 40px 10px rgba(var(--theme-dark-vals), 0.9);
                     }
                     text-shadow: .05em .05em 0px rgba(var(--theme-dark-vals), 0.2);
                     font-size: calc(var(--width) * 0.05);
@@ -87,10 +110,7 @@ body{
                     position: relative;
                     width: var(--width);
                     height: var(--height);
-                    transition: color .35s;
-                    &:not(.active):not(.inactive)/*:hover*/{
-                        cursor: pointer;
-                    }
+                    transition: color .15s, outline .35s, font-variation-settings .35s;
 
                     &::before,&::after, >.decor::before, >.decor::after{
                         /* content: attr(--txt); */
@@ -194,7 +214,7 @@ body{
         }
         &.inactive{
             display: none;
-            pointer-events: none;
+            pointer-events: none !important;
         }
 
 

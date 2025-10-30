@@ -25,6 +25,8 @@ function sidepropogate(side, func){
 
 const size = pint(elprop(cube, "--width"));
 attachdebug(size, "size");
+let funnypersp = false;
+
 
 const returncubetransform = (props = {}) => {
     const rotatex = (props.rotatex || 0) + offsetdata.X;
@@ -35,11 +37,14 @@ const returncubetransform = (props = {}) => {
     const translatey = props.translatey || 0;
     const translatez = props.translatez || 0;
     
-    return `translate(-50%, -50%) rotateX(${rotatex}deg) rotateY(${rotatey}deg) rotateZ(${rotatez}deg) translate3d( ${translatex}px, ${translatey}px, ${translatez}px)`;
-    // return `translate(-50%, -50%) rotateX(${rotatex}deg) rotateY(${rotatey}deg) rotateZ(${rotatez}deg) perspective(${perspective}px) translate3d(calc(-1 * ${translatex}px), calc(-1 * ${translatey}px), ${translatez}px)`;
+    if(!funnypersp){
+        return `translate(-50%, -50%) rotateX(${rotatex}deg) rotateY(${rotatey}deg) rotateZ(${rotatez}deg) translate3d( ${translatex}px, ${translatey}px, ${translatez}px)`;
+    }
+    else 
+        return `translate(-50%, -50%) rotateX(${rotatex}deg) rotateY(${rotatey}deg) rotateZ(${rotatez}deg) perspective(${perspective}px) translate3d(calc(-1 * ${translatex}px), calc(-1 * ${translatey}px), ${translatez}px)`;
 }
 
-const cubetransform = new MeteredQueueTrigger(40, (e) => {
+const cubetransform = new MeteredQueueTrigger(10, (e) => {
     const x = e.clientX / window.innerWidth;
     const y = e.clientY / window.innerHeight;
     const rotmultiplier = .5;
@@ -58,7 +63,7 @@ const cubetransform = new MeteredQueueTrigger(40, (e) => {
         inputdata.rotatey = null;
         inputdata.rotatez = rotateY;
     }
-    // inputdata.perspective = abs(rotateX*rotateY) + 500;
+    inputdata.perspective = abs(rotateX*rotateY) ;
     inputdata.translatey = y * size*.1;
     inputdata.translatex = x * size*.1;
     // perspective: abs(rotateX*rotateY) + 500, // funny rendering mode
@@ -165,9 +170,6 @@ cube.addEventListener("click", (e) => {
     attachdebug(side, "activeside");
 });
 
-document.addEventListener("click", (e) => {
-    log("clicked on", e.target);
-});
 
 // eqa(".cube>div").forEach(side => {
 //     const sidename = side.dataset.side;
@@ -195,7 +197,13 @@ document.addEventListener("wheel", (e) => {
     const newperspective = clamp(currperspective + delta, 100, 3000);
 
     main.style.perspective = newperspective + "px";
-    log("perspective set to", newperspective);
+    // log("perspective set to", newperspective);
 }, { passive: false });
 
 checkvisit();
+
+
+document.addEventListener("click", (e) => {
+    attachdebug("clicked on", e.target.tagName, e.target.classList.toString()
+        , e.target.id);
+});
