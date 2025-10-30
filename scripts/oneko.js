@@ -89,7 +89,7 @@ function oneko(speed = 10, color = false, pointerevents = false) {
   };
 
   function init() {
-    nekoEl.class = "oneko";
+    nekoEl.className = "oneko";
     nekoEl.ariaHidden = true;
     nekoEl.style.width = "32px";
     nekoEl.style.height = "32px";
@@ -116,8 +116,14 @@ function oneko(speed = 10, color = false, pointerevents = false) {
       nekoId.style.userSelect = "none";
       nekoEl.appendChild(nekoId);
     }
+    if(curScript.parentElement !== document.head){
+
+      curScript.parentElement.appendChild(nekoEl);
+    }
+    else{
 
     document.body.appendChild(nekoEl);
+    }
 
     document.addEventListener("mousemove", function (event) {
       mousePosX = event.clientX;
@@ -285,6 +291,9 @@ function oneko(speed = 10, color = false, pointerevents = false) {
   });
   document.dispatchEvent(mouseMoveEvent);
 }
+
+
+
 const nekoStyle = document.createElement('style');
 nekoStyle.innerHTML = `
     @keyframes heartBurst {
@@ -303,11 +312,15 @@ nekoStyle.innerHTML = `
   `;
 
 document.head.appendChild(nekoStyle);
-let wowow = 1;
-while(Math.random() < 0.5){
-  wowow += wowow;
-  oneko(Math.floor(Math.random() * 10) + 5);
-}
-console.log(`1 in ${wowow}!`);
+function onekopopulate(){
 oneko(7);
 oneko(12);
+  let wowow = 1;
+  while(Math.random() < 0.5){
+    wowow += wowow;
+    oneko(Math.floor(Math.random() * 10) + 5);
+  }
+  console.log(`1 in ${wowow}!`);
+
+}
+onekopopulate();

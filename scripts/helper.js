@@ -181,6 +181,9 @@ function appmany(parent, children){
     children.forEach(child => app(parent, child));
     return parent;
 }
+function appdoc(child){
+    return app(document.body, child);
+}
 function prep(parent, child){
     if (child instanceof Node) {
         parent.prepend(child);
