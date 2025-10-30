@@ -25,7 +25,8 @@ class FpsMeter{
 
     static init(){
         if(!eid("fps")) appdoc(mk("div", 
-            {id: "fps", style: "position: fixed; bottom: 4px; left: 0; z-index: 2; pointer-events: none;"}));
+            {id: "fps", style: `position: fixed; bottom: 4px; left: 0; z-index: 3; pointer-events: none;
+                    text-shadow: .05em .05em 0px var(--theme-light);`}));
         window.requestAnimationFrame(FpsMeter.#fps);
     }
 
@@ -84,10 +85,8 @@ class KeySetSide{
                 style: `font-size: ${sqrt(KeySetSide.#kps.cntn())}ch;` });
             keyel.style.animationTimingFunction = `cubic-bezier(1,${pow(1.5, 
                 min(10, sqrt(KeySetSide.#kps.cntn())))},0.45,1.25)`;
+
             app(KeySetSide.#keyset, keyel);
-
-            log("pressed", keyel);
-
         }
         KeySet.onoofkey = (key) => {
             setTimeout(() => {
@@ -209,7 +208,7 @@ class ThemeSwitch{
             </div>
         </div>
     </div>`);
-            appdoc(ts);
+            document.body.prepend(ts);
             styling(`:root.dark #theme-switch{
                         rotate: calc( 180deg);
                         top: -50px;

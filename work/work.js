@@ -187,4 +187,15 @@ document.addEventListener("click", (e) => {
 //     });
 // });
 
+document.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const delta = e.deltaY;
+    log(delta);
+    let currperspective = pint(main.style.perspective);
+    const newperspective = clamp(currperspective + delta, 100, 3000);
+
+    main.style.perspective = newperspective + "px";
+    log("perspective set to", newperspective);
+}, { passive: false });
+
 checkvisit();

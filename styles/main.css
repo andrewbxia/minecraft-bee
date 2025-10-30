@@ -392,15 +392,6 @@ a{
     font-family: inherit !important;
 }
 
-
-#fps, #main{
-    text-shadow: .05em .05em 0px var(--theme-light);
-}
-
-
-
-
-
 #main{
     /* background-image: url('../assets/imgs/thing.png');
     background-size: cover; */
@@ -409,6 +400,7 @@ a{
     max-width: var(--main-width);
     background-color: rgba(var(--theme-light-vals), var(--bg-opacity));
     color: inherit;
+    text-shadow: .05em .05em 0px var(--theme-light);
     transition: var(--toggle-timing);
     transition-property: background-color, color;
     /* box-shadow: 0px 5px 10px 5px var(--theme-light); */
