@@ -5,7 +5,7 @@ function oneko(speed = 10, color = false, pointerevents = false) {
     window.matchMedia(`(prefers-reduced-motion: reduce)`) === true ||
     window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true;
 
-  if (isReducedMotion) return;
+  // if (isReducedMotion) return; temporary disalbe
 
   const nekoEl = document.createElement("div");
 
