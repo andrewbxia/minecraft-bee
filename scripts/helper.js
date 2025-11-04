@@ -54,11 +54,7 @@ function min(...args){
     }
     return min;
 }
-function clamp(val, min, max){
-    if(val < min) return min;
-    if(val > max) return max;
-    return val;
-}
+const clamp = (val, mini = val, maxi = val) => min(max(val, mini), maxi);
 const floor = (a) => Math.floor(a);
 const ceil = (a) => Math.ceil(a);
 const sqrt = (a) => Math.sqrt(a);
@@ -91,18 +87,18 @@ function numsuffix(num, onlysuffix = false){
             : 'th'))));
 }
 
+
+// dont use except when i go into typescript since event doesnt have code editor striggies
+const listen = (event, callback, element = document) => {
+    element.addEventListener(event, callback);
+    return () => element.removeEventListener(event, callback);
+}
 function addclicklistener(query, callback){
     document.addEventListener("click", (e) => {
         if(e.target.matches(query)){
             callback(e);
         }
     })
-}
-
-// dont use except when i go into typescript since event doesnt have code editor striggies
-const listen = (event, callback, element = document) => {
-    element.addEventListener(event, callback);
-    return () => element.removeEventListener(event, callback);
 }
 
 let thememode = localStorage.getItem("theme") || "light";
@@ -113,7 +109,8 @@ const toggletheme = () => {
     document.documentElement.setAttribute("data-theme", thememode);
 }
 // light mode better tho :sunglasses: :sunglasses:
-if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
+if (thememode === "dark" || window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
+    // toggle to dark
     toggletheme();
 }
 localStorage.setItem("theme", thememode);
@@ -122,7 +119,7 @@ document.documentElement.setAttribute("data-theme", thememode);
 const elprop = (element, property) => poat(compst(element).getPropertyValue(property));
 const elpropstr = (element, property) => compst(element).getPropertyValue(property);
 const docprop = (property) => elpropstr(document.documentElement, property);
-const setelprop = (element = document.documentElement, property, value = null) => {
+const setprop = (element = document.documentElement, property, value = null) => {
     if(value !== null)
         element.style.setProperty(property, value);
     return docprop(property);
@@ -137,12 +134,7 @@ function isnum(num){
     }
     return false;
 }
-function nullnum(num){
-    if(isnum(num))
-        return num;
-    return null;
-}
-
+const nullnum = (num) => isnum(num) ? num : null;
 // html elements funcs to make everything terse and unreadable
 function mk(type, attr = {}){
     const el = document.createElement(type);
@@ -169,12 +161,21 @@ function mkhtml(type, txt = "", attr = {}) {
     }
     return mktxt(type, txt, attr).outerHTML;
 }
+function checknodes(func, ...nodes){
+    let ok = true;
+    nodes.forEach((node, idx) => {
+        if(!(node instanceof Node)){
+            err(`arg ${idx + 1} is not a node`);
+            attachdebug(`arg ${idx + 1} is not a node`);
+            ok = false;
+        }
+    });
+    if(ok) func(...nodes);
+    return ok;
+}
+
 function app(parent, child){
-    if (child instanceof Node) {
-        parent.appendChild(child);
-    } else {
-        err("arg 2 is not an object");
-    }
+    checknodes((p, c) => p.appendChild(c), parent, child);
     return parent;
 }
 function appmany(parent, children){
@@ -185,11 +186,7 @@ function appdoc(child){
     return app(document.body, child);
 }
 function prep(parent, child){
-    if (child instanceof Node) {
-        parent.prepend(child);
-    } else {
-        err("arg 2 is not an object");
-    }
+    checknodes((p, c) => p.prepend(c), parent, child);
     return parent;
 }
 function prepmany(parent, children){
@@ -199,6 +196,7 @@ function prepmany(parent, children){
 
 const fromhtml = (txt) => mktxt("template", txt).content.firstChild;
 const tohtml = (el) => el.outerHTML;
+
 
 function link(url, txt = "", target = "_blank", attr = {}){
     if(typeof target === "object"){

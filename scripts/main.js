@@ -113,7 +113,9 @@ function playbsplash() {
         setTimeout(playbsplash, 1000);
     }
 }
-playbsplash();
+setTimeout(() => {
+    playbsplash();
+}, randint(7000,3000));
 
 
 
