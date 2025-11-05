@@ -1,5 +1,5 @@
 body{
-    pointer-events: none;
+    /* pointer-events: none; */
     width: 100%;
     height: 100vh;
 }
@@ -78,12 +78,12 @@ body{
                 &:hover{
                     width: var(--width);
                     height: var(--height);
+                        cursor: pointer;
                     >div{
                         font-variation-settings: var(--fw-normal);
                         transform: translateZ(calc(var(--width) * 0.05));
                         color: var(--theme-dark-other);
                         >div{
-                            cursor: pointer;
                             outline: 10px solid var(--theme-light-other);
                             box-shadow: inset 0 0 40px 10px rgba(var(--theme-light-other-vals), 0.9);
 
@@ -96,7 +96,7 @@ body{
                 /* scale */
                 /* backface-visibility: hidden; makes pointer events not work in chrome? */
                 /* background-color: grey; */
-                pointer-events: auto;
+                /* pointer-events: auto; */
                 transition: transform .35s var(--ease-backtrack);
                 >div{
                     /* ind. rotation / transforms */

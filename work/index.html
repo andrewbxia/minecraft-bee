@@ -111,6 +111,7 @@
             eqa(".cube>div").forEach(side => {
                 const classname = side.className;
                 side.dataset.side = classname;
+                side.style.setProperty('--txt', `"${classname}"`);
                 let cnt = 0;
                 while(cnt < 4 && side.firstElementChild){
                     side.classList.add(sidejobs[cnt]);

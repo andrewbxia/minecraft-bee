@@ -119,11 +119,7 @@ document.documentElement.setAttribute("data-theme", thememode);
 const elprop = (element, property) => poat(compst(element).getPropertyValue(property));
 const elpropstr = (element, property) => compst(element).getPropertyValue(property);
 const docprop = (property) => elpropstr(document.documentElement, property);
-const setprop = (element = document.documentElement, property, value = null) => {
-    if(value !== null)
-        element.style.setProperty(property, value);
-    return docprop(property);
-}
+const setprop = (element = document.documentElement, property, value = null) => element.style.setProperty(property, value);
 
 function isnum(num){
     if(typeof num === 'number') {

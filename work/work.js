@@ -131,38 +131,41 @@ const sidesdata = {
     }
 }
 
+let cssstr = `.cube{\n`;
+let cssstrend =   `}\n`;
+const bordermaps = [
+    "&::before",
+    ">.decor::after",
+    "&::after",
+    ">.decor::before",
+];
+
 eqa(".cube .decor").forEach(decor => {
     const side = decor.parentElement;
     const sidename = side.dataset.side;
 
     const clss = sidename + "-active";
 
-    let cssstr = `.cube{`;
-    let cssstrend = `}`;
+    
+
     sidesdata[sidename].neighbors.forEach((neighbor, i) => {
-        cssstr += `div.ind-rot.${clss}{
-            &::before, &::after, >.decor::before, >.decor::after {
-                content: 
-            
-            }
+        cssstr += `div.ind-rot.${clss}.${neighbor}${bordermaps[i]}, `;
         
-        
-        
-        
-        
-        }`
     });
 
+    const rules = `
+        {
+            content: "${sidename}";
+        }`;
+    cssstr = cssstr.slice(0, -2) + `{
+        ${rules}
+    }\n`;
+
 });
+styling(cssstr + cssstrend);
 
 
 
-const bordermaps = [
-    "::before",
-    ">.decor::after",
-    "::after",
-    ">.decor::before",
-];
 
 let activeside = "front";
 
@@ -171,8 +174,10 @@ function setactiveside(side){
     sidepropogate(activeside, (el) => el.classList.remove("active"));
     sidepropogate(sidesdata[activeside].other, 
         (el) => el.classList.remove("inactive"));
+        
     sidesdata[activeside].neighbors.forEach(neighbor => {
-        const clss = neighbor + "-active";
+        const clss = activeside + "-active";
+
         eq(`.cube div.${clss}.ind-rot`)?.classList.remove(clss);
     });
     const data = sidesdata[side];
@@ -185,7 +190,7 @@ function setactiveside(side){
     resetoffsetdata();
     offsetdata[data.axis.toUpperCase()] = data.offset;
     sidesdata[activeside].neighbors.forEach(neighbor => {
-        const clss = neighbor + "-active";
+        const clss = side + "-active";
         eq(`.cube div.ind-rot`).classList.add(clss);
     });
     document.dispatchEvent(new MouseEvent("mousemove", {
