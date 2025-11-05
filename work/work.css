@@ -1,4 +1,5 @@
 body{
+    pointer-events: none;
     width: 100%;
     height: 100vh;
 }
@@ -95,6 +96,7 @@ body{
                 /* scale */
                 /* backface-visibility: hidden; makes pointer events not work in chrome? */
                 /* background-color: grey; */
+                pointer-events: auto;
                 transition: transform .35s var(--ease-backtrack);
                 >div{
                     /* ind. rotation / transforms */

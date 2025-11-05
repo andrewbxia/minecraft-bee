@@ -102,11 +102,18 @@
         </div>
 
         <script>
+            const sidejobs = [
+                "orientation", 
+                "offset",
+                "scale", 
+                "ind-rot"
+            ];
             eqa(".cube>div").forEach(side => {
                 const classname = side.className;
                 side.dataset.side = classname;
-                let cnt = 1;
-                while(side.firstElementChild && cnt < 4){
+                let cnt = 0;
+                while(cnt < 4 && side.firstElementChild){
+                    side.classList.add(sidejobs[cnt]);
                     const sidechild = side.firstElementChild;
                     sidechild.dataset.side = classname;
                     sidechild.className = classname;

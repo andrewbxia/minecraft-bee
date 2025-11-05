@@ -24,7 +24,7 @@ function sidepropogate(side, func){
 }
 
 const size = pint(elprop(cube, "--width"));
-attachdebug(size, "size");
+// attachdebug(size, "size");
 let funnypersp = false;
 
 
@@ -38,11 +38,14 @@ const returncubetransform = (props = {}) => {
     const translatez = props.translatez || 0;
     
     if(!funnypersp){
+        // normie pose
         return `translate(-50%, -50%) rotateX(${rotatex}deg) rotateY(${rotatey}deg) rotateZ(${rotatez}deg) translate3d( ${translatex}px, ${translatey}px, ${translatez}px)`;
     }
     else 
         return `translate(-50%, -50%) rotateX(${rotatex}deg) rotateY(${rotatey}deg) rotateZ(${rotatez}deg) perspective(${perspective}px) translate3d(calc(-1 * ${translatex}px), calc(-1 * ${translatey}px), ${translatez}px)`;
 }
+
+
 
 const cubetransform = new MeteredQueueTrigger(10, (e) => {
     const x = e.clientX / window.innerWidth;
@@ -127,6 +130,33 @@ const sidesdata = {
         neighbors: ["front", "right", "back", "left"],
     }
 }
+
+eqa(".cube .decor").forEach(decor => {
+    const side = decor.parentElement;
+    const sidename = side.dataset.side;
+
+    const clss = sidename + "-active";
+
+    let cssstr = `.cube{`;
+    let cssstrend = `}`;
+    sidesdata[sidename].neighbors.forEach((neighbor, i) => {
+        cssstr += `div.ind-rot.${clss}{
+            &::before, &::after, >.decor::before, >.decor::after {
+                content: 
+            
+            }
+        
+        
+        
+        
+        
+        }`
+    });
+
+});
+
+
+
 const bordermaps = [
     "::before",
     ">.decor::after",
@@ -141,6 +171,10 @@ function setactiveside(side){
     sidepropogate(activeside, (el) => el.classList.remove("active"));
     sidepropogate(sidesdata[activeside].other, 
         (el) => el.classList.remove("inactive"));
+    sidesdata[activeside].neighbors.forEach(neighbor => {
+        const clss = neighbor + "-active";
+        eq(`.cube div.${clss}.ind-rot`)?.classList.remove(clss);
+    });
     const data = sidesdata[side];
     // set active
     sidepropogate(side, (el) => el.classList.add("active"));
@@ -150,7 +184,10 @@ function setactiveside(side){
     activeside = side;
     resetoffsetdata();
     offsetdata[data.axis.toUpperCase()] = data.offset;
-    
+    sidesdata[activeside].neighbors.forEach(neighbor => {
+        const clss = neighbor + "-active";
+        eq(`.cube div.ind-rot`).classList.add(clss);
+    });
     document.dispatchEvent(new MouseEvent("mousemove", {
         clientX: cursor.X,
         clientY: cursor.Y,
@@ -167,7 +204,7 @@ cube.addEventListener("click", (e) => {
     }
     const side = sideelement.dataset.side;
     setactiveside(side);
-    attachdebug(side, "activeside");
+    // attachdebug(side, "activeside");
 });
 
 
@@ -205,5 +242,5 @@ checkvisit();
 
 document.addEventListener("click", (e) => {
     attachdebug("clicked on", e.target.tagName, e.target.classList.toString()
-        , e.target.id);
+        , e.target.id, eqa(".ind-rot").length);
 });
