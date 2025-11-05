@@ -1,18 +1,20 @@
 body{
+    pointer-events: none;
     width: 100%;
     height: 100vh;
-
 }
 
-
-
 #main{
+    pointer-events:none;
     transform-style: preserve-3d;
-    perspective: 10000px;
+    /* perspective: 1500px; set in html */
+    transition: perspective .35s ease-out;
     position: relative;
     width: 100%;
     height: 100%;
     overflow: hidden;
+    text-shadow: .05em .05em 0px var(--theme-light);
+
 }
 
 @keyframes p-change{
@@ -37,43 +39,155 @@ body{
 
 
 .cube{
-    pointer-events: none;
+    pointer-events:none;
     position: absolute;
     top: 50%;
     left: 50%;
-    --size: 1200px;
-    --size-h: calc(var(--size) / 2);
-    width: var(--size);
-    height: var(--size);
+    --width: 130vw;
+    --height: var(--width);
+    width: var(--width);
+    height: var(--height);
     transform-style: preserve-3d;
     transform: translate(-50%, -50%);
     transform-origin: 50% 50%;
-    border: 5px solid black;
-    transition: transform .2s ease-out;
+    /* border: 5px solid black; */
+    transition: transform 1.5s cubic-bezier(0.25, 1, 0.542, 1);
     /* perspective: 1000px;
     perspective-origin: center center; */
-    div{
+    >div, >div>div, >div>div>div, >div>div>div>div{ /* lmao */
         transform-style: preserve-3d;
         position: absolute;
-        width: var(--size);
-        height: var(--size);
-        border: 1px solid red;
+        box-sizing: border-box;
+        transform-origin: calc(var(--width) / 2) calc(var(--height) / 2);
     }
     >div{
-        /* pointer-events: none; */
         /* orientation */
+        pointer-events: none;
         >div{
             /* offset */
-                pointer-events: all;
-            transform: translateZ(var(--size-h));
+            pointer-events: auto;
+            transform: translateZ(calc(var(--width) / 2));
+            &.top, &.bottom{
+                /* transform:  */
+            }
+            
+            &:not(.active):not(.inactive){
+                >div{
+                    font-variation-settings: var(--fw-light);
+                }
+                &:hover{
+                    width: var(--width);
+                    height: var(--height);
+                    >div{
+                        font-variation-settings: var(--fw-normal);
+                        transform: translateZ(calc(var(--width) * 0.05));
+                        color: var(--theme-dark-other);
+                        >div{
+                            cursor: pointer;
+                            outline: 10px solid var(--theme-light-other);
+                            box-shadow: inset 0 0 40px 10px rgba(var(--theme-light-other-vals), 0.9);
+
+                        }
+                    }
+                }
+            }
+            
             >div{
                 /* scale */
-                pointer-events: all;
-                backface-visibility: hidden;
-                background-color: grey;
+                /* backface-visibility: hidden; makes pointer events not work in chrome? */
+                /* background-color: grey; */
+                pointer-events: auto;
+                transition: transform .35s var(--ease-backtrack);
                 >div{
-                    /* ind. rotation */
-                    pointer-events: all;
+                    /* ind. rotation / transforms */
+                    &.active{
+
+                        box-shadow: inset 0 0 40px 10px rgba(var(--theme-dark-vals), 0.9);
+                    }
+                    text-shadow: .05em .05em 0px rgba(var(--theme-dark-vals), 0.2);
+                    font-size: calc(var(--width) * 0.05);
+                    outline: 10px var(--border-dark);
+                    backface-visibility: hidden;
+                    display: inline-block;
+                    position: relative;
+                    width: var(--width);
+                    height: var(--height);
+                    transition: color .15s, outline .35s, font-variation-settings .35s;
+
+                    &::before,&::after, >.decor::before, >.decor::after{
+                        /* content: attr(--txt); */
+                        font-size: 10px;
+                        color: blue;
+                        position: absolute;
+                        --size: 100px;
+                        width: var(--size);
+                        height: var(--size);
+                        pointer-events: none;
+                    }
+                    &.n-1::before, &.n-2>.decor::after, 
+                    &.n-3::after, &.n-4>.decor::before{
+                        content: attr(--txt);
+                        border: 500px var(--border-dark);
+                        
+                    }
+                    >.decor::before, >.decor::after{
+
+                    }
+                    /* 
+                    up
+                    down
+                    left
+                    righjt */
+                    &::before{
+                        width: 100%;
+                        left: 0;
+                        top: 0;
+                    }
+                    &::after{
+                        width: 100%;
+                        right: 0;
+                        bottom: 0;
+                    }
+                    >.decor{
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        pointer-events: none;
+                        width: 100%;
+                        height: 100%;
+                        &::before{
+                            height: 100%;
+                            left: 0;
+                            top: 0;
+
+                        }
+                        &::after{
+                            height: 100%;
+                            right: 0;
+                            top: 0;
+                            
+                        }
+                    }
+
+
+                    &.front{
+                        transform: rotateX(180deg);
+                    }
+                    &.back{
+                        transform: rotateX(180deg);
+                    }
+                    &.left{
+                        transform: rotateY(180deg);
+                    }
+                    &.right{
+                        transform: rotateY(180deg);
+                    }
+                    &.top{
+                        transform: rotateX(180deg);
+                    }
+                    &.bottom{
+                        transform: rotateX(180deg);
+                    }
                 }
             }
         }
@@ -102,7 +216,7 @@ body{
         }
         &.inactive{
             display: none;
-            pointer-events: none;
+            pointer-events: none !important;
         }
 
 

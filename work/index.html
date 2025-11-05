@@ -9,8 +9,9 @@
     <script src="/scripts/helper.js"></script>
     <script src="/scripts/helper-classes.js"></script>
     <script src="/scripts/supa-overview.js"></script>
+    <script src="/scripts/modules.js"></script>
     <script src="/scripts/dev-detect.js"></script>
-    <script  src="/scripts/anicursor.js" defer></script>
+    <script src="/scripts/anicursor.js" defer></script>
 
 
     
@@ -20,28 +21,111 @@
 
 </head>
 <body>
-    <div id="debug" style="font-size: 1vh;position: fixed; top: 0; left: 0; background: white; color: black; z-index: 10000;"></div>
-    <div id="main">
+<script src="/scripts/oneko.js"></script>
+    <script>
+        FpsMeter.init();
+        KeySetSide.init();
+        ThemeSwitch.init();
+    </script>
+    <div id="debug" style="font-size: 2vh;position: fixed; top: 0; left: 0; background: white; color: black; z-index: 10000;"></div>
+    <div id="main" style="perspective: 1500px;">
 
 
 
 
         <div class="cube">
             <!-- orientation, offset, scale, ind. rotation  -->
-            <div class="front"> <div><div><div>fro</div></div></div></div>
-            <div class="back">  <div><div><div>bac</div></div></div></div>
-            <div class="left">  <div><div><div>lef</div></div></div></div>
-            <div class="right"> <div><div><div>rig</div></div></div></div>
-            <div class="top">   <div><div><div>top</div></div></div></div>
-            <div class="bottom"><div><div><div>bot</div></div></div></div>
+            <div class="front">
+                <div><div><div style="text-align: center;">
+                    <h1>
+                        &apos;bout me
+                    </h1>
+                    <div>
+                        Heya, I'm andrew, i go boating sometimes
+                        <img src="/assets/imgs/canoe_square.jpg"
+                        style="margin: auto; width: 20%"> ok cool done by
+
+                    </div>
+                    <div>
+                        click around if u wanna ill put more about me stuff later
+                    </div>
+                    <script>onekopopulate(); </script>
+            </div></div></div></div>
+            <div class="back">
+                <div><div><div>
+                    <div>
+                        <img src="/assets/imgs/oneko.png" style="image-rendering: pixelated; width: 90%; display: block; margin: auto;">
+                    </div>
+                    <script>onekopopulate()</script>
+                    <script>onekopopulate()</script>
+                    <script>onekopopulate()</script>
+                    <script>onekopopulate()</script>
+
+            </div></div></div></div>
+            <div class="left">
+                <div><div><div>lef
+                    <script>onekopopulate()</script>
+
+            </div></div></div></div>
+            <div class="right">
+                <div><div><div>
+                    <h1>
+                        work exp
+                    </h1>
+                    <div>
+                        a billion years in virus development
+                    </div>
+                    <ul>
+                        <li>leading figure in decades old industry</li>
+                        <li>pls hire me</li>
+                    </ul>
+                    <script>onekopopulate()</script>
+                    <script>onekopopulate()</script>
+            </div></div></div></div>
+            <div class="top">
+                <div><div><div>
+
+                    <img src="/bee-minecraft.webp" 
+                    style="width: 90%; display: block; margin: auto;">
+                    <div style="text-align: center;">
+                        wow!
+                    </div>
+                    <script>onekopopulate()</script>
+                    <script>onekopopulate()</script>
+            </div></div></div></div>
+            <div class="bottom">
+                <div><div><div>bot
+
+                    <script>onekopopulate()</script>
+                    <script>onekopopulate()</script>
+            </div></div></div></div>
         </div>
 
         <script>
+            const sidejobs = [
+                "orientation", 
+                "offset",
+                "scale", 
+                "ind-rot"
+            ];
             eqa(".cube>div").forEach(side => {
-                side.dataset.side = side.className;
+                const classname = side.className;
+                side.dataset.side = classname;
+                let cnt = 0;
+                while(cnt < 4 && side.firstElementChild){
+                    side.classList.add(sidejobs[cnt]);
+                    const sidechild = side.firstElementChild;
+                    sidechild.dataset.side = classname;
+                    sidechild.className = classname;
+                    side = sidechild;
+                    cnt++;
+                }
+                app(side, mk("div", {class: "decor"}));
             })
         </script>
     </div>
-    
+    <script>
+        
+    </script>
 </body>
 </html>

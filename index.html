@@ -17,6 +17,7 @@
     <script src="/scripts/helper.js"></script>
     <script src="/scripts/helper-classes.js"></script>
     <script src="/scripts/supa-overview.js"></script>
+    <script src="/scripts/modules.js"></script>
     <script src="/scripts/dev-detect.js"></script>
     <script  src="/scripts/anicursor.js" defer></script>
     <script>
@@ -43,25 +44,7 @@
 </head>
 <body>
     <script defer src="/scripts/oneko.js" data-cat="/assets/imgs/oneko.png"></script>
-    <div id="theme-switch" onclick="triggertheme.fire()">
-        <div class="ts-container">
-            <div class="container" id="c-moon" title="clik 4 dark mode">
-                <!-- svgs from parkalex.dev -->
-                <svg xmlns="http://www.w3.org/2000/svg" id="moon-svg"
-                    viewBox="0 0 24 24"> 
-                    <path d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243 0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224zm-2.772 4.301a7.947 7.947 0 0 1-5.656 2.343 7.953 7.953 0 0 1-5.658-2.344c-3.118-3.119-3.118-8.195 0-11.314a7.923 7.923 0 0 1 2.06-1.483 10.027 10.027 0 0 0 2.89 7.848 9.972 9.972 0 0 0 7.848 2.891 8.036 8.036 0 0 1-1.484 2.059z">
-                    </path> 
-                </svg>
-            </div>
-            <div class="container" id="c-sun" title="clickies four light(better) mode">
-                <svg xmlns="http://www.w3.org/2000/svg" id="sun-svg"
-                    viewBox="0 0 24 24"> 
-                    <path d="M6.993 12c0 2.761 2.246 5.007 5.007 5.007s5.007-2.246 5.007-5.007S14.761 6.993 12 6.993 6.993 9.239 6.993 12zM12 8.993c1.658 0 3.007 1.349 3.007 3.007S13.658 15.007 12 15.007 8.993 13.658 8.993 12 10.342 8.993 12 8.993zM10.998 19h2v3h-2zm0-17h2v3h-2zm-9 9h3v2h-3zm17 0h3v2h-3zM4.219 18.363l2.12-2.122 1.415 1.414-2.12 2.122zM16.24 6.344l2.122-2.122 1.414 1.414-2.122 2.122zM6.342 7.759 4.22 5.637l1.415-1.414 2.12 2.122zm13.434 10.605-1.414 1.414-2.122-2.122 1.414-1.414z">
-                    </path>
-                </svg>
-            </div>
-        </div>
-    </div>
+    
     
     <style>
         @keyframes background-shift-y{
@@ -148,8 +131,8 @@
                     <div data-name="credits">
                         <span>credits</span>
                     </div>
-                    <div data-name="gallery">
-                        <span>gallery</span>
+                    <div data-name="about-me">
+                        <span>about-me&quest;</span>
                     </div>
                     <div data-name="guestbook">
                         <span>❤️<a href="https://andrewbxia.atabook.org/">guestbook!</a></span>
@@ -167,8 +150,8 @@
                             <p><a href="https://anthropocenereviewedbook.com">John Green</a> for inspiring my own writing style</p>
                             <p>hosted on <a href="https://pages.github.com/">github pages</a></p>
                         </div>
-                        <p class="content gallery">
-                            wip (?)🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛🎷🐛
+                        <p class="content about-me">
+                            // <a href="/work">about me thing wowow</a>
                         </p>
                         <p class="content guestbook">
                             come <a class="prominent" href="https://axia.atabook.org/">sign my guestbook!</a> i wanna see who's visiting my abomination of a website :eyes:
@@ -211,7 +194,7 @@
 
                         el.onclick = (e) => {
                             if(!el.matches(".selected")){
-                                triggertheme?.fire();
+                                ThemeSwitch.fire();
                             }
                             eq("#self-88x31>.output").innerText = 
                                 tohtml(app(link(baseurl), img(image.src)));
@@ -340,9 +323,6 @@
     <!-- z index 0: normal stuff -->
     <!-- z index 1: overlay stuff -->
     <!-- z index 2: imrpotant stuff -->
-    <div id="fps" style="position: fixed; bottom: 4px; left: 0; z-index: 2; pointer-events: none;"></div>
-    <div id="scroll-progress" style="width: 100%!important"></div>
-    <div id="keyset"></div>
     <div id="bg-bars"></div>
     <div id="save-status" data-save="0" style="position: fixed; bottom: 0; right: 0;"></div>
     <style>

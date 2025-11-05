@@ -23,42 +23,21 @@ document.addEventListener("visitorstats", () => {
 
 
 // REJECT CAMEL CASE
-const fpsm = new PerSec(1000);
-const dispfps = new MeteredTrigger(100, () => {eid("fps").innerText = fpsm.cntn();});
-let prevfps = 0, maxfps = 0;
-function fps(){
-    fpsm.add();
-    if(prevfps !== fpsm.cntn()){
-        dispfps.fire();
-        prevfps = fpsm.cntn();
-        maxfps = max(maxfps, prevfps);
-        // log(typeof prevfps, typeof fpsm.cntn());
-    }
-    window.requestAnimationFrame(fps);
-}
-fps();
-
-const keyset = eid("keyset");
-const kps = new PerSec(600);
+FpsMeter.init();
+KeySetSide.init();
+const containerlimiterid = "page";
+ScrollProgress.init(containerlimiterid);
+ThemeSwitch.init(() => {
+    togglewcb();
+    resetscrollbars();
+}, "var(--header-height)");
 // const keysetsize = () => {
 //     keyset.style.fontSize = `${sqrt(kps.cntn())}ch`;
 //     window.requestAnimationFrame(keysetsize);
 // }
 // keysetsize();
 
-KeySet.onnewkey = (key) => {
-    kps.add();
-    const keyel = p(key.key, {"data-key": key.ekey, style: `font-size: ${sqrt(kps.cntn())}ch;` });
-    keyel.style.animationTimingFunction = `cubic-bezier(1,${pow(1.5, min(10, sqrt(kps.cntn())))},0.45,1.25)`;
-    app(keyset, keyel);
 
-}
-KeySet.onoofkey = (key) => {
-    setTimeout(() => {
-        const el = eq(`#keyset>[data-key="${key.ekey}"]`);
-            if(el) el.remove()
-    }, 50);
-}
 
 // branding visuals
 //document.title = baseurl; // later have this textanimate based on branding activeq
@@ -134,7 +113,9 @@ function playbsplash() {
         setTimeout(playbsplash, 1000);
     }
 }
-playbsplash();
+setTimeout(() => {
+    playbsplash();
+}, randint(7000,3000));
 
 
 
@@ -198,12 +179,6 @@ function tohsl(cssColor, components = false){
     return `hsl(${h}, ${s}%, ${l}%${a === 1 ? '' : `, ${a}`})`;
 }
 
-const scrollprogress = new MeteredQueueTrigger(70, () => {
-    eid("scroll-progress").style.width = `${(window.scrollY / (eid(containerlimiterid).offsetHeight - window.innerHeight)) * 100}%`;
-});
-window.addEventListener("scroll", () => {
-    scrollprogress.fire();
-});
 
 function togglewcb(){
     if(thememode === "dark")
@@ -212,14 +187,6 @@ function togglewcb(){
         eid("wcb").classList.remove("wcb-d");
 }
 togglewcb();
-const triggertheme = new MeteredTrigger(250, () => {
-    toggletheme();
-    togglewcb();
-    // setTimeout(() => {
-        resetscrollbars();
-    // }, 250);
-});
-
 
 
 const barsizealert = () => {
@@ -243,7 +210,6 @@ function clearbarsizealert(){
     localStorage.removeItem("barsizealert");
 }
 
-const containerlimiterid = "page";
 let basecolor = tohsl(compst(document.documentElement).getPropertyValue("--theme-light"), true);
 
 let currpxl = 0;
@@ -333,8 +299,8 @@ const scrollbarst = new MeteredQueueTrigger(100, () => {
     const panstrength = 0.1;
     for(let depth of depths){
         const invdepth = max(.5, depths.length - depth);
-        const stopmult = maxfps / 10;
-        if(fpsm.cntn() + stopmult <= maxfps - invdepth * stopmult) return;
+        const stopmult = FpsMeter.maxfps / 10;
+        if(FpsMeter.currfps() + stopmult <= FpsMeter.maxfps - invdepth * stopmult) return;
         eq("#bg-bars .c-" + depth).style.transform = `translateY(${(scroll * -panstrength * invdepthpows[depth - 1]) % min(maxscroll(),Infinity)}px)`;
     }
 });
