@@ -49,22 +49,16 @@
                     <div>
                         click around if u wanna ill put more about me stuff later
                     </div>
-                    <script>onekopopulate(); </script>
             </div></div></div></div>
             <div class="back">
                 <div><div><div>
                     <div>
                         <img src="/assets/imgs/oneko.png" style="image-rendering: pixelated; width: 90%; display: block; margin: auto;">
                     </div>
-                    <script>onekopopulate()</script>
-                    <script>onekopopulate()</script>
-                    <script>onekopopulate()</script>
-                    <script>onekopopulate()</script>
 
             </div></div></div></div>
             <div class="left">
                 <div><div><div>lef
-                    <script>onekopopulate()</script>
 
             </div></div></div></div>
             <div class="right">
@@ -79,8 +73,6 @@
                         <li>leading figure in decades old industry</li>
                         <li>pls hire me</li>
                     </ul>
-                    <script>onekopopulate()</script>
-                    <script>onekopopulate()</script>
             </div></div></div></div>
             <div class="top">
                 <div><div><div>
@@ -90,14 +82,10 @@
                     <div style="text-align: center;">
                         wow!
                     </div>
-                    <script>onekopopulate()</script>
-                    <script>onekopopulate()</script>
             </div></div></div></div>
             <div class="bottom">
                 <div><div><div>bot
 
-                    <script>onekopopulate()</script>
-                    <script>onekopopulate()</script>
             </div></div></div></div>
         </div>
 
@@ -110,19 +98,21 @@
             ];
             eqa(".cube>div").forEach(side => {
                 const classname = side.className;
-                side.dataset.side = classname;
-                side.style.setProperty('--txt', `"${classname}"`);
                 let cnt = 0;
                 while(cnt < 4 && side.firstElementChild){
+                    side.className = classname;
                     side.classList.add(sidejobs[cnt]);
                     const sidechild = side.firstElementChild;
-                    sidechild.dataset.side = classname;
-                    sidechild.className = classname;
+                    side.dataset.side = classname;
                     side = sidechild;
                     cnt++;
+                    if(cnt === 3){
+                        app(side, mk("div", {class: `decor ${classname}`}));
+
+                    }
                 }
-                app(side, mk("div", {class: "decor"}));
-            })
+                log(classname)
+            });
         </script>
     </div>
     <script>

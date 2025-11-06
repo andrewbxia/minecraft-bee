@@ -131,12 +131,15 @@ const sidesdata = {
     }
 }
 
-let cssstr = `.cube{\n`;
-let cssstrend =   `}\n`;
+let cssstr = `.cube{
+div.ind-rot{
+
+`;
+let cssstrend =   `}\n}\n`;
 const bordermaps = [
-    "&::before",
+    "::before",
     ">.decor::after",
-    "&::after",
+    "::after",
     ">.decor::before",
 ];
 
@@ -146,10 +149,13 @@ eqa(".cube .decor").forEach(decor => {
 
     const clss = sidename + "-active";
 
+    cssstr += `
+    &.${clss}{
     
+    `
 
     sidesdata[sidename].neighbors.forEach((neighbor, i) => {
-        cssstr += `div.ind-rot.${clss}.${neighbor}${bordermaps[i]}, `;
+        cssstr += `&.${neighbor}${bordermaps[i]}, `;
         
     });
 
@@ -157,7 +163,7 @@ eqa(".cube .decor").forEach(decor => {
         {
             content: "${sidename}";
         }`;
-    cssstr = cssstr.slice(0, -2) + `{
+    cssstr = cssstr.slice(0, -2) + `
         ${rules}
     }\n`;
 
@@ -174,12 +180,11 @@ function setactiveside(side){
     sidepropogate(activeside, (el) => el.classList.remove("active"));
     sidepropogate(sidesdata[activeside].other, 
         (el) => el.classList.remove("inactive"));
-        
-    sidesdata[activeside].neighbors.forEach(neighbor => {
-        const clss = activeside + "-active";
+    
+    // remove active classes
+    const clss = activeside + "-active";
+    eqa(`.cube div.${clss}.ind-rot`).forEach(el => el.classList.remove(clss));
 
-        eq(`.cube div.${clss}.ind-rot`)?.classList.remove(clss);
-    });
     const data = sidesdata[side];
     // set active
     sidepropogate(side, (el) => el.classList.add("active"));
@@ -189,9 +194,10 @@ function setactiveside(side){
     activeside = side;
     resetoffsetdata();
     offsetdata[data.axis.toUpperCase()] = data.offset;
+    // add active classes
     sidesdata[activeside].neighbors.forEach(neighbor => {
-        const clss = side + "-active";
-        eq(`.cube div.ind-rot`).classList.add(clss);
+        const clss = activeside + "-active";
+        eq(`.cube div.${neighbor}.ind-rot`)?.classList.add(clss);
     });
     document.dispatchEvent(new MouseEvent("mousemove", {
         clientX: cursor.X,

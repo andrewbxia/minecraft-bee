@@ -119,6 +119,7 @@ body{
                         font-size: 10px;
                         color: blue;
                         position: absolute;
+                        background-color: red;
                         --size: 100px;
                         width: var(--size);
                         height: var(--size);
