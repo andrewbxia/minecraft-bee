@@ -132,10 +132,6 @@ const sidesdata = {
 }
 const sides = Array.from(Object.keys(sidesdata));
 
-let cssstr = `.cube{
-div.ind-rot{
-
-`;
 let cssstrend =   `}\n}\n`;
 const bordermaps = [
     "::before",
@@ -144,6 +140,11 @@ const bordermaps = [
     ">.decor::before",
 ];
 
+
+let cssstr = `.cube{
+div.scale:hover >.ind-rot{
+
+`;
 const sidecss = Object.fromEntries(sides.map(k => [k, ""]));
 
 sides.forEach(side => {
@@ -151,7 +152,7 @@ sides.forEach(side => {
 // div.ind-rot.back-active.right
      
     sidesdata[side].neighbors.forEach((neighbor, i) => {
-        sidecss[neighbor] += `
+        sidecss[side] += `
         &.${neighbor}-active.${side}${bordermaps[i]}, `;
         // sidecss[neighbor] += `&.active.${side}${bordermaps[i]}, `;
     });

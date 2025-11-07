@@ -17,27 +17,6 @@ body{
 
 }
 
-@keyframes p-change{
-    0%{
-        transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) 
-        perspective(450px) 
-        translate(-900px,-900px);
-    }
-    50%{
-        transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) 
-        perspective(450px) 
-        translate(0,0)
-
-    }
-    100%{
-        transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) 
-        perspective(450px) 
-        translate(0,-900px);
-    }
-}
-
-
-
 .cube{
     pointer-events:none;
     position: absolute;
@@ -125,14 +104,18 @@ body{
 
                     &::before,&::after, >.decor::before, >.decor::after{
                         /* content: attr(--txt); */
-                        font-size: 10px;
+                        --size: 10vh;
+                        font-size: var(--size);
                         color: blue;
                         position: absolute;
                         background-color: red;
-                        --size: 100px;
+                        text-align: center;
                         /* width: var(--size);
                         height: var(--size); */
                         pointer-events: none;
+                        transition: var(--ease-backtrack);
+                        transition-property: font-size, background-color;
+                        transition-duration: .75s, .35s;
                     }
                     /* 
                     up
@@ -140,33 +123,49 @@ body{
                     left
                     righjt */
                     &::before{
+                        /* up */
                         width: 100%;
                         left: 0;
                         top: 0;
+                        transform-origin: center bottom;
+                        transform: rotateX(-45deg);
                         /* make rotations for these later */
                     }
                     &::after{
+                        /* down */
                         width: 100%;
+                        /* rotate: 90deg; */
                         right: 0;
                         bottom: 0;
+                        transform-origin: center bottom;
+                        transform: translateY(-100%)rotateZ(180deg)rotateX(-45deg);
                     }
                     >.decor{
+                        
                         position: absolute;
+                        transform-style: preserve-3d;
                         top: 0;
                         left: 0;
                         pointer-events: none;
                         width: 100%;
                         height: 100%;
                         &::before{
+                            /* left */
+                            writing-mode: vertical-rl;
                             height: 100%;
                             left: 0;
                             top: 0;
-
+                            transform-origin: left center;
+                            transform: translateX(70.71%)rotateY(45deg)rotateZ(180deg);
                         }
                         &::after{
+                            /* right */
+                            writing-mode: vertical-rl;
                             height: 100%;
                             right: 0;
                             top: 0;
+                            transform-origin: left center;
+                            transform: rotateY(-45deg);
                         }
                     }
 
