@@ -130,6 +130,7 @@ const sidesdata = {
         neighbors: ["front", "right", "back", "left"],
     }
 }
+const sides = Array.from(Object.keys(sidesdata));
 
 let cssstr = `.cube{
 div.ind-rot{
@@ -143,34 +144,33 @@ const bordermaps = [
     ">.decor::before",
 ];
 
-eqa(".cube .decor").forEach(decor => {
-    const side = decor.parentElement;
-    const sidename = side.dataset.side;
+const sidecss = Object.fromEntries(sides.map(k => [k, ""]));
 
-    const clss = sidename + "-active";
+sides.forEach(side => {
 
-    cssstr += `
-    &.${clss}{
-    
-    `
-
-    sidesdata[sidename].neighbors.forEach((neighbor, i) => {
-        cssstr += `&.${neighbor}${bordermaps[i]}, `;
-        
+// div.ind-rot.back-active.right
+     
+    sidesdata[side].neighbors.forEach((neighbor, i) => {
+        sidecss[neighbor] += `
+        &.${neighbor}-active.${side}${bordermaps[i]}, `;
+        // sidecss[neighbor] += `&.active.${side}${bordermaps[i]}, `;
     });
-
-    const rules = `
-        {
-            content: "${sidename}";
-        }`;
-    cssstr = cssstr.slice(0, -2) + `
-        ${rules}
-    }\n`;
-
 });
-styling(cssstr + cssstrend);
-
-
+for(const side of sides){
+    cssstr += `
+    ${sidecss[side].slice(0, -2)}{
+        
+        content: "${side}";
+    }`;
+    // cssstr += `
+    // ${sidecss[side].slice(0, -2)}{
+    //     content: "${side}";
+    // }
+    // `;
+}
+cssstr += cssstrend;
+styling(cssstr);
+attachdebug(cssstr);
 
 
 let activeside = "front";
