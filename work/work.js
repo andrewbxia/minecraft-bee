@@ -142,7 +142,7 @@ const bordermaps = [
 
 
 let cssstr = `.cube{
-div.scale:hover >.ind-rot{
+div.offset >.scale >.ind-rot{
 
 `;
 const sidecss = Object.fromEntries(sides.map(k => [k, ""]));
@@ -160,7 +160,6 @@ sides.forEach(side => {
 for(const side of sides){
     cssstr += `
     ${sidecss[side].slice(0, -2)}{
-        
         content: "${side}";
     }`;
     // cssstr += `

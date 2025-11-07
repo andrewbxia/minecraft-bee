@@ -57,7 +57,7 @@ body{
                 &:hover{
                     width: var(--width);
                     height: var(--height);
-                        cursor: pointer;
+                    cursor: pointer;
                     >div{
                         font-variation-settings: var(--fw-normal);
                         transform: translateZ(calc(var(--width) * 0.05));
@@ -66,8 +66,22 @@ body{
                             outline: 10px solid var(--theme-light-other);
                             box-shadow: inset 0 0 40px 10px rgba(var(--theme-light-other-vals), 0.9);
                             &::before, &::after, >.decor::before, >.decor::after{
+                                opacity: 1;
                                 background-color: var(--theme-light-other);
                                 font-size: 10vh;
+                                color: var(--theme-dark-other);
+                            }
+                            &::before{
+                                transform: rotateX(-45deg);
+                            }
+                            &::after{
+                                transform: translateY(-100%)rotateZ(180deg)rotateX(-45deg);
+                            }
+                            >.decor::before{
+                                transform: translateX(100%)rotateY(45deg)rotateZ(180deg);
+                            }
+                            >.decor::after{
+                                transform: rotateY(-45deg);
                             }
                         }
                     }
@@ -84,12 +98,6 @@ body{
                 >div{
                     /* ind. rotation / transforms */
                     &.active{
-                        &:hover{
-                            /* &::before, &::after, >.decor::before, >.decor::after{
-                                background-color: var(--theme-light-other);
-                                font-size: 10vh;
-                            } */
-                        }
                         box-shadow: inset 0 0 40px 10px rgba(var(--theme-dark-vals), 0.9);
                     }
                     text-shadow: .05em .05em 0px rgba(var(--theme-dark-vals), 0.2);
@@ -104,6 +112,7 @@ body{
 
                     &::before,&::after, >.decor::before, >.decor::after{
                         /* content: attr(--txt); */
+                        opacity: 0;
                         --size: 10vh;
                         font-size: var(--size);
                         color: blue;
@@ -114,8 +123,8 @@ body{
                         height: var(--size); */
                         pointer-events: none;
                         transition: var(--ease-backtrack);
-                        transition-property: font-size, background-color;
-                        transition-duration: .75s, .35s;
+                        transition-property: font-size, background-color, color, opacity, transform;
+                        transition-duration: .75s, .45s, 1s, .35s, .35s, .35s;
                     }
                     /* 
                     up
@@ -128,7 +137,7 @@ body{
                         left: 0;
                         top: 0;
                         transform-origin: center bottom;
-                        transform: rotateX(-45deg);
+                        transform: rotateX(450deg);
                         /* make rotations for these later */
                     }
                     &::after{
@@ -138,7 +147,7 @@ body{
                         right: 0;
                         bottom: 0;
                         transform-origin: center bottom;
-                        transform: translateY(-100%)rotateZ(180deg)rotateX(-45deg);
+                        transform: translateY(-100%)rotateZ(180deg)rotateX(450deg);
                     }
                     >.decor{
                         
@@ -156,7 +165,7 @@ body{
                             left: 0;
                             top: 0;
                             transform-origin: left center;
-                            transform: translateX(70.71%)rotateY(45deg)rotateZ(180deg);
+                            transform: translateX(100%)rotateY(-450deg)rotateZ(180deg);
                         }
                         &::after{
                             /* right */
@@ -165,7 +174,7 @@ body{
                             right: 0;
                             top: 0;
                             transform-origin: left center;
-                            transform: rotateY(-45deg);
+                            transform: rotateY(450deg);
                         }
                     }
 
@@ -223,31 +232,3 @@ body{
     }
 }
 
-
-@keyframes changex{
-    from{
-        transform: rotateX(0deg);
-
-    }
-    to{
-        transform: rotateX(180deg);
-
-    }
-}
-@keyframes changey{
-    from{
-        transform: rotateY(0deg);
-    }
-    to{
-        transform: rotateY(180deg);
-    }
-}
-
-@keyframes changep{
-    from{
-        perspective-origin: 0 0;
-    }
-    to{
-        perspective-origin: 100% 100%;
-    }
-}
