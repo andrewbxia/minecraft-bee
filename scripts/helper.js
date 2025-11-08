@@ -285,15 +285,24 @@ document.addEventListener("DOMContentLoaded", () =>{
             imglazy(img);
     })
 });
-
+    
 
 function attachdebug(...messages){
-    if(!debug) return;
-    const el = eid("debug");
+    if(!debug){
+    }
     const debugmessage = `debug mode enabled, if you're not me 
         and you see this you can blame my bad coding`;
     
-    if(!el) return;
+    if(!eid("debug")) {
+        if(Debug){
+            Debug.init();
+            log("ok")
+        }
+        else{
+            return;
+        }
+    }
+    const el = eid("debug");
     el.innerHTML = "";
 
     app(el, mktxt("h4", debugmessage));

@@ -163,7 +163,8 @@ class Debug{
             appdoc(mk("div", {id: "debug", style: `
 position: fixed;
 top: 0; 
-left: 0; 
+left: 0;
+font-size: 1.5vh;
 background: var(--theme-light-other); 
 color: var(--theme-dark-other); 
 z-index: 10000;
