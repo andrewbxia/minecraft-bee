@@ -33,6 +33,7 @@ const assertnotreached = (msg = "unreachable thingy reached") => assert(false, m
 const truheight = window.innerHeight * window.devicePixelRatio;
 const truwidth = window.innerWidth * window.devicePixelRatio;
 const sp = "&nbsp;";
+const nofunc = () => {};
 
 function max(...args){
     if(args.length === 0) return null;
@@ -178,6 +179,15 @@ function appmany(parent, children){
     children.forEach(child => app(parent, child));
     return parent;
 }
+
+function appnest(...nodes){
+    checknodes(nofunc, ...nodes);
+    for(let i = nodes.length - 1; i > 0; i--){
+        app(nodes[i - 1], nodes[i]);
+    }
+    return nodes[0];
+}
+
 function appdoc(child){
     return app(document.body, child);
 }
