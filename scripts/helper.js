@@ -181,7 +181,7 @@ function appmany(parent, children){
 }
 
 function appnest(...nodes){
-    checknodes(nofunc, ...nodes);
+    if(!checknodes(nofunc, ...nodes))return null;
     for(let i = nodes.length - 1; i > 0; i--){
         app(nodes[i - 1], nodes[i]);
     }
