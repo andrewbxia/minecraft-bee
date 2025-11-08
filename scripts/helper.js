@@ -298,8 +298,7 @@ document.addEventListener("DOMContentLoaded", () =>{
     
 
 function attachdebug(...messages){
-    if(!debug){
-    }
+    if(!debug) return;
     const debugmessage = `debug mode enabled, if you're not me 
         and you see this you can blame my bad coding`;
     
