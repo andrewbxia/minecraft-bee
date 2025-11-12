@@ -38,12 +38,10 @@ function generatepost(post){
     // log(created.getTime(), edited.getTime(), edited);
     const cover = post.cover_url;
     const content = post.content || "AMAZING CONTENT";
-    const wordcount = content.split(" ").length; // lazy but gets the job done heheheheheh
+    
     
     const postel = mk("article", {class: "post", "data-id": id, id: `post-${id}`});
     const posth = mk("center", {class: "post-header", title: title});
-    const postwc = mktxt("h6", `<<--|  ~${wordcount}±${(1-abs(Math.sin(wordcount)))
-        .toFixed(randint(2,2))}-ish words  |-->>`, {class: "post-wordcount"});
     const postc = mktxt("p", content, {class: "post-content"});
     const postt = app(mk("h2", {class: "post-title"}), link(`?post=${id}`, title, "_self"));
     app(posth, postt);
@@ -54,16 +52,23 @@ function generatepost(post){
     const hasedited = (created.getTime() + dayms / 2) < edited.getTime();
     const datestr = created.toDateString() + (hasedited ? ` (${edited.toDateString()})` : "");
     appmany(misc, 
-        [p(datestr), p(tags.join(" · ")), postwc]
+        [p(datestr), p(tags.join(" · "))]
     );
 
     postc.querySelectorAll("img").forEach(img => {
         imglazy(img);
     });
     
-    app(posth, misc);
+    // app(posth, misc);
     app(postel, posth);
     app(postel, postc);
+    
+    
+    const wordcount = postel.innerText.split(" ").length; // lazy but gets the job done heheheheheh
+    const postwc = mktxt("h6", `<<--|  ~${wordcount}±${(1-abs(Math.sin(wordcount)))
+        .toFixed(randint(2,2))}-ish words  |-->>`, {class: "post-wordcount"});
+    appnest(posth, misc, postwc)
+    
     return postel;
 }
 

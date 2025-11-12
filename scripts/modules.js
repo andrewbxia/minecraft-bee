@@ -163,7 +163,8 @@ class Debug{
             appdoc(mk("div", {id: "debug", style: `
 position: fixed;
 top: 0; 
-left: 0; 
+left: 0;
+font-size: 1.5vh;
 background: var(--theme-light-other); 
 color: var(--theme-dark-other); 
 z-index: 10000;
@@ -178,14 +179,14 @@ transition-timing-function: ease-out;
 class ThemeSwitch{
 
     static #switcher = null;
-    static #extra = () => {};
+    static #extra = nofunc;
     static #limiter = 250;
     static #triggertheme = new MeteredTrigger(ThemeSwitch.#limiter, (...args) => {
         toggletheme();
         ThemeSwitch.#extra(...args);
     });
 
-    static init(onclick = () => {}, top = "0px"){
+    static init(onclick = nofunc, top = "0px"){
         ThemeSwitch.#extra = onclick;
         if(!eid("theme-switch")){
             const ts = fromhtml(`<div id="theme-switch">

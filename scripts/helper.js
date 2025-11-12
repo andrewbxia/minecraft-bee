@@ -33,6 +33,7 @@ const assertnotreached = (msg = "unreachable thingy reached") => assert(false, m
 const truheight = window.innerHeight * window.devicePixelRatio;
 const truwidth = window.innerWidth * window.devicePixelRatio;
 const sp = "&nbsp;";
+const nofunc = () => {};
 
 function max(...args){
     if(args.length === 0) return null;
@@ -178,6 +179,15 @@ function appmany(parent, children){
     children.forEach(child => app(parent, child));
     return parent;
 }
+
+function appnest(...nodes){
+    if(!checknodes(nofunc, ...nodes))return null;
+    for(let i = nodes.length - 1; i > 0; i--){
+        app(nodes[i - 1], nodes[i]);
+    }
+    return nodes[0];
+}
+
 function appdoc(child){
     return app(document.body, child);
 }
@@ -285,15 +295,23 @@ document.addEventListener("DOMContentLoaded", () =>{
             imglazy(img);
     })
 });
-
+    
 
 function attachdebug(...messages){
     if(!debug) return;
-    const el = eid("debug");
     const debugmessage = `debug mode enabled, if you're not me 
         and you see this you can blame my bad coding`;
     
-    if(!el) return;
+    if(!eid("debug")) {
+        if(Debug){
+            Debug.init();
+            log("ok")
+        }
+        else{
+            return;
+        }
+    }
+    const el = eid("debug");
     el.innerHTML = "";
 
     app(el, mktxt("h4", debugmessage));
