@@ -71,6 +71,13 @@ body{
                                 font-size: 10vh;
                                 color: var(--theme-dark-other);
                             }
+                            
+                            >.decor-flash{
+                                animation: decor-flash .75s ease-out;
+                            }
+
+
+                            
                             &::before{
                                 transform: rotateX(-45deg);
                             }
@@ -149,8 +156,7 @@ body{
                         transform-origin: center bottom;
                         transform: translateY(-100%)rotateZ(180deg)rotateX(450deg);
                     }
-                    >.decor{
-                        
+                    >.decor, >.decor-flash{
                         position: absolute;
                         transform-style: preserve-3d;
                         top: 0;
@@ -158,6 +164,8 @@ body{
                         pointer-events: none;
                         width: 100%;
                         height: 100%;
+                    }
+                    >.decor{
                         &::before{
                             /* left */
                             writing-mode: vertical-rl;
@@ -177,7 +185,12 @@ body{
                             transform: rotateY(450deg);
                         }
                     }
+                    >.decor-flash{
+                        background-color: var(--theme-dark);
 
+                        opacity: 0;
+                        transform: none;
+                    }
 
                     &.front{
                         transform: rotateX(180deg);
@@ -232,3 +245,13 @@ body{
     }
 }
 
+@keyframes decor-flash{
+    0%{
+        opacity: 1;
+        transform: translateZ(0)scale(1);
+    }
+    100%{
+        opacity: 0;
+        transform: translateZ(50px)scale(5);
+    }
+}
