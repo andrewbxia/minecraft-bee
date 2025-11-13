@@ -345,3 +345,57 @@ class ThemeSwitch{
         ThemeSwitch.#triggertheme.fire();
     }
 }
+
+class BGBars{
+    static #currpxl = 0;
+    static #step = 1150;
+    static #maxpxl = () => min(1080 * 5, truheight * 3.75);
+    static #maxscroll = () => window.innerHeight / truheight * maxpxl();
+    static #maxdepth = 4;
+    static #depths = (BGBars.#maxdepth).range().map(i => i + 1);
+    static #bardepthpower = 1.5;
+    static #depthpows = depths.map(depth => pow(depth, bardepthpower));
+    static #invdepthpows = depths.map(depth => pow(max(.5, depths.length - depth), bardepthpower));
+
+    static #scrollbarst = new MeteredQueueTrigger(100, () => {});
+
+    static init(options = {}){
+        BGBars.#currpxl = 0;
+        BGBars.#step = options.step || BGBars.#step;
+        BGBars.#maxpxl = options.maxpxl !== undefined ? () => options.maxpxl : BGBars.#maxpxl;
+        BGBars.#maxscroll = options.maxscroll !== undefined ? () => options.maxscroll : BGBars.#maxscroll;
+        BGBars.#maxdepth = options.maxdepth || BGBars.#maxdepth;
+        BGBars.#depths = (BGBars.#maxdepth).range().map(i => i + 1);
+        BGBars.#bardepthpower = options.bardepthpower || BGBars.#bardepthpower;
+        BGBars.#depthpows = BGBars.#depths.map(depth => pow(depth, BGBars.#bardepthpower));
+        BGBars.#invdepthpows = BGBars.#depths.map(depth => pow(max(.5, BGBars.#depths.length - depth), BGBars.#bardepthpower));
+
+        // BGBars.#panstrength = options.panstrength || 0.1;
+
+        BGBars.#scrollbarst = new MeteredQueueTrigger(100, () => {
+            // if(window.devicePixelRatio * 100 <= 60)return;
+            // if(fpsm.cntn() <= 50) return; // dont run if not doing too hot
+            const scroll = window.innerHeight + window.scrollY;
+            if(currpxl < eid(containerlimiterid).offsetHeight){ 
+                bgbars(scroll);
+            }
+
+            if(scroll >= eid(containerlimiterid).offsetHeight){
+                return;
+            }
+            // log(window.scrollY + window.innerHeight, eid("container").offsetHeight);
+            for(let depth of depths){
+                const invdepth = max(.5, depths.length - depth);
+                const stopmult = FpsMeter.maxfps / 10;
+                if(FpsMeter.currfps() + stopmult <= FpsMeter.maxfps - invdepth * stopmult) return;
+                eq("#bg-bars .c-" + depth).style.transform = `translateY(${(scroll * -panstrength * invdepthpows[depth - 1]) % min(maxscroll(),Infinity)}px)`;
+            }
+        });
+    }
+
+
+
+
+
+
+}

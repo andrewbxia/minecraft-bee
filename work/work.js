@@ -160,8 +160,9 @@ sides.forEach(side => {
 for(const side of sides){
     cssstr += `
     ${sidecss[side].slice(0, -2)}{
-        content: "${side}";
+        content: var(--desc); 
     }`;
+    // did this when I stored sides data in javascript instead of css vars lmao
     // cssstr += `
     // ${sidecss[side].slice(0, -2)}{
     //     content: "${side}";
