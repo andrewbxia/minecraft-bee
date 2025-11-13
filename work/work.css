@@ -33,16 +33,17 @@ body{
     transition: transform 1.5s cubic-bezier(0.25, 1, 0.542, 1);
     /* perspective: 1000px;
     perspective-origin: center center; */
-    >div, >div>div, >div>div>div, >div>div>div>div{ /* lmao */
+    >div.orientation, >div>div.offset, 
+        >div>div>div.scale, >div>div>div>div.ind-rot{ /* lmao */
         transform-style: preserve-3d;
         position: absolute;
         box-sizing: border-box;
         transform-origin: calc(var(--width) / 2) calc(var(--height) / 2);
     }
-    >div{
+    >div.orientation{
         /* orientation */
         pointer-events: none;
-        >div{
+        >div.offset{
             /* offset */
             pointer-events: auto;
             transform: translateZ(calc(var(--width) / 2));
@@ -51,18 +52,18 @@ body{
             }
             
             &:not(.active):not(.inactive){
-                >div{
+                >div.scale{
                     font-variation-settings: var(--fw-light);
                 }
                 &:hover{
                     width: var(--width);
                     height: var(--height);
                     cursor: pointer;
-                    >div{
+                    >div.scale{
                         font-variation-settings: var(--fw-normal);
                         transform: translateZ(calc(var(--width) * 0.05));
                         color: var(--theme-dark-other);
-                        >div{
+                        >div.ind-rot{
                             outline: 10px solid var(--theme-light-other);
                             box-shadow: inset 0 0 40px 10px rgba(var(--theme-light-other-vals), 0.9);
                             &::before, &::after, >.decor::before, >.decor::after{
@@ -75,8 +76,6 @@ body{
                             >.decor-flash{
                                 animation: decor-flash .75s ease-out;
                             }
-
-
                             
                             &::before{
                                 transform: rotateX(-45deg);
@@ -96,13 +95,12 @@ body{
             }
             
             
-            >div{
+            >div.scale{
                 /* scale */
                 /* backface-visibility: hidden; makes pointer events not work in chrome? */
-                /* background-color: grey; */
-                /* pointer-events: auto; */
+
                 transition: transform .35s var(--ease-backtrack);
-                >div{
+                >div.ind-rot{
                     /* ind. rotation / transforms */
                     &.active{
                         box-shadow: inset 0 0 40px 10px rgba(var(--theme-dark-vals), 0.9);
@@ -186,8 +184,7 @@ body{
                         }
                     }
                     >.decor-flash{
-                        background-color: var(--theme-dark);
-
+                        background-color: var(--theme-light-other);
                         opacity: 0;
                         transform: none;
                     }
@@ -217,9 +214,6 @@ body{
 
         &.front{
             transform: rotateX(180deg);
-            >div{
-                /* scale: -1; */
-            }
         }
         &.back{
             transform: rotateX(0deg);
@@ -247,11 +241,11 @@ body{
 
 @keyframes decor-flash{
     0%{
-        opacity: 1;
+        opacity: .8;
         transform: translateZ(0)scale(1);
     }
     100%{
         opacity: 0;
-        transform: translateZ(50px)scale(5);
+        transform: translateZ(25px)scale(1.25);
     }
 }
