@@ -1,4 +1,5 @@
 // set of classes i made to help me not go crazy with tihs coding
+const helperclassesjs = true;
 class MeteredTrigger{
     #curr = 0;
     #limit = 100;
@@ -197,6 +198,7 @@ class RollingActives{
     #initialized = false;
 
     constructor(el, activeclass = "active", classprefix = "*"){ // maybe do class prefix later im lazy
+        if(!helperjs) throw new Error("helper.js not loaded yet");
         this.#init();
         assert(el instanceof HTMLElement, "el is not a html element");
         this.axiac = el.childNodes;

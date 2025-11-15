@@ -3,6 +3,7 @@ const baseurl = window.location.origin;
 const fullurl = baseurl + window.location.pathname;
 const siteurls = ["andrewb.xyz", "axia.sh", "axia.nekoweb.org"];
 const debug = !siteurls.includes(minurl);
+const helperjs = true;
 // helper code i wrote to make everything(javascript) either less horrible or more unreadable with the terseness of whatever declaratinons come out of me utilizing this
 
 const eid = (id) => document.getElementById(id);

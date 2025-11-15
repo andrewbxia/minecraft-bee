@@ -54,7 +54,17 @@ button{
 #menu-toggle:focus-within #menu{
     display: block;
 }
-
+#vol-display{
+    position: fixed;
+    /* display: flex;
+    flex-grow: 1; */
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    outline: red 5px solid;
+    z-index: -1;
+}
 #key-container{
     display: flex;
     position: relative;
@@ -76,6 +86,8 @@ button{
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     transition: background-color 0.1s ease-in;
+    /* TODO: MAKE EVERY ASPECT OF THE KEY IN A KEY CONTAINER SO THAT Z INDEX WORKS */
+    /* z-index: 1; */
 }
 .key::before{
     content: "";

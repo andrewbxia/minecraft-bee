@@ -1,19 +1,23 @@
 const keyContainer = document.getElementById("key-container");
 const fpsElement = document.getElementById("fps");
+const droppedFramesElement = document.getElementById("dropped-frames");
 const fpsValue = document.getElementById("fps-adjust");
 const kpsValue = document.getElementById("kps-time-adjust");
 const keytrailAppearanceValue = document.getElementById("keytrail-appearance");
 const keyTrailSpeedElement = document.getElementById("keytrail-speed");
 const kpsElement = document.getElementById("kps");
 const kpsSElement = document.getElementById("kps-s");
+const totalKeysElement = document.getElementById("tot-keys");
 
 let start = performance.now();
 const keySet = new Set();
 const pressedKeys = new Set();
 
-let fps = 60;
+let droppedFrames = 0.0;
 let fpsCount = 0;
 let fpsCumulative = 5000;
+const fps = new PerSec(fpsCumulative);
+let targetfps = 60;
 let keyLife = 2000; // 2 seconds default
 let keyTrailSpeed = window.innerHeight / keyLife;
 let currKeys = 0;
@@ -21,6 +25,7 @@ let kpsDuration = 1000;
 let initStart;
 let delta;
 let appearenceValue = 0.6;
+let totalKeys = 0;
 let appearenceBoolBefore = false;
 const keyWaitingList = new Set();
 
@@ -37,6 +42,12 @@ const specialChars = {
     "ArrowLeft": "←",
     "ArrowRight": "→",
 };
+
+function incrementTotalKeys(increment = true){
+    if(increment)
+        totalKeys++;
+    totalKeysElement.innerText = "total pressed: " + totalKeys;
+}
 
 function createKeyElement(key) {
     const keyElement = document.createElement("div");
@@ -66,11 +77,7 @@ function incrementHeight(k) {
 }
 
 function incrementFPSCounter(){
-    fpsCount++;
-    setTimeout(() => {
-        fpsCount--;
-        // 1000 / fps
-    },  fpsCumulative);
+    fps.add();
 }
 
 function reset(){
@@ -87,7 +94,7 @@ function doWaitingList() {
             keySet.add(key);
             createKeyElement(key);
             // playKeysound({element: document.getElementById(key)});
-            console.log("creating key: ", key);
+            // console.log("creating key: ", key);
         }
         const keyElement = document.getElementById(key);
         keyElement.classList.add("key-pressed");
@@ -115,7 +122,7 @@ function handleKeyDown(e) {
     if (specialChars[key]) {
         key = specialChars[key];
     }
-    console.log(key);
+    // console.log(key);
     
     if (pressedKeys.has(key)) {
         return;
@@ -126,7 +133,8 @@ function handleKeyDown(e) {
     if(!keyWaitingList.has(key)) 
     keyWaitingList.add(key);
     pressedKeys.add(key);
-
+    
+    incrementTotalKeys();
     currKeys++;
     setTimeout(() => {
         currKeys--;
@@ -173,7 +181,8 @@ function incrementHeight(keyId){
         //     console.log("keytrail is full");
         //     return;
         // }
-        let keyPadding = parseFloat(keyTrailContainer.style.paddingBottom) || 0;        console.log(keyPadding+ "px");
+        let keyPadding = parseFloat(keyTrailContainer.style.paddingBottom) || 0;
+        // console.log(keyPadding+ "px");
 
         keyTrailContainer.style.paddingBottom = "0px";
         
@@ -198,11 +207,11 @@ function incrementHeight(keyId){
 
 function update(timestamp) {
     delta = timestamp - start;
-    // if (delta < 1000 / fps - 0.1) {
+    // if (delta < 1000 / targetfps - 0.1) {
     //     window.requestAnimationFrame(update);
     //     return;
     // }
-    fpsElement.textContent = (fpsCount * 1000 / fpsCumulative).toFixed(2) + "fps";
+    fpsElement.textContent = fps.cntn().toFixed(2) + "fps";
     kpsElement.textContent = `${(currKeys / (kpsDuration / 1000)).toFixed(2)} kps [${currKeys} || ${kpsDuration}ms]`;
     kpsSElement.textContent = `${(currKeys / (kpsDuration / 1000) / Math.max(1, keySet.size)).toFixed(2)} kps [${(currKeys)}/${keySet.size}key || ${kpsDuration}ms]`;
     keyTrailSpeed = window.innerHeight / keyLife;
@@ -216,7 +225,7 @@ function update(timestamp) {
             const keytrailRect = keytrail.getBoundingClientRect();
             if (keytrailRect.bottom < -window.scrollY) {
                 if (!pressedKeys.has(key.id)) {
-                    console.log("removing keytrail");
+                    // console.log("removing keytrail");
                     keyTrailContainer.removeChild(keytrail);
                     i--;
                 }
@@ -227,7 +236,7 @@ function update(timestamp) {
         if (key.querySelector(".key-trail-container")
             .childNodes.length === 0) {
             keySet.delete(key.id);
-            console.log("removing key " + key.id);
+            // console.log("removing key " + key.id);
             keyContainer.removeChild(key);
         }
         else{
@@ -236,11 +245,16 @@ function update(timestamp) {
     });
     
     doWaitingList();
+    doKeysoundFuncs(delta);
     const perf = performance.now();
     
-    const next = Math.max(perf, timestamp + 1000 / fps);
-    if(perf > timestamp + 1000 / fps)
-        console.warn("frame took " + (perf -  (timestamp + 1000 / fps)).toFixed(3) + "ms longer to process than expected");
+    const next = Math.max(perf, timestamp + 1000 / targetfps);
+    if(perf > timestamp + 1000 / targetfps && document.hasFocus()){
+        droppedFrames += (perf - (timestamp + 1000 / targetfps)) / (1000 / targetfps);
+        droppedFramesElement.innerText = "dropped frames: " + Math.ceil(droppedFrames);
+        // console.warn("frame took " + (perf -  (timestamp + 1000 / fps)).toFixed(3) + "ms longer to process than expected");
+    }
+        
     start = timestamp;
     
     incrementFPSCounter();
@@ -267,8 +281,9 @@ keyTrailSpeedElement.addEventListener("input", (e) => {
 });
 
 fpsValue.addEventListener("input", (e) => {
-    fps = parseInt(e.target.value);
-    fpsValue.nextElementSibling.textContent = fps + "fps";
+    targetfps = parseInt(e.target.value);
+    fps.setwindow(1000 * targetfps / 60);
+    fpsValue.nextElementSibling.textContent = targetfps + "fps";
 });
 
 kpsValue.addEventListener("input", (e) => {
@@ -278,19 +293,20 @@ kpsValue.addEventListener("input", (e) => {
 
 let keytrailStyleInd;
 keytrailAppearanceValue.addEventListener("focusin", (e) => {
-    console.log("focusin");
     const stylesheet = document.styleSheets[0];
     for(let i = 0; i < stylesheet.cssRules.length; i++){
         if(stylesheet.cssRules[i].selectorText === ".keytrail"){
             keytrailStyleInd = i;
-            console.log("keytrail style found", i);
+            // console.log("keytrail style found", i);
             return;
         }
     }
-    console.error("keytrail style not found");
+    // console.error("keytrail style not found");
 })
 keytrailAppearanceValue.addEventListener("input", (e) => {
     appearenceValue = parseFloat(e.target.value);
     keytrailAppearanceValue.nextElementSibling.textContent = Math.floor(appearenceValue * 100) + "%";
-    document.styleSheets[0].cssRules[keytrailStyleInd].style.background = `linear-gradient(to top, white 0%, white ${appearenceValue * 100}%, transparent 100%)`
+    if(keytrailStyleInd)
+        document.styleSheets[0].cssRules[keytrailStyleInd].style.background = `linear-gradient(to top, white 0%, white ${appearenceValue * 100}%, transparent 100%)`
 });
+incrementTotalKeys(false);
