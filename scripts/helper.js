@@ -322,3 +322,68 @@ function attachdebug(...messages){
     });
     app(el, list);
 }
+
+
+// color funcs
+
+
+
+//bg bars && theme transition
+function tohsl(cssColor, components = false){
+    let r, g, b, a = 1;
+  
+    // rgb
+    if (cssColor.startsWith('rgb')){
+        const vals = cssColor.substring(cssColor.indexOf('(') + 1, cssColor.lastIndexOf(')')).split(',').map(Number);
+        r = vals[0] / 255;
+        g = vals[1] / 255;
+        b = vals[2] / 255;
+        if (vals.length === 4){
+            a = vals[3];
+        }
+    } 
+    // rgba
+    else if (cssColor.startsWith('#')){
+        const hex = cssColor.slice(1);
+        if (hex.length === 3){
+            r = pint(hex[0]+hex[0], 16) / 15;
+            g = pint(hex[1]+hex[1], 16) / 15;
+            b = pint(hex[2]+hex[2], 16) / 15;
+        }
+        else if (hex.length === 6 || hex.length === 8){
+            const values = hex.match(/.{2}/g).map(v => pint(v, 16) / 255);
+            [r, g, b] = values;
+            if (hex.length === 8){
+                a = values[3];
+            }
+        }
+        else{
+            return null;
+        }
+    }
+    else{
+      return null;
+    }
+  
+    const maxc = max(r, g, b);
+    const minc = min(r, g, b);
+    let h, s, l = (maxc + minc) / 2;
+  
+    if (maxc === minc){
+      h = s = 0; // achromatic
+    } else{
+      const d = maxc - minc;
+      s = l > 0.5 ? d / (2 - maxc - minc) : d / (maxc + minc);
+      switch (maxc){
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        case b: h = (r - g) / d + 4; break;
+      }
+      h /= 6;
+    }
+    h = round(h * 360); s = round(s * 100); l = round(l * 100);
+    if(components){
+        return{h: h, s: s, l: l, a: a};
+    }
+    return `hsl(${h}, ${s}%, ${l}%${a === 1 ? '' : `, ${a}`})`;
+}

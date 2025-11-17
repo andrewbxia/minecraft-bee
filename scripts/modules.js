@@ -350,50 +350,229 @@ class BGBars{
     static #currpxl = 0;
     static #step = 1150;
     static #maxpxl = () => min(1080 * 5, truheight * 3.75);
-    static #maxscroll = () => window.innerHeight / truheight * maxpxl();
+    static #maxscroll = () => window.innerHeight / truheight * BGBars.#maxpxl();
     static #maxdepth = 4;
-    static #depths = (BGBars.#maxdepth).range().map(i => i + 1);
+    static #depths = [...Array(BGBars.#maxdepth).keys()].map(i => i + 1);
     static #bardepthpower = 1.5;
-    static #depthpows = depths.map(depth => pow(depth, bardepthpower));
-    static #invdepthpows = depths.map(depth => pow(max(.5, depths.length - depth), bardepthpower));
+    static #depthpows = BGBars.#depths.map(depth => pow(depth, BGBars.#bardepthpower));
+    static #invdepthpows = BGBars.#depths.map(depth => pow(max(.5, BGBars.#depths.length - depth), BGBars.#bardepthpower));
+    static #bgbars = null;
+    static #numbars = 0;
+    static #panstrength = 0.1;
+    static #basecolor = tohsl(docprop("--theme-light"), true);
+    static #barspawninterval = 300;
+    static initialized = false;
+    static #barkeyframes = [
+        "passdown",
+        "passup",
+        "passright",
+        "passleft"
+    ];
+    // static #containerlimiterid = "page";
 
-    static #scrollbarst = new MeteredQueueTrigger(100, () => {});
+    static scrollbarst = new MeteredQueueTrigger(100, () => {});
+
+
 
     static init(options = {}){
+        if(BGBars.initialized) return;
+        BGBars.initialized = true;
         BGBars.#currpxl = 0;
         BGBars.#step = options.step || BGBars.#step;
         BGBars.#maxpxl = options.maxpxl !== undefined ? () => options.maxpxl : BGBars.#maxpxl;
         BGBars.#maxscroll = options.maxscroll !== undefined ? () => options.maxscroll : BGBars.#maxscroll;
         BGBars.#maxdepth = options.maxdepth || BGBars.#maxdepth;
-        BGBars.#depths = (BGBars.#maxdepth).range().map(i => i + 1);
+        BGBars.#depths = [...Array(BGBars.#maxdepth).keys()].map(i => i + 1);
         BGBars.#bardepthpower = options.bardepthpower || BGBars.#bardepthpower;
         BGBars.#depthpows = BGBars.#depths.map(depth => pow(depth, BGBars.#bardepthpower));
         BGBars.#invdepthpows = BGBars.#depths.map(depth => pow(max(.5, BGBars.#depths.length - depth), BGBars.#bardepthpower));
+        BGBars.#barspawninterval = options.barspawninterval || BGBars.#barspawninterval;
+        // BGBars.#containerlimiterid = options.containerlimiterid || BGBars.#containerlimiterid;
+
+        BGBars.#panstrength = options.panstrength || BGBars.#panstrength;
+        BGBars.#basecolor = tohsl(docprop("--theme-light"), true);
+
+        if(!eid("bg-bars"))
+            appdoc(mk("div", {id: "bg-bars"}));
+        BGBars.#bgbars = eid("bg-bars");
+        styling(`
+            @keyframes passdown{
+    from{
+        transform: translateY(-100vh) translateX(-50%);
+    }
+    to{
+        transform: translateY(0) translateX(-50%);
+    }
+}
+@keyframes passup{
+    from{
+        transform: translateY(100vh) translateX(-50%);
+    }
+    to{
+        transform: translateY(0) translateX(-50%);
+    }
+}
+@keyframes passright{
+    from{
+        transform: translateX(-150%);
+    }
+    to{
+        transform: translateX(-50%);
+    }
+}
+@keyframes passleft{
+    from{
+        transform: translateX(50%);
+    }
+    to{
+        transform: translateX(-50%);
+    }
+}
+@keyframes expand{
+    from{
+        width: 0;
+    }
+    to{
+        width: 156.25vw;
+    }
+}
+
+#bg-bars{
+    z-index: -1;
+    position: fixed;
+    /* overflow: hidden; */
+    top: 0;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    >div{
+        position: relative;
+        /* overflow-y: hidden; */
+    }
+}
+.bg-bar{
+    position: absolute;
+    width: 156.25vw; /*calc(2500vw/16);, also not using larger value since it lags like potato chips*/
+    left: 50%;
+    transform: translateX(-50%);
+    transform-origin: 0% 50%;
+    filter: opacity(0.5);
+    animation-timing-function: 
+    /* ease-in-out; */
+    var(--ease-morein-out);
+
+}
+.bg-a-1{
+    animation-name: passdown;
+}
+.bg-a-2{
+    animation-name: passup;
+}
+.bg-a-3{
+    animation-name: passright;
+}
+.bg-a-4{
+    animation-name: passleft;
+}
+.bg-a-5{
+    animation-name: expand;
+}
+.bg-a-e{
+    animation-name: expand;
+    /* transform: translateX(-50%); */
+        }`);
+
+        BGBars.#depths.forEach(depth => {
+            app(eid("bg-bars"), mk("div",{class: `c-${depth}` }));
+        });
+        styling(BGBars.#depths.map(depth => `.c-${depth}{ 
+            z-index: -${depth};
+            transition: transform ${depth * 0.6}s var(--ease-lessout);
+
+            >div{
+                filter: blur(${min(7.5, BGBars.#depthpows[depth - 1])}px);
+            }
+        }
+        `).join("\n"));
 
         // BGBars.#panstrength = options.panstrength || 0.1;
 
-        BGBars.#scrollbarst = new MeteredQueueTrigger(100, () => {
+        BGBars.scrollbarst = new MeteredQueueTrigger(100, (currscroll = window.innerHeight + window.scrollY, 
+            comparing = Infinity, limiting = 0) => {
             // if(window.devicePixelRatio * 100 <= 60)return;
             // if(fpsm.cntn() <= 50) return; // dont run if not doing too hot
-            const scroll = window.innerHeight + window.scrollY;
-            if(currpxl < eid(containerlimiterid).offsetHeight){ 
-                bgbars(scroll);
+            // const scroll = window.innerHeight + window.scrollY;
+            if(BGBars.#currpxl < comparing){//eid(BGBars.#containerlimiterid).offsetHeight){ 
+                BGBars.bgbars(currscroll);
             }
 
-            if(scroll >= eid(containerlimiterid).offsetHeight){
+            if(currscroll >= limiting){//eid(BGBars.#containerlimiterid).offsetHeight){
                 return;
             }
             // log(window.scrollY + window.innerHeight, eid("container").offsetHeight);
-            for(let depth of depths){
-                const invdepth = max(.5, depths.length - depth);
+            for(let depth of BGBars.#depths){
+                const invdepth = max(.5, BGBars.#depths.length - depth);
                 const stopmult = FpsMeter.maxfps / 10;
                 if(FpsMeter.currfps() + stopmult <= FpsMeter.maxfps - invdepth * stopmult) return;
-                eq("#bg-bars .c-" + depth).style.transform = `translateY(${(scroll * -panstrength * invdepthpows[depth - 1]) % min(maxscroll(),Infinity)}px)`;
+                eq("#bg-bars .c-" + depth).style.transform = `translateY(${(currscroll * -BGBars.#panstrength * 
+                    BGBars.#invdepthpows[depth - 1]) % BGBars.#maxscroll()}px)`;
             }
-        });
+        });``
     }
 
+    static bgbars(newheight){
+        if(!eid("bg-bars")){
+            log("nope");
+            return;
+        }
 
+        while(BGBars.#currpxl <= BGBars.#maxpxl() && BGBars.#currpxl <= newheight + BGBars.#step){
+            log("spawning more");
+            BGBars.#currpxl += BGBars.#step;
+            for (let depth of BGBars.#depths){
+                const invdepth = max(.5, BGBars.#depths.length - depth);
+                for (let cnt = 0; cnt <= depth / 3; cnt++){
+                    BGBars.#numbars++;
+                    const bar = mk("div", {class: `bg-bar`});
+                    // bg-a-${randint(3,1)}
+                    bar.style.animationName = randarrchoose(BGBars.#barkeyframes);
+                    if(chance(1.5)) bar.style.animationName += ", expand";
+                    // log(bar.style.animationName);
+                    // const bgcolor = `hsl(${basecolor.h }, ${basecolor.s}%, 
+                    // ${rand(basecolor.l / (depth), basecolor.l * .6 + invdepth * 5)}%)`;
+                    const bgcolor = `hsl(${BGBars.#basecolor.h}, ${BGBars.#basecolor.s}%, 
+                    ${rand( BGBars.#basecolor.l*invdepth / 4, BGBars.#basecolor.l * .75)}%)`;
+
+
+
+                    bar.style.height = `${(depth) * rand(depth) + 4* depth}vh`;
+                    bar.style.rotate = `${rand(40, -20)*depth}deg`;
+                    bar.style.left = `${rand(50, -25)}%`;
+                    bar.style.backgroundColor = bgcolor;
+                    bar.style.top = `${BGBars.#currpxl - rand(BGBars.#step, -0)}px`;
+                    bar.style.opacity = (invdepth) * rand(.35 * invdepth, .45);
+                    // bar.style.boxShadow = `0 0 ${pow((depth - 1), 2) * 10}px ${bgcolor}`; cool but laggy
+                    bar.style.animationDuration = `${rand(1.5,.5)}s`;
+                    setTimeout(() => {
+                        app(eq("#bg-bars .c-" + depth), bar);
+                    }, rand(BGBars.#barspawninterval/10, (depth - 2) * BGBars.#barspawninterval));
+                }
+            }
+        }
+    }
+
+    static resetscrollbars(){
+        BGBars.#currpxl = 0;
+        BGBars.#numbars = 0;
+        BGBars.#basecolor = tohsl(docprop("--theme-light"), true);
+        eqa("#bg-bars>div").forEach((bar) => {
+            bar.innerHTML = "";
+        });
+        BGBars.bgbars(window.innerHeight + window.scrollY);
+        BGBars.scrollbarst.fire();
+
+    }
 
 
 
