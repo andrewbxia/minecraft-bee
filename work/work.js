@@ -45,9 +45,9 @@ const returncubetransform = (props = {}) => {
         return `translate(-50%, -50%) rotateX(${rotatex}deg) rotateY(${rotatey}deg) rotateZ(${rotatez}deg) perspective(${perspective}px) translate3d(calc(-1 * ${translatex}px), calc(-1 * ${translatey}px), ${translatez}px)`;
 }
 
+let inputdata = {};
 
-
-const cubetransform = new MeteredQueueTrigger(10, (e) => {
+const cubetransform = new MeteredQueueTrigger(50, (e) => {
     const x = e.clientX / window.innerWidth;
     const y = e.clientY / window.innerHeight;
     const rotmultiplier = .5;
@@ -59,9 +59,10 @@ const cubetransform = new MeteredQueueTrigger(10, (e) => {
     const rotateX = -(ydiff / midheight) * 90 * rotmultiplier;
     const rotateY = (xdiff / midwidth) * 90 * rotmultiplier;
 
-    const inputdata = {};
+    // const inputdata = {};
     inputdata.rotatex = rotateX;
     inputdata.rotatey = rotateY;
+    inputdata.rotateZ = null;
     if(sidesdata[activeside].toZ){
         inputdata.rotatey = null;
         inputdata.rotatez = rotateY;
@@ -71,6 +72,8 @@ const cubetransform = new MeteredQueueTrigger(10, (e) => {
     inputdata.translatex = x * size*.1;
     // perspective: abs(rotateX*rotateY) + 500, // funny rendering mode
     cube.style.transform = returncubetransform(inputdata);
+    // BGBars.fire();
+
 });
 
 document.onmousemove = (e) => {
@@ -255,3 +258,9 @@ document.addEventListener("click", (e) => {
     attachdebug("clicked on", e.target.tagName, e.target.classList.toString()
         , e.target.id, eqa(".ind-rot").length);
 });
+
+BGBars.init({
+    scrollfunc: () => {
+        return inputdata.translatex * inputdata.translatey;
+    }
+})

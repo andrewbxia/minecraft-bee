@@ -356,7 +356,7 @@ class BGBars{
     static #bardepthpower = 1.5;
     static #depthpows = BGBars.#depths.map(depth => pow(depth, BGBars.#bardepthpower));
     static #invdepthpows = BGBars.#depths.map(depth => pow(max(.5, BGBars.#depths.length - depth), BGBars.#bardepthpower));
-    static #bgbars = null;
+    static #bgbar = null;
     static #numbars = 0;
     static #panstrength = 0.1;
     static #basecolor = tohsl(docprop("--theme-light"), true);
@@ -369,13 +369,14 @@ class BGBars{
         "passleft"
     ];
     // static #containerlimiterid = "page";
-
-    static scrollbarst = new MeteredQueueTrigger(100, () => {});
+    static #scrollfunc = () => {throw new Error("init boy")};
+    static #scrollbarst = new MeteredQueueTrigger(100, BGBars.#scrollfunc);
 
 
 
     static init(options = {}){
         if(BGBars.initialized) return;
+        if(!(helperjs && helperclassesjs)) throw new Error("helper.js and helper-classes.js not loaded yet");
         BGBars.initialized = true;
         BGBars.#currpxl = 0;
         BGBars.#step = options.step || BGBars.#step;
@@ -394,7 +395,7 @@ class BGBars{
 
         if(!eid("bg-bars"))
             appdoc(mk("div", {id: "bg-bars"}));
-        BGBars.#bgbars = eid("bg-bars");
+        BGBars.#bgbar = eid("bg-bars");
         styling(`
             @keyframes passdown{
     from{
@@ -497,17 +498,17 @@ class BGBars{
         `).join("\n"));
 
         // BGBars.#panstrength = options.panstrength || 0.1;
-
-        BGBars.scrollbarst = new MeteredQueueTrigger(100, (currscroll = window.innerHeight + window.scrollY, 
-            comparing = Infinity, limiting = 0) => {
+        BGBars.#scrollfunc = options.scrollfunc || (() => (window.innerHeight + window.scrollY));
+        BGBars.#scrollbarst = new MeteredQueueTrigger(100,
+         (comparing = Infinity, limiting = 0, currscroll = BGBars.#scrollfunc) => {
             // if(window.devicePixelRatio * 100 <= 60)return;
             // if(fpsm.cntn() <= 50) return; // dont run if not doing too hot
-            // const scroll = window.innerHeight + window.scrollY;
+            const scroll = currscroll();
             if(BGBars.#currpxl < comparing){//eid(BGBars.#containerlimiterid).offsetHeight){ 
-                BGBars.bgbars(currscroll);
+                BGBars.#bgbars(scroll);
             }
 
-            if(currscroll >= limiting){//eid(BGBars.#containerlimiterid).offsetHeight){
+            if(scroll >= limiting){//eid(BGBars.#containerlimiterid).offsetHeight){
                 return;
             }
             // log(window.scrollY + window.innerHeight, eid("container").offsetHeight);
@@ -515,17 +516,20 @@ class BGBars{
                 const invdepth = max(.5, BGBars.#depths.length - depth);
                 const stopmult = FpsMeter.maxfps / 10;
                 if(FpsMeter.currfps() + stopmult <= FpsMeter.maxfps - invdepth * stopmult) return;
-                eq("#bg-bars .c-" + depth).style.transform = `translateY(${(currscroll * -BGBars.#panstrength * 
+                eq("#bg-bars .c-" + depth).style.transform = `translateY(${(scroll * -BGBars.#panstrength * 
                     BGBars.#invdepthpows[depth - 1]) % BGBars.#maxscroll()}px)`;
+
             }
-        });``
+        });
+
     }
 
-    static bgbars(newheight){
+    static #bgbars(newheight){
         if(!eid("bg-bars")){
-            log("nope");
+            dlog("nope");
             return;
         }
+        if(!BGBars.initialized) return;
 
         while(BGBars.#currpxl <= BGBars.#maxpxl() && BGBars.#currpxl <= newheight + BGBars.#step){
             log("spawning more");
@@ -562,19 +566,21 @@ class BGBars{
         }
     }
 
-    static resetscrollbars(){
+    static reset(){
         BGBars.#currpxl = 0;
         BGBars.#numbars = 0;
         BGBars.#basecolor = tohsl(docprop("--theme-light"), true);
         eqa("#bg-bars>div").forEach((bar) => {
             bar.innerHTML = "";
         });
-        BGBars.bgbars(window.innerHeight + window.scrollY);
-        BGBars.scrollbarst.fire();
+        BGBars.#bgbars(window.innerHeight + window.scrollY);
+        BGBars.fire();
 
     }
 
-
+    static fire(comparing, limiting, currscroll){
+        BGBars.#scrollbarst.fire(comparing, limiting, currscroll);
+    }
 
 
 }

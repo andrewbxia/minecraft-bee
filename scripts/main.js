@@ -29,7 +29,7 @@ const containerlimiterid = "page";
 ScrollProgress.init(containerlimiterid);
 ThemeSwitch.init(() => {
     togglewcb();
-    resetscrollbars();
+    BGBars.reset();
 }, "var(--header-height)");
 // const keysetsize = () => {
 //     keyset.style.fontSize = `${sqrt(kps.cntn())}ch`;
@@ -159,14 +159,10 @@ document.addEventListener("blogloaded", () => {
     if(BGBars.initialized) return;
     BGBars.init({});
     window.addEventListener("scroll", () => {
-        const currscroll = window.innerHeight + window.scrollY;
         const comparing = eid(containerlimiterid).offsetHeight;
         const limiting = eid(containerlimiterid).offsetHeight;
-        log("ok")
-        BGBars.scrollbarst.fire(
-            currscroll,
-            comparing,
-            limiting
+        BGBars.fire(
+            comparing, limiting,
         );
     });
 });
