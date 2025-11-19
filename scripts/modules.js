@@ -540,6 +540,8 @@ class BGBars{
             }
         });
 
+        TSFuncs.add(BGBars.reset);
+
     }
 
     static #bgbars(newheight){

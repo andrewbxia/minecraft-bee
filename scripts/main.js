@@ -21,7 +21,6 @@ document.addEventListener("visitorstats", () => {
 })
 
 
-
 // REJECT CAMEL CASE
 FpsMeter.init();
 KeySetSide.init();
@@ -29,13 +28,7 @@ const containerlimiterid = "page";
 ScrollProgress.init(containerlimiterid);
 ThemeSwitch.init(() => {
     togglewcb();
-    BGBars.reset();
 }, "var(--header-height)");
-// const keysetsize = () => {
-//     keyset.style.fontSize = `${sqrt(kps.cntn())}ch`;
-//     window.requestAnimationFrame(keysetsize);
-// }
-// keysetsize();
 
 
 

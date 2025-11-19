@@ -268,6 +268,9 @@ function maxpoat(val, minval=.0005){
 
 const limiter = 100;
 
+FpsMeter.init();
+KeySetSide.init();
+ThemeSwitch.init();
 BGBars.init({
     limiter,
     scrollfunc: (val) => ({Y: val, X: val}),
@@ -282,4 +285,4 @@ setInterval(() => {
         attachdebug("matrix3d product: " + product, transform, FpsMeter.maxfps, FpsMeter.avg);
         BGBars.fire(Infinity, Infinity, product);
     }
-}, limiter)
+}, limiter);

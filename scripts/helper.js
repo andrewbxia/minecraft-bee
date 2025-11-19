@@ -105,13 +105,34 @@ function addclicklistener(query, callback){
     })
 }
 
+class TSFuncs{
+    static #funcs = [];
+    static add(func){
+        if(!(func instanceof Function)){
+            derr("arg is not a function");
+            return;
+        }
+        TSFuncs.#funcs.push(func);
+    }
+    static run(theme){
+        TSFuncs.#funcs.forEach(func => {
+            func(theme);
+        });
+    }
+}
+
 let thememode = localStorage.getItem("theme") || "light";
 const toggletheme = () => {
     document.documentElement.classList.toggle("dark"); 
     thememode = document.documentElement.classList.contains("dark") ? "dark" : "light";
     localStorage.setItem("theme", thememode);
     document.documentElement.setAttribute("data-theme", thememode);
+    
+    TSFuncs.run(thememode);
 }
+
+
+
 // light mode better tho :sunglasses: :sunglasses:
 if (thememode === "dark" || window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
     // toggle to dark
