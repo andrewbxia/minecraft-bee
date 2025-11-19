@@ -157,7 +157,7 @@ function clearbarsizealert(){
 // document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("blogloaded", () => {
     if(BGBars.initialized) return;
-    BGBars.init({});
+    BGBars.init();
     window.addEventListener("scroll", () => {
         const comparing = eid(containerlimiterid).offsetHeight;
         const limiting = eid(containerlimiterid).offsetHeight;

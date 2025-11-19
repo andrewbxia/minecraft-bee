@@ -28,6 +28,7 @@ const rad2deg = 180 / pi;
 const sin = (rads) => Math.sin(rads);
 const cos = (rads) => Math.cos(rads);
 const tan = (rads) => Math.tan(rads);
+const isnan = isNaN;
 const assert = (condition, msg) => {if(!condition) throw new Error(msg);};
 const assertnotreached = (msg = "unreachable thingy reached") => assert(false, msg);
 
@@ -35,6 +36,7 @@ const truheight = window.innerHeight * window.devicePixelRatio;
 const truwidth = window.innerWidth * window.devicePixelRatio;
 const sp = "&nbsp;";
 const nofunc = () => {};
+
 
 function max(...args){
     if(args.length === 0) return null;

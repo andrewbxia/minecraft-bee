@@ -72,7 +72,7 @@ const cubetransform = new MeteredQueueTrigger(50, (e) => {
     inputdata.translatex = x * size*.1;
     // perspective: abs(rotateX*rotateY) + 500, // funny rendering mode
     cube.style.transform = returncubetransform(inputdata);
-    // BGBars.fire();
+    BGBars.fire(Infinity, Infinity, inputdata);
 
 });
 
@@ -255,12 +255,37 @@ checkvisit();
 
 
 document.addEventListener("click", (e) => {
-    attachdebug("clicked on", e.target.tagName, e.target.classList.toString()
-        , e.target.id, eqa(".ind-rot").length);
+    // attachdebug("clicked on", e.target.tagName, e.target.classList.toString()
+    //     , e.target.id, eqa(".ind-rot").length);
 });
 
+
+function maxpoat(val, minval=.0005){
+    val = poat(val);
+    if(isnan(val) || abs(val) < minval) return minval;
+    return val;
+}
+
+const limiter = 100;
+
 BGBars.init({
-    scrollfunc: () => {
-        return inputdata.translatex * inputdata.translatey;
+    limiter,
+    // scrollfunc: (inputdata) => {
+    //     const minval = 0.01;
+    //     let ret = maxpoat(inputdata.rotatex) * maxpoat(inputdata.rotatey) * maxpoat(inputdata.rotatez);
+    //     // attachdebug(JSON.stringify(inputdata), ret);
+    //     return ret;
+    // }
+    scrollfunc: (val) => ({Y: val, X: val}),
+});
+setInterval(() => {
+    const transform = compst(eq(".cube")).transform;
+    // get matrix3d valss
+    const match = transform.match(/matrix3d\(([^)]+)\)/);
+    if (match) {
+        const values = match[1].split(',').map(Number);
+        const product = values.reduce((acc, val) => maxpoat(acc) * maxpoat(val), 1);
+        attachdebug("matrix3d product: " + product, transform, FpsMeter.maxfps);
+        BGBars.fire(Infinity, Infinity, product);
     }
-})
+}, limiter)

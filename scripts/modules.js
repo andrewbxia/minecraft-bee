@@ -7,6 +7,7 @@ class FpsMeter{
     static #defaultwindow = 1000;
     static #updateint = 100;
     static #fpsm = new PerSec(FpsMeter.#defaultwindow);
+    static #avgs = new RollingAvg(500);
     static #dispfps = 
         new MeteredTrigger(FpsMeter.#updateint, () => {
             eid("fps").innerText = FpsMeter.#fpsm.cntn();
@@ -14,10 +15,18 @@ class FpsMeter{
 
     static #fps(){
         FpsMeter.#fpsm.add();
+        FpsMeter.#avgs.add(FpsMeter.#fpsm.cntn());
         if(FpsMeter.#prevfps !== FpsMeter.#fpsm.cntn()){
             FpsMeter.#dispfps.fire();
             FpsMeter.#prevfps = FpsMeter.#fpsm.cntn();
-            FpsMeter.#maxfps = max(FpsMeter.#maxfps, FpsMeter.#prevfps);
+
+            // occasionally adapt to thing 
+            if(!chance(200)){
+                FpsMeter.#maxfps = max(FpsMeter.#maxfps, FpsMeter.#prevfps);
+            }
+            else{
+                FpsMeter.#maxfps = FpsMeter.#avgs.avg();
+            }
             // log(typeof prevfps, typeof fpsm.cntn());
         }
         window.requestAnimationFrame(FpsMeter.#fps);
@@ -32,6 +41,9 @@ class FpsMeter{
 
     static get maxfps(){
         return FpsMeter.#maxfps;
+    }
+    static avg(){
+        return FpsMeter.#avgs.avg();
     }
     static currfps(){
         return FpsMeter.#fpsm.cntn();
@@ -361,7 +373,8 @@ class BGBars{
     static #panstrength = 0.1;
     static #basecolor = tohsl(docprop("--theme-light"), true);
     static #barspawninterval = 300;
-    static initialized = false;
+    static #initialized = false;
+    static #limiter = 100;
     static #barkeyframes = [
         "passdown",
         "passup",
@@ -369,15 +382,15 @@ class BGBars{
         "passleft"
     ];
     // static #containerlimiterid = "page";
-    static #scrollfunc = () => {throw new Error("init boy")};
+    static #scrollfunc = (...args) => {throw new Error("init boy")};
     static #scrollbarst = new MeteredQueueTrigger(100, BGBars.#scrollfunc);
 
 
 
     static init(options = {}){
-        if(BGBars.initialized) return;
+        if(BGBars.#initialized) return;
         if(!(helperjs && helperclassesjs)) throw new Error("helper.js and helper-classes.js not loaded yet");
-        BGBars.initialized = true;
+        BGBars.#initialized = true;
         BGBars.#currpxl = 0;
         BGBars.#step = options.step || BGBars.#step;
         BGBars.#maxpxl = options.maxpxl !== undefined ? () => options.maxpxl : BGBars.#maxpxl;
@@ -498,17 +511,21 @@ class BGBars{
         `).join("\n"));
 
         // BGBars.#panstrength = options.panstrength || 0.1;
-        BGBars.#scrollfunc = options.scrollfunc || (() => (window.innerHeight + window.scrollY));
-        BGBars.#scrollbarst = new MeteredQueueTrigger(100,
-         (comparing = Infinity, limiting = 0, currscroll = BGBars.#scrollfunc) => {
+        BGBars.#scrollfunc = options.scrollfunc || (() => ({Y: window.innerHeight + window.scrollY, X: 0}));
+        BGBars.#limiter = options.limiter || 100;
+        BGBars.#scrollbarst = new MeteredQueueTrigger(BGBars.#limiter,
+         (comparing = Infinity, limiting = 0, ...funcargs) => {
             // if(window.devicePixelRatio * 100 <= 60)return;
             // if(fpsm.cntn() <= 50) return; // dont run if not doing too hot
-            const scroll = currscroll();
+            // attachdebug(...funcargs.map(a => JSON.stringify(a)), "BGBars scrollfunc args");
+            const scroll = BGBars.#scrollfunc(...funcargs);
+            const scrollY = scroll.Y;
+            const scrollX = scroll.X;
             if(BGBars.#currpxl < comparing){//eid(BGBars.#containerlimiterid).offsetHeight){ 
-                BGBars.#bgbars(scroll);
+                BGBars.#bgbars(scrollY);
             }
 
-            if(scroll >= limiting){//eid(BGBars.#containerlimiterid).offsetHeight){
+            if(scrollY >= limiting){//eid(BGBars.#containerlimiterid).offsetHeight){
                 return;
             }
             // log(window.scrollY + window.innerHeight, eid("container").offsetHeight);
@@ -516,8 +533,10 @@ class BGBars{
                 const invdepth = max(.5, BGBars.#depths.length - depth);
                 const stopmult = FpsMeter.maxfps / 10;
                 if(FpsMeter.currfps() + stopmult <= FpsMeter.maxfps - invdepth * stopmult) return;
-                eq("#bg-bars .c-" + depth).style.transform = `translateY(${(scroll * -BGBars.#panstrength * 
-                    BGBars.#invdepthpows[depth - 1]) % BGBars.#maxscroll()}px)`;
+                eq("#bg-bars .c-" + depth).style.transform = `translateY(${(scrollY * -BGBars.#panstrength * 
+                    BGBars.#invdepthpows[depth - 1]) % BGBars.#maxscroll()}px)
+                    translateX(${(scrollX * -BGBars.#panstrength * pow(BGBars.#invdepthpows[depth - 1],2)) % BGBars.#maxscroll()}px)
+                    `;
 
             }
         });
@@ -529,7 +548,7 @@ class BGBars{
             dlog("nope");
             return;
         }
-        if(!BGBars.initialized) return;
+        if(!BGBars.#initialized) return;
 
         while(BGBars.#currpxl <= BGBars.#maxpxl() && BGBars.#currpxl <= newheight + BGBars.#step){
             log("spawning more");
@@ -547,8 +566,6 @@ class BGBars{
                     // ${rand(basecolor.l / (depth), basecolor.l * .6 + invdepth * 5)}%)`;
                     const bgcolor = `hsl(${BGBars.#basecolor.h}, ${BGBars.#basecolor.s}%, 
                     ${rand( BGBars.#basecolor.l*invdepth / 4, BGBars.#basecolor.l * .75)}%)`;
-
-
 
                     bar.style.height = `${(depth) * rand(depth) + 4* depth}vh`;
                     bar.style.rotate = `${rand(40, -20)*depth}deg`;
@@ -581,6 +598,8 @@ class BGBars{
     static fire(comparing, limiting, currscroll){
         BGBars.#scrollbarst.fire(comparing, limiting, currscroll);
     }
-
+    static get initialized(){
+        return BGBars.#initialized;
+    }
 
 }
