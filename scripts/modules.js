@@ -7,7 +7,7 @@ class FpsMeter{
     static #defaultwindow = 1000;
     static #updateint = 100;
     static #fpsm = new PerSec(FpsMeter.#defaultwindow);
-    static #avgs = new RollingAvg(500);
+    static #avgs = new RollingAvg(100);
     static #dispfps = 
         new MeteredTrigger(FpsMeter.#updateint, () => {
             eid("fps").innerText = FpsMeter.#fpsm.cntn();
@@ -21,13 +21,12 @@ class FpsMeter{
             FpsMeter.#prevfps = FpsMeter.#fpsm.cntn();
 
             // occasionally adapt to thing 
-            if(!chance(200)){
+            if(!chance(100)){
                 FpsMeter.#maxfps = max(FpsMeter.#maxfps, FpsMeter.#prevfps);
             }
             else{
-                FpsMeter.#maxfps = FpsMeter.#avgs.avg();
+                FpsMeter.#maxfps = FpsMeter.#avgs.get() - 5;
             }
-            // log(typeof prevfps, typeof fpsm.cntn());
         }
         window.requestAnimationFrame(FpsMeter.#fps);
     }
@@ -42,10 +41,10 @@ class FpsMeter{
     static get maxfps(){
         return FpsMeter.#maxfps;
     }
-    static avg(){
-        return FpsMeter.#avgs.avg();
+    static get avg(){
+        return FpsMeter.#avgs.get();
     }
-    static currfps(){
+    static get currfps(){
         return FpsMeter.#fpsm.cntn();
     }
 }
@@ -532,7 +531,7 @@ class BGBars{
             for(let depth of BGBars.#depths){
                 const invdepth = max(.5, BGBars.#depths.length - depth);
                 const stopmult = FpsMeter.maxfps / 10;
-                if(FpsMeter.currfps() + stopmult <= FpsMeter.maxfps - invdepth * stopmult) return;
+                if(FpsMeter.currfps + stopmult <= FpsMeter.maxfps - invdepth * stopmult) return;
                 eq("#bg-bars .c-" + depth).style.transform = `translateY(${(scrollY * -BGBars.#panstrength * 
                     BGBars.#invdepthpows[depth - 1]) % BGBars.#maxscroll()}px)
                     translateX(${(scrollX * -BGBars.#panstrength * pow(BGBars.#invdepthpows[depth - 1],2)) % BGBars.#maxscroll()}px)

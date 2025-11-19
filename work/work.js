@@ -62,15 +62,15 @@ const cubetransform = new MeteredQueueTrigger(50, (e) => {
     // const inputdata = {};
     inputdata.rotatex = rotateX;
     inputdata.rotatey = rotateY;
-    inputdata.rotateZ = null;
+    inputdata.rotatez = null;
     if(sidesdata[activeside].toZ){
         inputdata.rotatey = null;
         inputdata.rotatez = rotateY;
     }
-    inputdata.perspective = abs(rotateX*rotateY) ;
+    inputdata.perspective = abs(rotateX*rotateY) + 500; // funny rendering mode
     inputdata.translatey = y * size*.1;
     inputdata.translatex = x * size*.1;
-    // perspective: abs(rotateX*rotateY) + 500, // funny rendering mode
+
     cube.style.transform = returncubetransform(inputdata);
     BGBars.fire(Infinity, Infinity, inputdata);
 
@@ -270,22 +270,16 @@ const limiter = 100;
 
 BGBars.init({
     limiter,
-    // scrollfunc: (inputdata) => {
-    //     const minval = 0.01;
-    //     let ret = maxpoat(inputdata.rotatex) * maxpoat(inputdata.rotatey) * maxpoat(inputdata.rotatez);
-    //     // attachdebug(JSON.stringify(inputdata), ret);
-    //     return ret;
-    // }
     scrollfunc: (val) => ({Y: val, X: val}),
 });
 setInterval(() => {
     const transform = compst(eq(".cube")).transform;
-    // get matrix3d valss
+    // get matrix3d valss (from chatgpt)
     const match = transform.match(/matrix3d\(([^)]+)\)/);
     if (match) {
         const values = match[1].split(',').map(Number);
         const product = values.reduce((acc, val) => maxpoat(acc) * maxpoat(val), 1);
-        attachdebug("matrix3d product: " + product, transform, FpsMeter.maxfps);
+        attachdebug("matrix3d product: " + product, transform, FpsMeter.maxfps, FpsMeter.avg);
         BGBars.fire(Infinity, Infinity, product);
     }
 }, limiter)
