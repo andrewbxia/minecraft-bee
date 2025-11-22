@@ -4,7 +4,7 @@ const fullurl = baseurl + window.location.pathname;
 const siteurls = ["andrewb.xyz", "axia.sh", "axia.nekoweb.org"];
 const debug = !siteurls.includes(minurl);
 const helperjs = true;
-// helper code i wrote to make everything(javascript) either less horrible or more unreadable with the terseness of whatever declaratinons come out of me utilizing this
+// helper code i wrote to make everything(javascript) either less horrible
 
 const eid = (id) => document.getElementById(id);
 const eq = (query) => document.querySelector(query);
@@ -280,6 +280,7 @@ const getstylesheets = () => {
     // literally 9 spyware extensions on this thing, anyways the very very
     // very smart IT people who put stylelint tailwind classes on this
     // did a very good job at overriding my --border variable 
+    // had to make this function since they disabled inspect element
     // ugh
 }
 

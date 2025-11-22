@@ -509,14 +509,10 @@ class BGBars{
         }
         `).join("\n"));
 
-        // BGBars.#panstrength = options.panstrength || 0.1;
         BGBars.#scrollfunc = options.scrollfunc || (() => ({Y: window.innerHeight + window.scrollY, X: 0}));
         BGBars.#limiter = options.limiter || 100;
         BGBars.#scrollbarst = new MeteredQueueTrigger(BGBars.#limiter,
          (comparing = Infinity, limiting = 0, ...funcargs) => {
-            // if(window.devicePixelRatio * 100 <= 60)return;
-            // if(fpsm.cntn() <= 50) return; // dont run if not doing too hot
-            // attachdebug(...funcargs.map(a => JSON.stringify(a)), "BGBars scrollfunc args");
             const scroll = BGBars.#scrollfunc(...funcargs);
             const scrollY = scroll.Y;
             const scrollX = scroll.X;
@@ -541,6 +537,7 @@ class BGBars{
         });
 
         TSFuncs.add(BGBars.reset);
+        // BGBars.#bgbars(0);
 
     }
 
@@ -559,12 +556,8 @@ class BGBars{
                 for (let cnt = 0; cnt <= depth / 3; cnt++){
                     BGBars.#numbars++;
                     const bar = mk("div", {class: `bg-bar`});
-                    // bg-a-${randint(3,1)}
                     bar.style.animationName = randarrchoose(BGBars.#barkeyframes);
                     if(chance(1.5)) bar.style.animationName += ", expand";
-                    // log(bar.style.animationName);
-                    // const bgcolor = `hsl(${basecolor.h }, ${basecolor.s}%, 
-                    // ${rand(basecolor.l / (depth), basecolor.l * .6 + invdepth * 5)}%)`;
                     const bgcolor = `hsl(${BGBars.#basecolor.h}, ${BGBars.#basecolor.s}%, 
                     ${rand( BGBars.#basecolor.l*invdepth / 4, BGBars.#basecolor.l * .75)}%)`;
 

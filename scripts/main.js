@@ -158,6 +158,7 @@ document.addEventListener("blogloaded", () => {
             comparing, limiting,
         );
     });
+    window.dispatchEvent(new Event("scroll"));
 });
 
 
@@ -350,7 +351,6 @@ const lmenuretract = new MeteredPatientTrigger(lmenulife, () => {
 
 lmenu.onmouseover = lmenuops.onmouseover = () => {
     lmenu.style.opacity = "1";
-    // lmenu.style.transform = "rotateX(35deg) translateY(0px)"
 }
 lmenu.onmouseout = lmenuops.onmouseout = () => {
     if(lmenuhover()) return;
@@ -370,7 +370,7 @@ eqa("#left-menu-options>div").forEach(e => {
     option.onmouseover = () => {
         menuitem.classList.add("active");
 
-        // Get the perspective value from #left-menu
+        // Get the perspective value from #left-menu (chatgpt)
         const perspective = 1000;
         const realheight = brect(eid("left-menu")).height;
         // ((menuitem.clientHeight + menuitem.offsetTop) / eid("left-menu").clientHeight);
@@ -404,15 +404,7 @@ eqa("#left-menu-options>div").forEach(e => {
     };
     menuitem.onmouseout = option.onmouseout;
 });
-eid("left-menu-outer").onmouseout = (e) => {
 
-    // // idk what chatgpt cooked up here but ti woirks
-    // // Only reset if the mouse actually leaves the container, not just moves between children
-    // if (!e.relatedTarget || !eid("left-menu-outer").contains(e.relatedTarget)) {
-    //     eid("left-menu").style.transform = "";
-    //     dlog("resetting left menu transform");
-    // }
-}
 
 // https://www.npmjs.com/package/ani-cursor/v/0.0.5
 // const ani2css = (selector, data) => window.AniCursor.convertAniBinaryToCSS(selector, data);
