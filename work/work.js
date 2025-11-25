@@ -72,7 +72,7 @@ const cubetransform = new MeteredQueueTrigger(50, (e) => {
     inputdata.translatex = x * size*.1;
 
     cube.style.transform = returncubetransform(inputdata);
-    BGBars.fire(Infinity, Infinity, inputdata);
+    // BGBars.fire(Infinity, Infinity, inputdata);
 
 });
 
@@ -260,7 +260,7 @@ document.addEventListener("click", (e) => {
 });
 
 
-function maxpoat(val, minval=.0005){
+function maxpoat(val, minval=.00025){
     val = poat(val);
     if(isnan(val) || abs(val) < minval) return minval;
     return val;
