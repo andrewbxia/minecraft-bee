@@ -197,7 +197,9 @@
                                 ThemeSwitch.fire();
                             }
                             eq("#self-88x31>.output").innerText = 
-                                tohtml(app(link(baseurl), img(image.src)));
+                                tohtml(app(link(baseurl), img(image.src, {
+                                    style: "image-rendering: pixelated;",
+                                })));
                             eqa(spanquery8831).forEach((el) => {
                                 el.classList.remove("selected");
                             });
