@@ -57,7 +57,7 @@ class PerSec{
         return this.cnt() - countbefore;
     }
 
-    cntn(){
+    cntn(){ // count normalized
         return this.cnt() * this.#windowdefualt / this.#window;
     }
 }

@@ -20,8 +20,8 @@ const fps = new PerSec(fpsCumulative);
 let targetfps = 60;
 let keyLife = 2000; // 2 seconds default
 let keyTrailSpeed = window.innerHeight / keyLife;
-let currKeys = 0;
 let kpsDuration = 1000;
+const currKeys = new PerSec(kpsDuration);
 let initStart;
 let delta;
 let appearenceValue = 0.6;
@@ -135,11 +135,8 @@ function handleKeyDown(e) {
     pressedKeys.add(key);
     
     incrementTotalKeys();
-    currKeys++;
-    setTimeout(() => {
-        currKeys--;
-    }, kpsDuration);
-    
+    currKeys.add();
+
 }
 
 function handleKeyUp(e) {
@@ -212,8 +209,8 @@ function update(timestamp) {
     //     return;
     // }
     fpsElement.textContent = fps.cntn().toFixed(2) + "fps";
-    kpsElement.textContent = `${(currKeys / (kpsDuration / 1000)).toFixed(2)} kps [${currKeys} || ${kpsDuration}ms]`;
-    kpsSElement.textContent = `${(currKeys / (kpsDuration / 1000) / Math.max(1, keySet.size)).toFixed(2)} kps [${(currKeys)}/${keySet.size}key || ${kpsDuration}ms]`;
+    kpsElement.textContent = `${(currKeys.cntn()).toFixed(2)} kps [${currKeys.cnt()} || ${kpsDuration}ms]`;
+    kpsSElement.textContent = `${(currKeys.cntn() / Math.max(1, keySet.size)).toFixed(2)} kps [${(currKeys.cnt())}/${keySet.size}key || ${kpsDuration}ms]`;
     keyTrailSpeed = window.innerHeight / keyLife;
     keyContainer.style.fontSize = `${Math.min(Math.max(window.innerWidth / keySet.size, 0), window.innerWidth * 0.25)}px`;
     
@@ -247,10 +244,11 @@ function update(timestamp) {
     doWaitingList();
     doKeysoundFuncs(delta);
     const perf = performance.now();
-    
-    const next = Math.max(perf, timestamp + 1000 / targetfps);
-    if(perf > timestamp + 1000 / targetfps && document.hasFocus()){
-        droppedFrames += (perf - (timestamp + 1000 / targetfps)) / (1000 / targetfps);
+    const targetms = 1000 / targetfps;
+
+    const next = Math.max(perf, timestamp + targetms);
+    if(perf > timestamp + targetms && document.hasFocus()){
+        droppedFrames += (perf - (timestamp + targetms)) / targetms;
         droppedFramesElement.innerText = "dropped frames: " + Math.ceil(droppedFrames);
         // console.warn("frame took " + (perf -  (timestamp + 1000 / fps)).toFixed(3) + "ms longer to process than expected");
     }
@@ -289,6 +287,7 @@ fpsValue.addEventListener("input", (e) => {
 kpsValue.addEventListener("input", (e) => {
     kpsDuration = parseInt(e.target.value);
     kpsValue.nextElementSibling.textContent = kpsDuration + "ms";
+    currKeys.setwindow(kpsDuration);
 });
 
 let keytrailStyleInd;
