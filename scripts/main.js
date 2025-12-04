@@ -9,14 +9,14 @@ checkvisit();
 document.addEventListener("visitorstats", () => {
     eq("#visitor-stats span.total").innerText = visitorstats.visitor_count;
     eq("#visitor-stats span.unique").innerText = visitorstats.visitor_unique;
-    const visitorid = pint(localStorage.getItem("visitorid"));
+    const visitorid = pint(ls.get("visitorid"));
     log("visitorid", visitorid);
     if(visitorid){
         eq("#visitor-stats span.unique").setAttribute("data-hover", `(ur the ${numsuffix(visitorid)}!)`);
     }
     else{
         // huh
-        localStorage.removeItem("lastvisit");
+        ls.rm("lastvisit");
     }
 })
 
@@ -130,15 +130,15 @@ const barsizealert = () => {
             also if its pretty laggy even at normal zoom, just like zoom in more to mask my bad coding :p (i really tried)\n
             ok thats it have fun!
                         ~~ andrew`);
-        localStorage.setItem("barsizealert", "1");
+        ls.set("barsizealert", "1");
         window.removeEventListener("resize", barsizealert);
     }
 };
-if(localStorage.getItem("barsizealert") !== "1"){
+if(ls.get("barsizealert") !== "1"){
     window.addEventListener("resize", barsizealert);
 }
 function clearbarsizealert(){
-    localStorage.removeItem("barsizealert");
+    ls.rm("barsizealert");
 }
 
 

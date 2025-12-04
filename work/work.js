@@ -1,6 +1,21 @@
 const main = eid("main");
 const cube = eq(".cube");
 
+let motionsickness = false;
+const lsms = ls.get("motionsickness");
+if(lsms && !debug){
+    motionsickness = lsms === "1";
+}
+else{
+    motionsickness = confirm("u get motion sickness or not (confirm for yes cancel for nosies)");
+    ls.set("motionsickness", motionsickness ? "1" : "0");
+}
+
+if(motionsickness){
+    main.style.perspective = 600 + "px";
+    main.style.transition = "0s";
+    cube.style.transition = "0s";
+}
 
 const offsetdata = {
     X: 0,
@@ -29,6 +44,7 @@ let funnypersp = false;
 
 
 const returncubetransform = (props = {}) => {
+    if(motionsickness) props = {};
     const rotatex = (props.rotatex || 0) + offsetdata.X;
     const rotatey = (props.rotatey || 0) + offsetdata.Y;
     const rotatez = (props.rotatez || 0) + offsetdata.Z;
@@ -47,7 +63,7 @@ const returncubetransform = (props = {}) => {
 
 let inputdata = {};
 
-const cubetransform = new MeteredQueueTrigger(50, (e) => {
+const cubetransform = new MeteredQueueTrigger(10, (e) => {
     const x = e.clientX / window.innerWidth;
     const y = e.clientY / window.innerHeight;
     const rotmultiplier = .5;
@@ -243,6 +259,7 @@ cube.addEventListener("click", (e) => {
 
 document.addEventListener("wheel", (e) => {
     e.preventDefault();
+    if(motionsickness)return;
     const delta = -e.deltaY;
     let currperspective = pint(main.style.perspective);
     const newperspective = clamp(currperspective + delta, 100, 5000);

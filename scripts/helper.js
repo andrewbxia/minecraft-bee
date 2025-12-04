@@ -121,11 +121,27 @@ class TSFuncs{
     }
 }
 
-let thememode = localStorage.getItem("theme") || "light";
+class ls{
+    static set(key, value){
+        if(typeof value !== "string"){
+            derr("value is not a string");
+            return;
+        }
+        localStorage.setItem(key, value);
+    }
+    static get(key){
+        return localStorage.getItem(key);
+    }
+    static rm(key){
+        localStorage.removeItem(key);
+    }
+}
+
+let thememode = ls.get("theme") || "light";
 const toggletheme = () => {
     document.documentElement.classList.toggle("dark"); 
     thememode = document.documentElement.classList.contains("dark") ? "dark" : "light";
-    localStorage.setItem("theme", thememode);
+    ls.set("theme", thememode);
     document.documentElement.setAttribute("data-theme", thememode);
     
     TSFuncs.run(thememode);
@@ -138,7 +154,7 @@ if (thememode === "dark" || window.matchMedia && window.matchMedia("(prefers-col
     // toggle to dark
     toggletheme();
 }
-localStorage.setItem("theme", thememode);
+ls.set("theme", thememode);
 document.documentElement.setAttribute("data-theme", thememode);
 
 const elprop = (element, property) => poat(compst(element).getPropertyValue(property));
