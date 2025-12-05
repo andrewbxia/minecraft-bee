@@ -1,9 +1,11 @@
 const main = eid("main");
 const cube = eq(".cube");
+const mstoggle = eid("ms-toggle");
+const mscontainer = eid("ms-container");
 
 let motionsickness = false;
 const lsms = ls.get("motionsickness");
-if(lsms && !debug){
+if(lsms){// && !debug){
     motionsickness = lsms === "1";
 }
 else{
@@ -12,10 +14,16 @@ else{
 }
 
 if(motionsickness){
-    main.style.perspective = 600 + "px";
+    main.style.perspective = 500 + "px";
     main.style.transition = "0s";
     cube.style.transition = "0s";
 }
+
+
+
+
+
+
 
 const offsetdata = {
     X: 0,

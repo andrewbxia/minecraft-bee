@@ -259,3 +259,29 @@ body{
         transform: translateZ(25px)scale(1.25);
     }
 }
+
+#ms-toggle{
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+
+}
+#ms-tip{
+}
+
+#ms-menu{
+    position: absolute;
+    transform-style: preserve-3d;
+    transition: transform .35s var(--double-backtrack);
+    transform: none;
+    width: 100px;
+    height: 50px;
+}
+#ms-container{
+    position: relative;
+}
+#ms-toggle:focus-within #ms-container{
+
+
+}
