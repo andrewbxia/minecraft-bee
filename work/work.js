@@ -18,9 +18,6 @@ function resetms(){
 
 if(motionsickness)setms();
 
-eid("ms-container").onclick = () => {
-    // eid("ms-container").classList.toggle("ms");
-}
 
 function togglems(){
     updatems("toggle");

@@ -262,7 +262,11 @@ body{
         transform: translateZ(25px)scale(1.25);
     }
 }
-
+:root.dark #ms-toggle{
+    &::before, &::after{
+        mix-blend-mode: multiply !important;
+    }   
+}
 #ms-toggle{
     position: fixed;
     transform-style: preserve-3d;
@@ -298,10 +302,12 @@ body{
     }
     >span{
         font-variation-settings: var(--fw-normal);
-        transition: color .35s, font-variation-settings .75s;
+        transition: color .35s, font-variation-settings .75s, 
+            font-size .75s var(--ease-backtrack);
     }
 
     &:hover, &:focus-within{
+        font-size: 1.5em;
         border-color: var(--theme-light);
         background-color: var(--theme-dark);
         >span{
@@ -346,7 +352,7 @@ body{
 
     --menuw: 400px;
     --menuh: 200px;
-    font-size: 1.5em;
+    font-size: 1em;
     font-feature-settings: var(--fw-bold);
     font-weight: bold;
 

@@ -99,7 +99,7 @@ body{
     background-color: var(--theme-light);
     color: var(--theme-dark);
     font-family: cascadia, sans-serif;
-    font-size: 1.5em;
+    font-size: 1.35em;
     font-weight: normal;
     font-variation-settings: var(--fw-normal);
     padding: 0;
