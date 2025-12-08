@@ -1,5 +1,5 @@
 "use strict";
-// attachdebug(compst(eid("abt-me")).getPropertyValue("border"), "ok");
+attachdebug("hi");
 
 // hi debugger if its saturday for you rn u get a cookie
 // i explicitly state where in this code chatgpt was used n stuffies
@@ -18,8 +18,13 @@ document.addEventListener("visitorstats", () => {
         // huh
         ls.rm("lastvisit");
     }
-})
-
+});
+// attachdebug(
+//     "fix2str",
+//     benchmark(fix2str, rand, 1000),
+//     "fix2num: ",
+//     benchmark(fix2num, rand, 1000),
+// );
 
 // REJECT CAMEL CASE
 FpsMeter.init();

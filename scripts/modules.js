@@ -239,7 +239,7 @@ class ThemeSwitch{
         }
         &.d-l{
             background-color: white;
-            filter: var(--theme-d-l-filter);
+            backdrop-filter: var(--theme-d-l-filter);
         }
 
         /* diff transitions */
@@ -269,7 +269,7 @@ class ThemeSwitch{
         &.filter{
             /* dark to light */
             backdrop-filter: var(--theme-d-l-filter);
-            background-color: white;
+            background-color: transparent;
             mix-blend-mode: normal;
         }
     }`;
@@ -305,7 +305,7 @@ class ThemeSwitch{
                 additive: [true, false],
             })
             .then(() => {
-                // eq(".collapse").classList.remove("filter");
+                eq(".collapse").classList.remove("filter");
                 ThemeSwitch.fire();
             })
             .rule({
@@ -337,9 +337,9 @@ class ThemeSwitch{
                 easing: "ease-out",
                 forwards: true,
                 additive: [false, false],
-            });
+            })
             
-            // slide-in slides in
+            // slide-in slides out
             const slideindelay = new Ani(".slide-in-right").delay(beforescreendelay.whendone() - 100)
             .rule({
                 from: [{left: "100%"}],
@@ -350,6 +350,8 @@ class ThemeSwitch{
                 additive: [true, false],
             }).then(() => {
                 ThemeSwitch.fire();
+                // eq(".slide-in-left").classList.remove("filter");
+                // eq(".slide-in-right").classList.remove("filter");
             });
 
             // collision
@@ -384,6 +386,7 @@ class ThemeSwitch{
             ThemeSwitch.#occupiedtypes.push(type);
             prepdoc(mk("div", {class: `ts-cover filter ${type}`}));
         }
+        eid("theme-switch").classList.add("pre");
         ThemeSwitch.#occupied = true;
     }
     static #resettypes(){
@@ -421,26 +424,29 @@ class ThemeSwitch{
     </div>
 </div>`);
             document.body.prepend(ts);
-            styling(`:root.dark #theme-switch, #theme-switch.dark{
-    rotate: calc( 180deg);
+            styling(`
+:root.dark #theme-switch, :root:not(.dark) #theme-switch.pre{
     top: -50px;
-    >.ts-container{
-        rotate: 180deg;
-    }
-    &:hover{
-        transform: translate(-1vw, 1vh);
-        >.ts-container{
-            rotate: calc(180deg - 3deg);
-        }
-    }
+    rotate: 180deg;
 }
 
-#theme-switch, :root:not(.dark) #theme-switch{
+:root.dark #theme-switch >div.ts-container{
+    rotate: 180deg;
+    &:hover{
+        rotate: calc(180deg - 3deg) !important;
+    }
+}
+#theme-switch >.ts-container{
+    rotate: 0deg;
+}
+#theme-switch, :root.dark #theme-switch.pre{
     /* --scale: 3; scale blurs out the svg */
     --slant: 15deg;
     --speed: .75s;
     position: fixed;
     z-index: 2;
+
+    rotate: 0deg;
     /*top: calc(50px + var(--header-height)); 2em (h1) + 0.67em from margin-block-startend  user-stylesheet*/
     top: calc(50px + ${top});
     right: 0px;
@@ -448,16 +454,35 @@ class ThemeSwitch{
     /* nvm dvh is like really laggy lol */
     transition: var(--speed) var(--ease-backtrack);
     transition-property: rotate, transform, top, right;
+    
     width: 0;
     height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+
+    &:hover{
+        cursor: pointer;
+        transform: translate(-1vw, 1vh);
+        >.ts-container{
+            rotate: -3deg;
+            >.container>svg{
+                animation-play-state: paused !important;
+                rotate: 270deg;
+                &#sun-svg{
+                    rotate: -270deg;
+                }
+                filter: drop-shadow(0px 0px 4px var(--theme-dark-other));
+            }
+        }
+    }
+
     >.ts-container{
         background-color: var(--theme-light-other);
         transition-property: background-color, rotate;
         transition-duration: 2.65s, var(--speed);
         transition-timing-function: var(--ease-more-in), var(--ease-backtrack);
+
         display: flex;
         flex-direction: row;
         transform: skew(var(--slant));
@@ -511,21 +536,6 @@ class ThemeSwitch{
     }
 }
 
-#theme-switch:hover{
-    cursor: pointer;
-    transform: translate(-1vw, 1vh);
-    >.ts-container{
-        rotate: -3deg;
-        >.container>svg{
-            animation-play-state: paused !important;
-            rotate: 270deg;
-            &#sun-svg{
-                rotate: -270deg;
-            }
-            filter: drop-shadow(0px 0px 4px var(--theme-dark-other));
-        }
-    }
-}
 @keyframes theme-glow{
     0%{
         filter: drop-shadow(0px 0px 1px var(--theme-dark-other));
@@ -556,8 +566,11 @@ class ThemeSwitch{
         if(!ThemeSwitch.#switcher) return;
         
         // eid("theme-switch").classList.toggle("dark");
-        if(!ThemeSwitch.#animate()) // if wasn't able to play, just fire.
+        if(!ThemeSwitch.#animate()){ // if wasn't able to play, just fire.
             ThemeSwitch.#triggertheme.fire();
+            eid("theme-switch").classList.remove("pre"); // coming from pass of #animate
+        
+        }
     }
     
     static #animate(){
@@ -765,28 +778,31 @@ class BGBars{
         while(BGBars.#currpxl <= BGBars.#maxpxl() && BGBars.#currpxl <= newheight + BGBars.#step){
             log("spawning more");
             BGBars.#currpxl += BGBars.#step;
+            const currpxl = BGBars.#currpxl; // get curr value (timeout stuff)
+
             for (let depth of BGBars.#depths){
                 const delay = rand((depth - 2) * BGBars.#barspawninterval);
                 setTimeout(() => {
                     const invdepth = BGBars.#invdepths[depth - 1];
+                    const bgcolor = `hsl(${BGBars.#basecolor.h}, ${BGBars.#basecolor.s}%, 
+                        ${frand( BGBars.#basecolor.l*invdepth / 4, BGBars.#basecolor.l * .75)}%)`;
+                    const bgbar = eq("#bg-bars .c-" + depth);
                     for (let cnt = 0; cnt <= depth / 3; cnt++){
                         BGBars.#numbars++;
                         BGBars.#barsfired++;
                         const bar = mk("div", {class: `bg-bar`});
                         bar.style.animationName = randarrchoose(BGBars.#barkeyframes);
                         if(chance(1.5)) bar.style.animationName += ", expand";
-                        const bgcolor = `hsl(${BGBars.#basecolor.h}, ${BGBars.#basecolor.s}%, 
-                        ${rand( BGBars.#basecolor.l*invdepth / 4, BGBars.#basecolor.l * .75)}%)`;
 
-                        bar.style.height = `${(depth) * rand(depth) + 4* depth}vh`;
-                        bar.style.rotate = `${rand(40, -20)*depth}deg`;
-                        bar.style.left = `${rand(50, -25)}%`;
+                        bar.style.height = `${(depth) * (frand(depth) + 4)}vh`;
+                        bar.style.rotate = `${frand(40, -20)*depth}deg`;
+                        bar.style.left = `${frand(50, -25)}%`;
                         bar.style.backgroundColor = bgcolor;
-                        bar.style.top = `${BGBars.#currpxl - rand(BGBars.#step, -0)}px`;
-                        bar.style.opacity = (invdepth) * rand(.35 * invdepth, .45);
+                        bar.style.top = `${currpxl - frand(BGBars.#step, 0)}px`;
+                        bar.style.opacity = (invdepth) * frand(.35 * invdepth, .45);
                         // bar.style.boxShadow = `0 0 ${pow((depth - 1), 2) * 10}px ${bgcolor}`; cool but laggy
-                        bar.style.animationDuration = `${rand(1.5,.5)}s`;
-                        app(eq("#bg-bars .c-" + depth), bar);
+                        bar.style.animationDuration = `${frand(1.5,.5)}s`;
+                        app(bgbar, bar);
 
                         setTimeout(() => {
                         }, rand(BGBars.#barspawninterval/10));

@@ -81,6 +81,7 @@ const pxlheight = window.innerHeight * window.devicePixelRatio;
 const pxlwidth = window.innerWidth * window.devicePixelRatio;
 const sp = "&nbsp;";
 const nofunc = () => {};
+const zerofunc = () => 0;
 
 
 function max(...args){
@@ -107,7 +108,7 @@ const clamp = (val, mini = val, maxi = val) => min(max(val, mini), maxi);
 const floor = (a) => Math.floor(a);
 const ceil = (a) => Math.ceil(a);
 const sqrt = (a) => Math.sqrt(a);
-const round = (a) => Math.round(a);
+const round = (a) => floor(a + 0.5);
 const rand = (mult = 1, add = 0) => Math.random() * mult + add;
 const randint = (mult = 1, add = 0) => Math.floor(Math.random() * (mult + 1)) + add;
 const randarridx = arr => Math.floor(Math.random() * arr.length);
@@ -118,6 +119,21 @@ function extrrand(max) { // prefer extremes of distribution
     return bias * max;
 }
 const chance = (onein = 2) => Math.random() < 1 / onein;
+const fix2str = (num, places = 2) => num.toFixed(places);
+const fix2num = (num, places = 2) => {
+    const factor = Math.pow(10, places);
+    return round(num * factor) / factor;
+}
+const frand = (mult = 1, add = 0, places = 2) => fix2num(rand(mult, add), places);
+const benchmark = (func = nofunc, paramfunc = zerofunc, ...params) => {
+    const iter = 10000000;
+    const start = performance.now();
+    for(let i = 0; i < iter; i++){
+        func(paramfunc(...params));
+    }
+    const end = performance.now();
+    return (end - start) / 1000;
+}
 
 const params = new URLSearchParams(window.location.search);
 

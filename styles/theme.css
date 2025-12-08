@@ -27,8 +27,12 @@
 
     /* https://angel-rs.github.io/css-color-filter-generator/ */
     /* light to dark mode white background filter */
-    --theme-d-l-filter: brightness(0) saturate(100%) invert(89%) sepia(10%) saturate(363%) hue-rotate(179deg) brightness(102%) contrast(95%);
 
+    /* based off actual light color */
+    --theme-d-l-filter: brightness(0) saturate(100%) invert(89%) sepia(10%) saturate(363%) hue-rotate(179deg) brightness(102%) contrast(95%);
+    
+    /* #d0e2f6, slightly more blue (compensate for bg bars) */
+    --theme-d-l-filter-fart: brightness(0) saturate(100%) invert(83%) sepia(21%) saturate(236%) hue-rotate(176deg) brightness(104%) contrast(93%);
 
     --theme-light-test: rgb(220, 233, 248);
     --theme-light-vals: var(--theme-white-vals);

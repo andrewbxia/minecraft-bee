@@ -269,9 +269,7 @@ function addblogloadimg(state = 1, first = false){
     setTimeout(() => {
         eid(loadimgid)?.remove();
     }, lifetime);
-    attachdebug(
-        state
-    );
+    // attachdebug(state);
     return lifetime;
 }
 
