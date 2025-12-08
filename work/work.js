@@ -3,25 +3,36 @@ const cube = eq(".cube");
 const mstoggle = eid("ms-toggle");
 const mscontainer = eid("ms-container");
 
-let motionsickness = false;
-const lsms = ls.get("motionsickness");
-if(lsms){// && !debug){
-    motionsickness = lsms === "1";
-}
-else{
-    motionsickness = confirm("u get motion sickness or not (confirm for yes cancel for nosies)");
-    ls.set("motionsickness", motionsickness ? "1" : "0");
-}
-
-if(motionsickness){
+function setms(){
     main.style.perspective = 500 + "px";
     main.style.transition = "0s";
     cube.style.transition = "0s";
 }
+function resetms(){
+    main.style.perspective = 1500 + "px";
+    main.style.transition = null;
+    cube.style.transition = null;
+}
 
+if(motionsickness)setms();
 
+eid("ms-container").onclick = () => {
+    // eid("ms-container").classList.toggle("ms");
+}
 
-
+function togglems(){
+    updatems("toggle");
+    eid("ms-container").classList.toggle("ms");
+    if(motionsickness) setms();
+    else resetms();
+    document.dispatchEvent(new MouseEvent("mousemove", {
+        clientX: cursor.X,
+        clientY: cursor.Y,
+    }));
+}
+function losefocus(){
+    document.documentElement.focus();
+}
 
 
 
@@ -31,8 +42,8 @@ const offsetdata = {
     Z: 0,
 };
 const cursor = {
-    X: 0,
-    Y: 0,
+    X: window.innerWidth / 2,
+    Y: window.innerHeight / 2,
 };
 function resetoffsetdata(){
     offsetdata.X = offsetdata.Y = offsetdata.Z = 0;
@@ -267,7 +278,7 @@ cube.addEventListener("click", (e) => {
 
 document.addEventListener("wheel", (e) => {
     e.preventDefault();
-    if(motionsickness)return;
+    // if(motionsickness)return;
     const delta = -e.deltaY;
     let currperspective = pint(main.style.perspective);
     const newperspective = clamp(currperspective + delta, 100, 5000);
@@ -280,8 +291,8 @@ checkvisit();
 
 
 document.addEventListener("click", (e) => {
-    // attachdebug("clicked on", e.target.tagName, e.target.classList.toString()
-    //     , e.target.id, eqa(".ind-rot").length);
+    attachdebug("clicked on", e.target.tagName, e.target.classList.toString()
+        , e.target.id, eqa(".ind-rot").length);
 });
 
 
@@ -300,6 +311,8 @@ BGBars.init({
     limiter,
     scrollfunc: (val) => ({Y: val, X: val}),
 });
+Debug.init();
+Debug.insert("centerdot");
 setInterval(() => {
     const transform = compst(eq(".cube")).transform;
     // get matrix3d valss (from chatgpt)
@@ -307,7 +320,10 @@ setInterval(() => {
     if (match) {
         const values = match[1].split(',').map(Number);
         const product = values.reduce((acc, val) => maxpoat(acc) * maxpoat(val), 1);
-        attachdebug("matrix3d product: " + product, transform, FpsMeter.maxfps, FpsMeter.avg);
+        //attachdebug("matrix3d product: " + product, transform, FpsMeter.maxfps, FpsMeter.avg);
         BGBars.fire(Infinity, Infinity, product);
     }
 }, limiter);
+BGBars.fire(Infinity, Infinity, 0);
+
+

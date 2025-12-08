@@ -21,22 +21,48 @@
 
 </head>
 <body>
-<script src="/scripts/oneko.js"></script>
-    <div id="debug" style="font-size: 1.5vh;position: fixed; top: 0; left: 0; background: white; color: black; z-index: 10000;"></div>
-    <div id="main" style="perspective: 1500px;">
-        <button id="ms-toggle">
-            <div id="ms-menu" class="comic-sans">
-                <div id="ms-container">
-                    <div class="front">
-                        front
-                    </div>
-                    <div class="back">
-                        back
-                    </div>
+    <script src="/scripts/oneko.js"></script>
+    <div id="debug" style="font-size: 1.5vh;position: fixed; top: 0; left: 0; background: white; color: black; z-index: 0;"></div>
+    <div id="cover"></div>
 
+
+    
+    <div id="ms-toggle" tabindex="0">
+        menu thing
+        <div id="ms-menu" class="comic-sans">
+            <div id="ms-container">
+                <div class="to-ms">
+                    <div class="container">
+                        <p>have motion sickness?</p>
+                        
+                        <div class="container">
+                            <button class="yes" id="to-ms-y" onclick="togglems()">
+                                yes
+                            </button>
+                            <button class="no" id="to-ms-n" onclick="losefocus()">
+                                no
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="to-normal">
+                    <div class="container">
+                        <p>return to normal view? (scroll & click around to navigate)</p>
+                        <div class="container">
+                            <button id="to-normal-y" class="yes" onclick="togglems()">
+                                go back
+                            </button>
+                            <button id="to-normal-n" class="no" onclick="losefocus()">
+                                stay
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </button>
+        </div>
+    </div>
+    <div id="main" style="perspective: 1500px;">
+        
         <div class="cube">
             <!-- orientation, offset, scale, ind. rotation  -->
             <div class="front">

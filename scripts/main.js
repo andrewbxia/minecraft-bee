@@ -121,7 +121,7 @@ togglewcb();
 
 
 const barsizealert = () => {
-    // if(truheight / window.innerHeight < 0.75){
+    // if(pxlheight / window.innerHeight < 0.75){
     if(false){
         alert(`
             hi! thanks for checking out my site :)\n
@@ -148,9 +148,9 @@ function clearbarsizealert(){
 
 // once everything is loaded
 // document.addEventListener("DOMContentLoaded", () => {
+BGBars.init();
 document.addEventListener("blogloaded", () => {
-    if(BGBars.initialized) return;
-    BGBars.init();
+    if(BGBars.barsfired > 0) return;
     window.addEventListener("scroll", () => {
         const comparing = eid(containerlimiterid).offsetHeight;
         const limiting = eid(containerlimiterid).offsetHeight;

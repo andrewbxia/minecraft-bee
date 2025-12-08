@@ -169,21 +169,49 @@ class ScrollProgress{
 }
 
 class Debug{
+    static #zindex = 2;
+
     static init(){
         if(!eid("debug")){
             appdoc(mk("div", {id: "debug", style: `
-position: fixed;
-top: 0; 
-left: 0;
-font-size: 1.5vh;
-background: var(--theme-light-other); 
-color: var(--theme-dark-other); 
-z-index: 10000;
-transition-property: background, color;
-transition-duration: .5s;
-transition-timing-function: ease-out;
-`}));
+                position: fixed;
+                top: 0; 
+                left: 0;
+                font-size: 1.5vh;
+                background: var(--theme-light-other); 
+                color: var(--theme-dark-other); 
+                z-index: ${Debug.#zindex};
+                transition-property: background, color;
+                transition-duration: .5s;
+                transition-timing-function: ease-out;
+                `}));
         }
+    }
+
+    static insert(type, ...args){
+        if(!debug) return;
+        Debug.#components[type](...args);
+    }
+
+    static #components = {
+        centerdot: (size = 8, color = "red") => {
+            if(eid("debug-centerdot")) return;
+            appdoc(mk("div", {id: "debug-centerdot", style: `
+                position: fixed;
+                pointer-events: none;
+
+                top: 50%;
+                left: 50%;
+                width: ${size}px;
+                height: ${size}px;
+                background-color: ${color};
+                transform: translate(-50%, -50%);
+                pointer-events: none;
+                z-index: ${Debug.#zindex};
+                `
+            }));
+        },
+        
     }
 }
 
@@ -196,9 +224,182 @@ class ThemeSwitch{
         toggletheme();
         ThemeSwitch.#extra(...args);
     });
+    static #occupied = false;
+    static #occupiedtypes = [];
+
+    static #coverscss = `
+    .ts-cover{
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        // outline: solid 10px red;
+        &.l-d{
+            background-color: var(--theme-l-d-diff);
+        }
+        &.d-l{
+            background-color: white;
+            filter: var(--theme-d-l-filter);
+        }
+
+        /* diff transitions */
+        &.collapse{
+            left: 100%;
+            bottom: 0;
+            width: 200vh;
+            height: 200vw;
+            transform-origin: 0% 100%;
+        }
+        &.slide-in-left{
+            top: 0;
+            right: 100%;        
+        }
+        &.slide-in-right{
+            left: 100%;
+            right: 0vw;
+            bottom: 0;
+            transform-origin: 100% 0%;        
+        }
+        &.filter{
+            background-color: var(--theme-l-d-diff);
+            mix-blend-mode: difference;
+        }
+    }
+    :root.dark body>.ts-cover{
+        &.filter{
+            /* dark to light */
+            backdrop-filter: var(--theme-d-l-filter);
+            background-color: white;
+            mix-blend-mode: normal;
+        }
+    }`;
+    static #playanimations = [
+        function collapse() {
+
+            ThemeSwitch.#addtype("collapse");
+
+
+            // collapse the .collapse div
+            new Ani(".collapse").rule({
+                from: [{rotate: "0deg"}],
+                to: [{rotate: "-90deg"}],
+                duration: 700,
+                easing: "ease-in",
+                forwards: true,
+                additive: [false, false],
+            })       
+            .rule({
+                from: [{rotate: "0deg"}],
+                to: [{rotate: "15deg"}],
+                duration: 300,
+                easing: "ease-out",
+                forwards: true,
+                additive: [true, true],
+            })
+            .rule({
+                from: [{rotate: "0deg"}],
+                to: [{rotate: "-90deg"}],
+                duration: 400,
+                easing: "ease-in",
+                forwards: true,
+                additive: [true, false],
+            })
+            .then(() => {
+                // eq(".collapse").classList.remove("filter");
+                ThemeSwitch.fire();
+            })
+            .rule({
+                from: [{rotate: "0deg"}],
+                to: [{rotate: "-360deg"}], // push a little extra to end
+                duration: 700,
+                easing: "ease-in",
+                forwards: true,
+                additive: [true, false],
+            })
+            .then(() => {
+                ThemeSwitch.#resettypes();
+            });
+        },
+
+        function slidein(){
+            const slideduration = 1980 / 3, collisionduration = 1980 / 2;
+
+            ThemeSwitch.#addtype("slide-in-left", "slide-in-right");
+            // before-screen slides in
+            
+            const beforescreendelay = new Ani(".slide-in-left").then(() => {
+                eq(".slide-in-left").style.left = "initial";
+            })
+            .rule({
+                from: [{right: "100vw"}],
+                to: [{right: "50vw"}],
+                duration: slideduration,
+                easing: "ease-out",
+                forwards: true,
+                additive: [false, false],
+            });
+            
+            // slide-in slides in
+            const slideindelay = new Ani(".slide-in-right").delay(beforescreendelay.whendone() - 100)
+            .rule({
+                from: [{left: "100%"}],
+                to: [{left: "50%"}],
+                duration: slideduration,
+                easing: "ease-in",
+                forwards: true,
+                additive: [true, false],
+            }).then(() => {
+                ThemeSwitch.fire();
+            });
+
+            // collision
+            new Ani(".slide-in-left").delay(slideindelay.whendone() - 5)
+            .rule({
+                from: [{right: "50vw"}],
+                to: [{right: "100vw"}],
+                duration: collisionduration,
+                easing: "ease-out",
+                forwards: true,
+                additive: [false, false],
+            }).then(() => {
+                ThemeSwitch.#resettypes();
+            })
+            .reset({left: "0"});
+
+            // slide-in tumbles
+            new Ani(".slide-in-right").delay(slideindelay.whendone())
+            .rule({
+                from: [{left: "50%", rotate: "0deg", bottom: "0%"}],
+                to: [{left: "20%", rotate: "-20deg", bottom: "-150%"}],
+                duration: collisionduration-10,
+                easing: "cubic-bezier(.43,-0.3,1,.31)",
+                forwards: true,
+                additive: [false, false],
+            }).reset({left: "100%"});
+        }
+    ]
+    static #addtype(...types){
+        if(ThemeSwitch.#occupied) return;
+        for(const type of types){
+            ThemeSwitch.#occupiedtypes.push(type);
+            prepdoc(mk("div", {class: `ts-cover filter ${type}`}));
+        }
+        ThemeSwitch.#occupied = true;
+    }
+    static #resettypes(){
+        ThemeSwitch.#occupied = false;
+        for(const t of ThemeSwitch.#occupiedtypes){
+            const el = eq(`.ts-cover.${t}`);
+            if(el) el.remove();
+        }
+        ThemeSwitch.#occupiedtypes = [];
+    }
 
     static init(onclick = nofunc, top = "0px"){
         ThemeSwitch.#extra = onclick;
+        styling(ThemeSwitch.#coverscss);
+        
+        
         if(!eid("theme-switch")){
             const ts = fromhtml(`<div id="theme-switch">
     <div class="ts-container">
@@ -220,7 +421,7 @@ class ThemeSwitch{
     </div>
 </div>`);
             document.body.prepend(ts);
-            styling(`:root.dark #theme-switch{
+            styling(`:root.dark #theme-switch, #theme-switch.dark{
     rotate: calc( 180deg);
     top: -50px;
     >.ts-container{
@@ -234,7 +435,7 @@ class ThemeSwitch{
     }
 }
 
-#theme-switch{
+#theme-switch, :root:not(.dark) #theme-switch{
     /* --scale: 3; scale blurs out the svg */
     --slant: 15deg;
     --speed: .75s;
@@ -349,19 +550,30 @@ class ThemeSwitch{
         ThemeSwitch.#switcher = eid("theme-switch");
 
         ThemeSwitch.#switcher.onclick = () => 
-            ThemeSwitch.#triggertheme.fire();
+            ThemeSwitch.fire();
     }
     static fire(){
         if(!ThemeSwitch.#switcher) return;
-        ThemeSwitch.#triggertheme.fire();
+        
+        // eid("theme-switch").classList.toggle("dark");
+        if(!ThemeSwitch.#animate()) // if wasn't able to play, just fire.
+            ThemeSwitch.#triggertheme.fire();
     }
+    
+    static #animate(){
+        if(ThemeSwitch.#occupied) return false;
+        randarrchoose(ThemeSwitch.#playanimations)();
+        return true;
+    }
+
+    
 }
 
 class BGBars{
     static #currpxl = 0;
     static #step = 1150;
-    static #maxpxl = () => min(1080 * 5, truheight * 3.75);
-    static #maxscroll = () => window.innerHeight / truheight * BGBars.#maxpxl();
+    static #maxpxl = () => min(1080 * 5, pxlheight * 3.75);
+    static #maxscroll = () => window.innerHeight / pxlheight * BGBars.#maxpxl();
     static #maxdepth = 4;
     static #depths = [...Array(BGBars.#maxdepth).keys()].map(i => i + 1);
     static #bardepthpower = 1.5;
@@ -373,6 +585,7 @@ class BGBars{
     static #basecolor = tohsl(docprop("--theme-light"), true);
     static #barspawninterval = 300;
     static #initialized = false;
+    static #barsfired = 0;
     static #limiter = 100;
     static #barkeyframes = [
         "passdown",
@@ -380,6 +593,8 @@ class BGBars{
         "passright",
         "passleft"
     ];
+    static #invdepths = []//max(.5, BGBars.#depths.length - depth);
+
     // static #containerlimiterid = "page";
     static #scrollfunc = (...args) => {throw new Error("init boy")};
     static #scrollbarst = new MeteredQueueTrigger(100, BGBars.#scrollfunc);
@@ -404,6 +619,7 @@ class BGBars{
 
         BGBars.#panstrength = options.panstrength || BGBars.#panstrength;
         BGBars.#basecolor = tohsl(docprop("--theme-light"), true);
+        BGBars.#invdepths = BGBars.#depths.map(depth => max(.5, BGBars.#depths.length - depth));
 
         if(!eid("bg-bars"))
             appdoc(mk("div", {id: "bg-bars"}));
@@ -525,9 +741,8 @@ class BGBars{
             }
             // log(window.scrollY + window.innerHeight, eid("container").offsetHeight);
             for(let depth of BGBars.#depths){
-                const invdepth = max(.5, BGBars.#depths.length - depth);
                 const stopmult = FpsMeter.maxfps / 10;
-                if(FpsMeter.currfps + stopmult <= FpsMeter.maxfps - invdepth * stopmult) return;
+                if(FpsMeter.currfps + stopmult <= FpsMeter.maxfps - BGBars.#invdepths[depth - 1] * stopmult) return;
                 eq("#bg-bars .c-" + depth).style.transform = `translateY(${(scrollY * -BGBars.#panstrength * 
                     BGBars.#invdepthpows[depth - 1]) % BGBars.#maxscroll()}px)
                     translateX(${(scrollX * -BGBars.#panstrength * pow(BGBars.#invdepthpows[depth - 1],2)) % BGBars.#maxscroll()}px)
@@ -540,7 +755,6 @@ class BGBars{
         // BGBars.#bgbars(0);
 
     }
-
     static #bgbars(newheight){
         if(!eid("bg-bars")){
             dlog("nope");
@@ -552,27 +766,33 @@ class BGBars{
             log("spawning more");
             BGBars.#currpxl += BGBars.#step;
             for (let depth of BGBars.#depths){
-                const invdepth = max(.5, BGBars.#depths.length - depth);
-                for (let cnt = 0; cnt <= depth / 3; cnt++){
-                    BGBars.#numbars++;
-                    const bar = mk("div", {class: `bg-bar`});
-                    bar.style.animationName = randarrchoose(BGBars.#barkeyframes);
-                    if(chance(1.5)) bar.style.animationName += ", expand";
-                    const bgcolor = `hsl(${BGBars.#basecolor.h}, ${BGBars.#basecolor.s}%, 
-                    ${rand( BGBars.#basecolor.l*invdepth / 4, BGBars.#basecolor.l * .75)}%)`;
+                const delay = rand((depth - 2) * BGBars.#barspawninterval);
+                setTimeout(() => {
+                    const invdepth = BGBars.#invdepths[depth - 1];
+                    for (let cnt = 0; cnt <= depth / 3; cnt++){
+                        BGBars.#numbars++;
+                        BGBars.#barsfired++;
+                        const bar = mk("div", {class: `bg-bar`});
+                        bar.style.animationName = randarrchoose(BGBars.#barkeyframes);
+                        if(chance(1.5)) bar.style.animationName += ", expand";
+                        const bgcolor = `hsl(${BGBars.#basecolor.h}, ${BGBars.#basecolor.s}%, 
+                        ${rand( BGBars.#basecolor.l*invdepth / 4, BGBars.#basecolor.l * .75)}%)`;
 
-                    bar.style.height = `${(depth) * rand(depth) + 4* depth}vh`;
-                    bar.style.rotate = `${rand(40, -20)*depth}deg`;
-                    bar.style.left = `${rand(50, -25)}%`;
-                    bar.style.backgroundColor = bgcolor;
-                    bar.style.top = `${BGBars.#currpxl - rand(BGBars.#step, -0)}px`;
-                    bar.style.opacity = (invdepth) * rand(.35 * invdepth, .45);
-                    // bar.style.boxShadow = `0 0 ${pow((depth - 1), 2) * 10}px ${bgcolor}`; cool but laggy
-                    bar.style.animationDuration = `${rand(1.5,.5)}s`;
-                    setTimeout(() => {
+                        bar.style.height = `${(depth) * rand(depth) + 4* depth}vh`;
+                        bar.style.rotate = `${rand(40, -20)*depth}deg`;
+                        bar.style.left = `${rand(50, -25)}%`;
+                        bar.style.backgroundColor = bgcolor;
+                        bar.style.top = `${BGBars.#currpxl - rand(BGBars.#step, -0)}px`;
+                        bar.style.opacity = (invdepth) * rand(.35 * invdepth, .45);
+                        // bar.style.boxShadow = `0 0 ${pow((depth - 1), 2) * 10}px ${bgcolor}`; cool but laggy
+                        bar.style.animationDuration = `${rand(1.5,.5)}s`;
                         app(eq("#bg-bars .c-" + depth), bar);
-                    }, rand(BGBars.#barspawninterval/10, (depth - 2) * BGBars.#barspawninterval));
-                }
+
+                        setTimeout(() => {
+                        }, rand(BGBars.#barspawninterval/10));
+                    }
+                }, delay);
+                
             }
         }
     }
@@ -595,5 +815,7 @@ class BGBars{
     static get initialized(){
         return BGBars.#initialized;
     }
-
+    static get barsfired(){
+        return BGBars.#barsfired;
+    }
 }

@@ -4,6 +4,51 @@ const fullurl = baseurl + window.location.pathname;
 const siteurls = ["andrewb.xyz", "axia.sh", "axia.nekoweb.org"];
 const debug = !siteurls.includes(minurl);
 const helperjs = true;
+class ls{
+    static set(key, value){
+        if(typeof value !== "string"){
+            derr("value is not a string");
+            return;
+        }
+        localStorage.setItem(key, value);
+    }
+    static get(key){
+        return localStorage.getItem(key);
+    }
+    static rm(key){
+        localStorage.removeItem(key);
+    }
+}
+
+// some accessibility stuffies
+
+// mutable to allow toggle
+let motionsickness = window.matchMedia(`(prefers-reduced-motion: reduce)`) === true ||
+    window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true;
+
+const updatems = (action = "none", reload = false) => {
+    switch(action){
+        case "toggle":
+            motionsickness = !motionsickness;
+            break;
+        case "set":
+            motionsickness = true;
+            break;
+        case "unset":
+            motionsickness = false;
+            break;
+        default:
+            break;
+    }
+    ls.set("ms", motionsickness ? "1" : "0");
+    if(reload) window.location.reload();
+};
+
+    if(ls.get("ms")) motionsickness = ls.get("ms") === "1";
+else updatems();
+
+
+
 // helper code i wrote to make everything(javascript) either less horrible
 
 const eid = (id) => document.getElementById(id);
@@ -32,8 +77,8 @@ const isnan = isNaN;
 const assert = (condition, msg) => {if(!condition) throw new Error(msg);};
 const assertnotreached = (msg = "unreachable thingy reached") => assert(false, msg);
 
-const truheight = window.innerHeight * window.devicePixelRatio;
-const truwidth = window.innerWidth * window.devicePixelRatio;
+const pxlheight = window.innerHeight * window.devicePixelRatio;
+const pxlwidth = window.innerWidth * window.devicePixelRatio;
 const sp = "&nbsp;";
 const nofunc = () => {};
 
@@ -121,22 +166,6 @@ class TSFuncs{
     }
 }
 
-class ls{
-    static set(key, value){
-        if(typeof value !== "string"){
-            derr("value is not a string");
-            return;
-        }
-        localStorage.setItem(key, value);
-    }
-    static get(key){
-        return localStorage.getItem(key);
-    }
-    static rm(key){
-        localStorage.removeItem(key);
-    }
-}
-
 let thememode = ls.get("theme") || "light";
 const toggletheme = () => {
     document.documentElement.classList.toggle("dark"); 
@@ -150,7 +179,7 @@ const toggletheme = () => {
 
 
 // light mode better tho :sunglasses: :sunglasses:
-if (thememode === "dark" || window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
+if ((!ls.get("theme") || thememode === "dark") && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
     // toggle to dark
     toggletheme();
 }
@@ -239,6 +268,11 @@ function prepmany(parent, children){
     children.forEach(child => prep(parent, child));
     return parent;
 }
+// no prepnest, does same as appnest functionally
+function prepdoc(child){
+    return prep(document.body, child);
+}
+
 
 const fromhtml = (txt) => mktxt("template", txt).content.firstChild;
 const tohtml = (el) => el.outerHTML;
@@ -364,8 +398,30 @@ function attachdebug(...messages){
 }
 
 
-// color funcs
+// color/extra style funcs
 
+{
+    // make 0.07s in css
+    // time from dimden.dev
+    let flickering = "@keyframes flickering{";
+    const minopacity = 0.25;
+    const limit = 75;
+    let flickeringo = "@keyframes flickering-o{";
+    let val = true;
+
+
+    for(let i = 0; i <= limit; i+=randint(3, 1)){
+        const valo = i > (limit - 5) ? 1 : min(1, .01 * round(100 * rand(1.25, .25)));
+        flickeringo += `${i}%{opacity: ${valo.toFixed(2)};}`;
+        flickering += `${i}%{opacity: ${(val || i > 45) ? 1 : minopacity};}`;
+        val = !val;
+    }
+
+    flickeringo += "}";
+    flickering += "}";
+    styling(flickering);
+    styling(flickeringo);
+}
 
 
 //bg bars && theme transition

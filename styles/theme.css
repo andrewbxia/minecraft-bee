@@ -12,11 +12,22 @@
     --theme-black-vals: 9, 29, 44;
     --theme-white: rgb(var(--theme-white-vals));
     --theme-black: rgb(var(--theme-black-vals));
+
+    --black-white: black;
+    --white-black: white;
     /* dark */
     --comp-purple-vals: 114, 111, 255;
     --comp-orange-vals: 255, 217, 0;
     --comp-purple: rgb(var(--comp-purple-vals));
     --comp-orange: rgb(var(--comp-orange-vals));
+
+    /* dark to light mode difference filter */
+    --theme-l-d-diff-vals: 106, 122, 7;
+    --theme-l-d-diff: rgb(var(--theme-l-d-diff-vals));
+
+    /* https://angel-rs.github.io/css-color-filter-generator/ */
+    /* light to dark mode white background filter */
+    --theme-d-l-filter: brightness(0) saturate(100%) invert(89%) sepia(10%) saturate(363%) hue-rotate(179deg) brightness(102%) contrast(95%);
 
 
     --theme-light-test: rgb(220, 233, 248);
@@ -60,6 +71,9 @@
     --fw-light: 'wght' var(--min-fw);
     --fw-normal: 'wght' var(--nor-fw);
     --fw-bold: 'wght' var(--max-fw);
+
+    --flicker: flickering 0.7s;
+
     &.dark{
         --theme-light-vals: var(--comp-purple-vals);
         --theme-light: rgb(var(--theme-light-vals));
@@ -67,6 +81,9 @@
         --theme-dark: rgb(var(--theme-dark-vals));
         --theme-light-other-vals: var(--theme-white-vals);
         --theme-dark-other-vals: var(--theme-black-vals);
+
+        --black-white: white;
+        --white-black: black;
     }
 }
 html{
