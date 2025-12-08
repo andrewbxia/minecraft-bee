@@ -1,5 +1,8 @@
+html{
+    pointer-events: none;
+}
 body{
-    /* pointer-events: none; */
+    pointer-events: none;
     width: 100%;
     height: 100vh;
 }
@@ -269,6 +272,47 @@ body{
     right: 0;
     width: fit-content;
     height: fit-content;
+    padding: 5px;
+    background-color: var(--theme-light);
+    transition: border-color .35s;
+    border: var(--border-dark);
+    border-width: 5px 0 0 5px;
+    cursor: pointer;
+
+    &::before, &::after{
+        content: '';
+        position: absolute;
+        height: 0px;
+        background-color: var(--theme-dark);
+        mix-blend-mode: plus-lighter;
+        /* pointer-events: none; */
+        transition: height 0.45s var(--ease-more-out);
+        width: 100%;
+    }
+    &::before{
+        top: 0;
+    }
+    &::after{
+        bottom: 0;
+        right: 0;
+    }
+    >span{
+        font-variation-settings: var(--fw-normal);
+        transition: color .35s, font-variation-settings .75s;
+    }
+
+    &:hover, &:focus-within{
+        border-color: var(--theme-light);
+        background-color: var(--theme-dark);
+        >span{
+            font-variation-settings: var(--fw-bold);
+            color: var(--theme-light);
+        }
+        &::before, &::after{
+            height: 100%;
+        }
+    }
+
 
 }
 #ms-tip{
@@ -374,6 +418,7 @@ body{
         width: 100%;
         height: 100%;
         outline: 4px dashed var(--black-white);
+        animation: outline-flash steps(2) infinite .75s;
         backface-visibility: hidden;
         padding: 1em;
         >.container{
@@ -395,19 +440,23 @@ body{
                 display: flex;
                 justify-content: space-evenly;
                 >button{
-                    font-size: inherit;
-                    font-family: inherit;
-                    color: inherit;
+
                     background-color: var(--theme-dark);
-                    box-shadow: 5px 5px 0px 0px var(--theme-light);
+                    --shadow-color: var(--theme-light);
+                    box-shadow: 5px 5px 0px 0px var(--shadow-color);
                     transition: box-shadow .25s, transform .25s;
+                    
+                    &.no{
+                        --shadow-color: var(--theme-dark-other);
+                        background-color: var(--theme-light);
+                        color: var(--theme-dark);
+                    }
                     &:hover{
-                        cursor: pointer;
-                        box-shadow: 8px 8px 0px 0px var(--theme-light);
+                        box-shadow: 8px 8px 0px 0px var(--shadow-color);
                         transform: translateY(-5px);
                     }
                     &:active{
-                        box-shadow: 2px 2px 0px 0px var(--theme-light);
+                        box-shadow: 2px 2px 0px 0px var(--shadow-color);
                         transform: translate(8px, 8px);
                     }
                     ::before, ::after{
@@ -418,10 +467,9 @@ body{
                         top: 0;
                         left: 0;
                         box-shadow: inset 0 0 20px 5px rgba(var(--theme-light-vals), 0.9);
-                        
                     }
-                    &.no{
-                        
+                    &::after{
+                        box-shadow: inset 0 0 -20px -5px rgba(var(--theme-light-vals), 0.9);
                     }
 
                 }
@@ -462,5 +510,15 @@ body{
     }
     100%{
         transform: translateY(0px);
+    }
+}
+@keyframes outline-flash{
+    from{
+        outline-offset: 0px;
+        outline-width: 4px;
+    }
+    to{
+        outline-offset: -4px;
+        outline-width: 8px;
     }
 }

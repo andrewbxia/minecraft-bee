@@ -27,19 +27,19 @@
 
 
     
-    <div id="ms-toggle" tabindex="0">
-        menu thing
+    <div id="ms-toggle" tabindex="1">
+        <span>menu thing</span>
         <div id="ms-menu" class="comic-sans">
             <div id="ms-container">
                 <div class="to-ms">
                     <div class="container">
-                        <p>have motion sickness?</p>
+                        <p>have motion sickness (yet?)</p>
                         
                         <div class="container">
                             <button class="yes" id="to-ms-y" onclick="togglems()">
                                 yes
                             </button>
-                            <button class="no" id="to-ms-n" onclick="losefocus()">
+                            <button class="no" id="to-ms-n" onclick="this.blur()">
                                 no
                             </button>
                         </div>
@@ -52,7 +52,7 @@
                             <button id="to-normal-y" class="yes" onclick="togglems()">
                                 go back
                             </button>
-                            <button id="to-normal-n" class="no" onclick="losefocus()">
+                            <button id="to-normal-n" class="no" onclick="this.blur()">
                                 stay
                             </button>
                         </div>

@@ -40,11 +40,11 @@
     --theme-dark-test: rgb(9, 29, 44);
     --theme-dark-vals: var(--theme-black-vals);
     --theme-dark: rgb(var(--theme-dark-vals));
+    --theme-tertiary: rgb(211, 211, 211);
 
 
     --theme-blue-vals: 85,153,255;
     --theme-green-vals: 54,224,153;
-    --theme-tertiary: rgb(211, 211, 211);
     --theme-blue: rgb(var(--theme-blue-vals));
     --theme-green: rgb(var(--theme-green-vals));
     --theme-purple: rgb(136, 99, 223);
@@ -76,7 +76,7 @@
     --fw-normal: 'wght' var(--nor-fw);
     --fw-bold: 'wght' var(--max-fw);
 
-    --flicker: flickering 0.7s;
+    --flicker: flickering 0.07s;
 
     &.dark{
         --theme-light-vals: var(--comp-purple-vals);
@@ -115,7 +115,13 @@ body{
     color: var(--theme-light);
     text-shadow: none;
 }
-
+button{
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    font-variation-settings: inherit;
+    color: inherit;
+}
 img{
     max-width: 100%; /* needed for img track */
     max-height: 100%;

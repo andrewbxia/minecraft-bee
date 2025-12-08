@@ -4,11 +4,13 @@ const mstoggle = eid("ms-toggle");
 const mscontainer = eid("ms-container");
 
 function setms(){
+    eid("ms-container").classList.add("ms");
     main.style.perspective = 500 + "px";
     main.style.transition = "0s";
     cube.style.transition = "0s";
 }
 function resetms(){
+    eid("ms-container").classList.remove("ms");
     main.style.perspective = 1500 + "px";
     main.style.transition = null;
     cube.style.transition = null;
@@ -22,18 +24,15 @@ eid("ms-container").onclick = () => {
 
 function togglems(){
     updatems("toggle");
-    eid("ms-container").classList.toggle("ms");
-    if(motionsickness) setms();
-    else resetms();
+    if(motionsickness)
+        setms();
+    else 
+        resetms();
     document.dispatchEvent(new MouseEvent("mousemove", {
         clientX: cursor.X,
         clientY: cursor.Y,
     }));
 }
-function losefocus(){
-    document.documentElement.focus();
-}
-
 
 
 const offsetdata = {

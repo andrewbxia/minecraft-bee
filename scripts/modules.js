@@ -441,6 +441,7 @@ class ThemeSwitch{
 }
 #theme-switch, :root.dark #theme-switch.pre{
     /* --scale: 3; scale blurs out the svg */
+    pointer-events: all;
     --slant: 15deg;
     --speed: .75s;
     position: fixed;
@@ -575,7 +576,8 @@ class ThemeSwitch{
     
     static #animate(){
         if(ThemeSwitch.#occupied) return false;
-        randarrchoose(ThemeSwitch.#playanimations)();
+        ThemeSwitch.#playanimations[thememode === "light" ? 0 : 1]();
+        // randarrchoose(ThemeSwitch.#playanimations)();
         return true;
     }
 
