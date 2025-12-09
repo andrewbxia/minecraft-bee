@@ -209,13 +209,13 @@ function displayblog(change = "none", delay = 0){
                 placenav();
             }
             dispblogyay();
-            blogstate = 2;
+            blogstate = 3;
         }).catch(error => {
             err(error);
             eid("blog").innerHTML += `<center style="margin-top:350px;">posts didnt load...maybe ${mkhtml("a", "reload?", {href: ""}) }
             <br>.₊̣̇.ಇ/ᐠˬ ͜   ˬ ᐟ\∫.₊̣̇.</center>`;
             blogstate = 0;
-            // addblogloadimg(blogstate);
+            addblogloadimg(blogstate);
         }).finally(() => {
             document.dispatchEvent(new Event("blogloaded"));
             if(params.has("b-edit") && !editorinit){
@@ -229,9 +229,193 @@ function displayblog(change = "none", delay = 0){
 
 const blogttl = 5000; // 5s
 const blogimglifetime = 1900;
+const blogimgpath = "/assets/imgs/loadings/yveltal/";
+const blogimg = (name) => blogimgpath + name;
+const blid = "blog-loading";
 
-const bloadimgs = ["/assets/imgs/loadings/yveltal/loading.webp",];
-const byayimg = "/assets/imgs/loadings/yveltal/success.webp";
+// const waitblogimgs = [
+//     "loading.webp"
+// ];
+// const blogloadframes = {
+//     success: ["success.webp"],
+//     grabbing: ["grabbingbody.webp", "grabbingarm.webp"],
+//     confident: ["confident.webp"],
+//     uhoh: ["uhoh.webp"],
+//     help: ["help.webp"],
+// };
+
+// for(const frames in blogloadframes){
+//     blogloadframes[frames].forEach((frame, idx) => {
+//         const img = new Image();
+//         img.src = blogimg(frame);
+//     });// preload imgs
+// }
+
+// const failblogimg = "help.webp";
+// let blprevstate = "none";
+// const setblstate = (state) => {
+//     const blogloading = eid(blid);
+//     if(!blogloading) {
+//         attachdebug("not ofund");
+//         return;
+//     }
+
+//     const cont = blogloading.querySelector("div.container");
+//     cont.classList.remove(blprevstate);
+//     cont.innerHTML = "";
+    
+//     blogloadframes[state].forEach((frame, idx) => 
+//         app(cont, img(blogimg(frame), {class: `img-${idx + 1} ${state}`})));
+
+//     cont.classList.add(state);
+//     attachdebug(`state ${state}`, blprevstate, blogloading.innerHTML);
+//     blprevstate = state;
+
+// }
+
+
+// /*
+// default states:
+// top: 0;
+// left: 50%;
+// transform: translate(-50%, 0) rotate(10deg);
+// */
+// const bloganim = () => {
+//     return new Ani(`#${blid}>div.container`)
+//     //success
+//     .norm()
+//     .then(() => {
+//         setblstate("success");
+//     })
+//     .rule({
+//         from: {top: "0px",rotate: "0deg"},
+//         to: {top: "-200px", rotate: "20deg"},
+//         duration: 800,
+//         easing: "ease-out",
+//         forwards: true,
+//         additive: [true, true],
+//     })
+//     .rule({
+//         from: {top: "0px", rotate: "0deg"},
+//         to: {top: "0px", rotate: "0deg"},
+//         duration: 700,
+//         easing: "ease-in",
+//         forwards: true,
+//         additive: [true, false],
+//     })
+//     .then(() => {
+//         // fall down, grabbing
+//         setblstate("grabbing");
+//     })
+//     .rule({
+//         from: {top: "0px", left: "0%",},
+//         to: {top: "350px", left: "-5%"},
+//         duration: 1200,
+//         forwards: true,
+//         easing: "ease-out",
+//         additive: [true, true],
+//     })
+//     .rule({
+//         from: {top: "0px"},
+//         to: {top: "0px"},
+//         duration: 800,
+//         forwards: true,
+//         easing: "ease-in",
+//         additive: [true, false],
+//     })
+//     .then(() => {
+//         // confident
+//         setblstate("confident");
+//     })
+//     .rule({
+//         from: {top: "0px", opacity: "0", left: "0%", rotate: "0deg"},
+//         to: {top: "-200px", opacity: "-0.2", left: "10%", rotate: "-15deg"},
+//         duration: 1500,
+//         forwards: true,
+//         easing: "ease-out",
+//         additive: [true, true],
+//     })
+//     .then(() => {
+//         // uhoh
+//         setblstate("uhoh");
+//     })
+//     .rule({
+//         from: {top: "0px", left: "0%", opacity: "0", rotate: "0deg"},
+//         to: {top: "-55px", left: "5%", opacity: "-0.3", rotate: "-10deg"},
+//         duration: 1500,
+//         forwards: true,
+//         easing: "ease",
+//         additive: [true, true],
+//     })
+//     .then(() => {
+//         //help
+//         setblstate("help");
+//     })
+//     .rule({
+//         from: {top: "0px", left: "0%", opacity: "0", rotate: "0deg"},
+//         to: {top: "-100px", left: "5%", opacity: "-.5", rotate: "8deg"},
+//         duration: 2000,
+//         forwards: true,
+//         easing: "ease",
+//         additive: [true, true],
+//     })
+//     .then(() => {
+//         eid(blid)?.remove();
+//     })
+//     .finish()
+//     .whendone();
+
+// }
+
+// function dispblogyay(){
+//     if(!eid(blid)){
+//         app(eid("blog"),
+//             app(mk("div", {id: blid}),
+//                 mk("div", {class: "container"})));
+//     }
+//     const blogloading = eid(blid);
+//     const duration = bloganim();
+
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// i hate this code its so nonscalable lol
+
+const bloadimgs = ["loading.webp", "confident.webp", "grabbingfull.webp"];
+const byayimg = "success.webp";
+const blongimgs = ["uhoh.webp"];
+const bfailimg = "help.webp";
 [byayimg, ...bloadimgs].forEach(src => { // preload imgs
     const img = new Image();
     img.src = src;
@@ -243,26 +427,28 @@ let bimgid = 0;
 const bimgdelay = blogimglifetime;
 const bloadtimes = [() => 0,
     () => elprop(eid("blog-loading"), "--b-load-1-time") * 1000,
-    () => elprop(eid("blog-loading"), "--b-load-2-time") * 1000];
+    () => elprop(eid("blog-loading"), "--b-load-2-time") * 1000,
+    () => elprop(eid("blog-loading"), "--b-load-3-time") * 1000,];
 
     
 
 function addblogloadimg(state = 1, first = false){
     const clss = "b-load-" + state + (first ? " first" : "");
-    const yay = state === 2 ? 1 : 0;
-    const lifetime = bloadtimes[state]() + (state === 1) * bimgdelay;
+    const yay = state === 3;
+    const lifetime = bloadtimes[state]() + (state === 1 || state === 2) * bimgdelay;
     const imgsrc = 
         state === 0 ? 
-        //  ""
-            randarrchoose(bloadimgs)
+            bfailimg
         : state === 1 ? 
             randarrchoose(bloadimgs)
-        : state === 2 ? 
+        : state === 2 ?
+            randarrchoose(blongimgs)
+        : state === 3 ? 
             byayimg
         : "bruh";
 
     const loadimgid = `b-load-img-${bimgid++}`;
-    const loadimg = img(imgsrc, {class: clss, id: loadimgid});
+    const loadimg = img(blogimgpath + imgsrc, {class: clss, id: loadimgid});
     if(yay)
         app(eid("blog-loading"), loadimg);
     else prep(eid("blog-loading"), loadimg);
@@ -283,13 +469,13 @@ function dispblogload(){
     const cnt = blogloadcnt;
 
     const int = setInterval(() => {
-        if(blogstate === 2 || cnt !== blogloadcnt){
+        if(blogstate === 3 || cnt !== blogloadcnt){
             clearInterval(int);
-            dlog("detected stopping", blogstate, cnt, blogloadcnt);
+            attachdebug("detected stopping", blogstate, cnt, blogloadcnt);
             setTimeout(() => {
                 if(cnt !== blogloadcnt) return;
 
-            }, bloadtimes[2]() + 500); // lag compensation
+            }, bloadtimes[3]() + 500); // lag compensation
             return;
         }
         
@@ -298,9 +484,10 @@ function dispblogload(){
 
     setTimeout(() => {
         if(cnt !== blogloadcnt) return;
-        if(blogstate === 2) return;
+        if(blogstate === 3) return;
         // clearInterval(int);
         // if(blogstate === 1) return;
+        blogstate = 2;
         eid("blog-loading-txt").innerText = "loading is taking longer than usual...try reloading?";
         document.dispatchEvent(new Event("blogloaded")); // preemptively do it to init pretty bg bars
         // add fail img
@@ -310,7 +497,7 @@ function dispblogload(){
 function dispblogyay(){
     // yay blog load wow omg
 
-    addblogloadimg(2);
+    addblogloadimg(3);
     let has1 = false;
     eqa("#blog-loading>img.b-load-1").forEach(el => {
         el.remove();
@@ -326,4 +513,4 @@ function dispblogyay(){
 
 
 
-displayblog("none", 0);
+displayblog("none", blogimglifetime * 2);

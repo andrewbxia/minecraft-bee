@@ -19,16 +19,29 @@
 }
 
 @keyframes b-load-2{
-    30%{
+    50%{
+        top: -50px;
+        /* rotate: 0deg; */
+        /* opacity: 1; */
+    }
+    100%{
+        top: -20px;
+        left: 70%;
+        rotate: 30deg;
+        opacity: 0;
+    }
+}
+@keyframes b-load-3{
+    55%{
         top: -150px;
         /* left: 00px; */
         opacity: 1;
     }
     100%{
-        top: -125px;
+        top: -135px;
         transform: translate(0, 0);
         left: -200px;
-        height: 500px;
+        width: 500px;
         rotate: -25deg;
         opacity: 0;
     }
@@ -125,18 +138,44 @@
         max-width: 100%;
         position: absolute;
         inset: 0;
-        height: 0;
+
+        /* top: 0;
+        left: 50%;
+        transform: translate(-50%, 0) rotate(10deg); */
+        height: 1000px;
         --b-load-1-delay: 1.9s;
         --b-load-1-time: 2s;
-        --b-load-2-time: 2.2s;
+        --b-load-2-time: 2s;
+        
+        --b-load-3-time: 2.2s;
+        >div.container{
+            position: absolute;
+            width: auto;
+            height: fit-content;
+            overflow: visible;
+            >img{
+                max-width: 350px;
+                /* outline: 2px black solid;
+                width: 350px;
+                height: 350px; */
+                
+                &.grabbing.img-2{
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                }
+            }
+        }
+
         >img{
             position: absolute;
             top: 0;
             left: 50%;
             transform: translate(-50%, 0) rotate(10deg);
-            min-height: 350px;
-            height: 350px;
-            width: auto;
+            min-width: 400px;
+            width: 400px;
+            max-width: 400px;
+            height: auto;
             user-select: none;
             animation: forwards ease-out;
             &.b-load-1{
@@ -148,6 +187,11 @@
             &.b-load-2{
                 animation-name: b-load-2;
                 animation-duration: var(--b-load-2-time);
+                animation-delay: var(--b-load-1-delay);
+            }
+            &.b-load-3{
+                animation-name: b-load-3;
+                animation-duration: var(--b-load-3-time);
             }
 
         }

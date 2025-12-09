@@ -281,24 +281,24 @@ class ThemeSwitch{
 
             // collapse the .collapse div
             new Ani(".collapse").rule({
-                from: [{rotate: "0deg"}],
-                to: [{rotate: "-90deg"}],
+                from: {rotate: "0deg"},
+                to: {rotate: "-90deg"},
                 duration: 700,
                 easing: "ease-in",
                 forwards: true,
                 additive: [false, false],
             })       
             .rule({
-                from: [{rotate: "0deg"}],
-                to: [{rotate: "15deg"}],
+                from: {rotate: "0deg"},
+                to: {rotate: "15deg"},
                 duration: 300,
                 easing: "ease-out",
                 forwards: true,
                 additive: [true, true],
             })
             .rule({
-                from: [{rotate: "0deg"}],
-                to: [{rotate: "-90deg"}],
+                from: {rotate: "0deg"},
+                to: {rotate: "-90deg"},
                 duration: 400,
                 easing: "ease-in",
                 forwards: true,
@@ -309,8 +309,8 @@ class ThemeSwitch{
                 ThemeSwitch.fire();
             })
             .rule({
-                from: [{rotate: "0deg"}],
-                to: [{rotate: "-360deg"}], // push a little extra to end
+                from: {rotate: "0deg"},
+                to: {rotate: "-360deg"}, // push a little extra to end
                 duration: 700,
                 easing: "ease-in",
                 forwards: true,
@@ -331,8 +331,8 @@ class ThemeSwitch{
                 eq(".slide-in-left").style.left = "initial";
             })
             .rule({
-                from: [{right: "100vw"}],
-                to: [{right: "50vw"}],
+                from: {right: "100vw"},
+                to: {right: "50vw"},
                 duration: slideduration,
                 easing: "ease-out",
                 forwards: true,
@@ -342,8 +342,8 @@ class ThemeSwitch{
             // slide-in slides out
             const slideindelay = new Ani(".slide-in-right").delay(beforescreendelay.whendone() - 100)
             .rule({
-                from: [{left: "100%"}],
-                to: [{left: "50%"}],
+                from: {left: "100%"},
+                to: {left: "50%"},
                 duration: slideduration,
                 easing: "ease-in",
                 forwards: true,
@@ -357,8 +357,8 @@ class ThemeSwitch{
             // collision
             new Ani(".slide-in-left").delay(slideindelay.whendone() - 5)
             .rule({
-                from: [{right: "50vw"}],
-                to: [{right: "100vw"}],
+                from: {right: "50vw"},
+                to: {right: "100vw"},
                 duration: collisionduration,
                 easing: "ease-out",
                 forwards: true,
@@ -371,8 +371,8 @@ class ThemeSwitch{
             // slide-in tumbles
             new Ani(".slide-in-right").delay(slideindelay.whendone())
             .rule({
-                from: [{left: "50%", rotate: "0deg", bottom: "0%"}],
-                to: [{left: "20%", rotate: "-20deg", bottom: "-150%"}],
+                from: {left: "50%", rotate: "0deg", bottom: "0%"},
+                to: {left: "20%", rotate: "-20deg", bottom: "-150%"},
                 duration: collisionduration-10,
                 easing: "cubic-bezier(.43,-0.3,1,.31)",
                 forwards: true,

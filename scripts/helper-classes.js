@@ -480,6 +480,10 @@ class Ani{
         // fontSize: "0px",
     };
 
+    static #propnorms = [
+        "rotate",
+    ];// properties that scream if not manually set.
+
     constructor(query, params = {}){
         if (!query) {
             this.#mode = "obj";
@@ -532,12 +536,14 @@ class Ani{
     #addunit(value, addition) { // ripped from chatgpt
         const regex = /^(-?\d*\.?\d+)([a-z%]*)$/i;
         let match = value.match(regex);
-        const defultvalue = Ani.#defaultvalues[value];
+        const defaultvalue = Ani.#defaultvalues[value];
 
         if (!match) {
-            if(!defultvalue)
-                throw new Error(`this value is likely |none| but still poopoo: ${value}. For values like rotate, set them to a defulat value like 0deg`);
-            console.warn(`Value ${value} not recognized, using default value ${Ani.#defaultvalues[value]}`);
+            if(!defaultvalue){
+                const msg = `this value is likely |none| but still poopoo: ${value}. For values like rotate, set them to a defulat value like 0deg`;
+                throw new Error(msg);
+            
+            }console.warn(`Value ${value} not recognized, using default value ${Ani.#defaultvalues[value]}`);
             match = defaultvalue.match(regex);
         }
 
@@ -546,6 +552,19 @@ class Ani{
         // console.log(this.#query, value,unit);
 
         return `${newValue}${unit}`;
+    }
+
+    norm(){
+        return this.#queuePromise(() => {
+            document.querySelectorAll(this.#query).forEach(el => {
+                const computed = getComputedStyle(el);
+                for(const prop of Ani.#propnorms){
+                    if(computed[prop] === "none" || computed[prop] === ""){
+                        el.style[prop] = Ani.#defaultvalues[prop];
+                    }
+                }
+            });
+        });
     }
 
     contif(conditionfunc, falsefunc){
@@ -622,32 +641,31 @@ class Ani{
         }
         const duration = (obj.duration >= 0) ? obj.duration: 1000;
         const easing = obj.easing || "linear";
-        const forwards = obj.forwards || false;
+        const forwards = obj.forwards || true;
         const additive = obj.additive || [false, false];
         const iterations = obj.iterations || 1;
-        const from = obj.from || [];
-        const to = obj.to || [];
+        const from = obj.from || {};
+        const to = obj.to || {};
         const otherignore = obj.otherignore || false;
         const elements = document.querySelectorAll(this.#query);
         // const id = this.#increment(); // do this in the loop
         this.#updatecurr(duration * iterations);
         let idx = 0;
         let keys = [];
+        
         while (idx < Math.min(this.#querycnt, elements.length)) {
             keys.push(this.#increment());
             idx++;
         }
         idx = 0;
-        from.forEach((item) => {
-            for (const prop in item) {
-                this.#changedproperties.add(prop);
-            }
-        });
-        to.forEach((item) => {
-            for (const prop in item) {
-                this.#changedproperties.add(prop);
-            }
-        });
+        for (const prop in from) {
+            this.#changedproperties.add(prop);
+        }
+        
+        for (const prop in to) {
+            this.#changedproperties.add(prop);
+        }
+        
         
 
 
@@ -672,25 +690,19 @@ class Ani{
                 if(!otherignore)
                     el.dataset.ani = key;
                 const frames = [{}, {}];
+                for (const prop in from) {
+                    const val = from[prop];
+                    frames[0][prop] = additive[0]
+                        ? this.#addunit(getComputedStyle(el)[prop], parseFloat(val))
+                        : val;
+                }
 
-                from.forEach((item) => {
-                    for (const prop in item) {
-                        const val = item[prop];
-
-                        frames[0][prop] = additive[0]
-                            ? this.#addunit(getComputedStyle(el)[prop], parseFloat(val))
-                            : val;
-                    }
-                });
-
-                to.forEach((item) => {
-                    for (const prop in item) {
-                        const val = item[prop];
-                        frames[1][prop] = additive[1]
-                            ? this.#addunit(getComputedStyle(el)[prop], parseFloat(val))
-                            : val;
-                    }
-                });
+                for (const prop in to) {
+                const val = to[prop];
+                    frames[1][prop] = additive[1]
+                        ? this.#addunit(getComputedStyle(el)[prop], parseFloat(val))
+                        : val;
+                }
 
                 Ani.#animations.set(
                     key,
