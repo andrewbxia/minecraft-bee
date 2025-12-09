@@ -418,7 +418,7 @@ const blongimgs = ["uhoh.webp"];
 const bfailimg = "help.webp";
 [byayimg, ...bloadimgs].forEach(src => { // preload imgs
     const img = new Image();
-    img.src = src;
+    img.src = blogimgpath + src;
 });
 
 const bnayimg = "";
