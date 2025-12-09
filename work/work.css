@@ -414,7 +414,7 @@ body{
     transform-style: preserve-3d;
     >.to-ms, >.to-normal{
         background-color: var(--theme-dark);
-        box-shadow: 10px 10px 0px 0px var(--theme-light);
+        box-shadow: 10px 10px 0px 0px var(--theme-dark-other);
         ::selection{
             background-color: var(--theme-light);
             color: var(--theme-dark);
