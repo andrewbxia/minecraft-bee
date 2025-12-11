@@ -181,17 +181,17 @@ function displayblog(change = "none", delay = 0){
         }
     }
     params.set(viewingmode, viewingmode === "post" ? postid : pageidx);
-
-
     blogstate = 1;
-    clearblog();
     blogloadcnt++;
+
+    clearblog();
     dispblogload();
 
     if(viewingmode === "post")
         window.location.href = "#blog";
     else if(viewingmode === "page" && change !== "none")
         window.location.href = "#blog";
+
     setTimeout(() => {
         (viewingmode === "post" ? getpost(postid) : getpage(pageidx)).then(data => {
             posts.push(...data);
@@ -210,25 +210,30 @@ function displayblog(change = "none", delay = 0){
             }
             dispblogyay();
             blogstate = 3;
+
         }).catch(error => {
+
             err(error);
             eid("blog").innerHTML += `<center style="margin-top:350px;">posts didnt load...maybe ${mkhtml("a", "reload?", {href: ""}) }
             <br>.₊̣̇.ಇ/ᐠˬ ͜   ˬ ᐟ\∫.₊̣̇.</center>`;
+            
             blogstate = 0;
             addblogloadimg(blogstate);
+            
         }).finally(() => {
             document.dispatchEvent(new Event("blogloaded"));
+
             if(params.has("b-edit") && !editorinit){
                 script("./scripts/blog-editor.js", true);
                 editorinit = true;
             }
         });
-    }, delay)
+    }, delay);
 }
 
 
-const blogttl = 5000; // 5s
-const blogimglifetime = 1900;
+const blogttl = 7500; // 7.5s
+const blogimglifetime = 1700;
 const blogimgpath = "/assets/imgs/loadings/yveltal/";
 const blogimg = (name) => blogimgpath + name;
 const blid = "blog-loading";
@@ -410,7 +415,7 @@ const blid = "blog-loading";
 
 
 
-// i hate this code its so nonscalable lol
+// i hate this code its so bad lol
 
 const bloadimgs = ["loading.webp", "confident.webp", "grabbingfull.webp"];
 const byayimg = "success.webp";
@@ -449,9 +454,12 @@ function addblogloadimg(state = 1, first = false){
 
     const loadimgid = `b-load-img-${bimgid++}`;
     const loadimg = img(blogimgpath + imgsrc, {class: clss, id: loadimgid});
+    
+
     if(yay)
         app(eid("blog-loading"), loadimg);
     else prep(eid("blog-loading"), loadimg);
+
     setTimeout(() => {
         eid(loadimgid)?.remove();
     }, lifetime);
@@ -474,8 +482,8 @@ function dispblogload(){
             attachdebug("detected stopping", blogstate, cnt, blogloadcnt);
             setTimeout(() => {
                 if(cnt !== blogloadcnt) return;
-
-            }, bloadtimes[3]() + 500); // lag compensation
+                eid("blog-loading")?.remove();
+            }, bloadtimes[3]() + 500);
             return;
         }
         
@@ -513,4 +521,4 @@ function dispblogyay(){
 
 
 
-displayblog("none", blogimglifetime * 2);
+displayblog("none", blogimglifetime * 3);

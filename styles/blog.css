@@ -5,32 +5,28 @@
     }
 }
 @keyframes b-load-1{
-    50%{
+    20%{
+        animation-timing-function: ease-in;
         top: -50px;
-        /* rotate: 0deg; */
-        /* opacity: 1; */
+        left: 55%;
+        rotate: 20deg;
+        opacity: 1;
+    }
+    60%{
+        animation-timing-function: ease-out;
+        top: 150px;
+        left: 62.5%;
+        rotate: 45deg;
+        opacity: 0.75;
     }
     100%{
-        top: -20px;
-        left: 70%;
-        rotate: 30deg;
+        top: 320px;
+        left: 67.5%;
+        rotate: 60deg;
         opacity: 0;
     }
 }
-
-@keyframes b-load-2{
-    50%{
-        top: -50px;
-        /* rotate: 0deg; */
-        /* opacity: 1; */
-    }
-    100%{
-        top: -20px;
-        left: 70%;
-        rotate: 30deg;
-        opacity: 0;
-    }
-}
+/* b-load-2 same as 1 */
 @keyframes b-load-3{
     55%{
         top: -150px;
@@ -143,9 +139,6 @@
         left: 50%;
         transform: translate(-50%, 0) rotate(10deg); */
         height: 1000px;
-        --b-load-1-delay: 1.9s;
-        --b-load-1-time: 2s;
-        --b-load-2-time: 2s;
         
         --b-load-3-time: 2.2s;
         >div.container{
@@ -167,6 +160,9 @@
             }
         }
 
+        --b-load-1-delay: 1.7s;
+        --b-load-1-time: 2.2s;
+        --b-load-2-time: 2.2s;
         >img{
             position: absolute;
             top: 0;
@@ -185,7 +181,7 @@
             }
             
             &.b-load-2{
-                animation-name: b-load-2;
+                animation-name: b-load-1;
                 animation-duration: var(--b-load-2-time);
                 animation-delay: var(--b-load-1-delay);
             }
@@ -195,7 +191,8 @@
             }
 
         }
-        &.yay > img.b-load-1{
+        &.yay > img.b-load-1, 
+        &.yay > img.b-load-2{
             animation-delay: 0s;
         }
         >#blog-loading-txt{

@@ -540,7 +540,7 @@ class Ani{
 
         if (!match) {
             if(!defaultvalue){
-                const msg = `this value is likely |none| but still poopoo: ${value}. For values like rotate, set them to a defulat value like 0deg`;
+                const msg = `this value is likely |none| but still poopoo: ${value}, ${addition}. For values like rotate, set them to a defulat value like 0deg`;
                 throw new Error(msg);
             
             }console.warn(`Value ${value} not recognized, using default value ${Ani.#defaultvalues[value]}`);
@@ -622,20 +622,20 @@ class Ani{
         return this.#curr - performance.now(); // usually this.#start, but could be innacurate due if code is slow (probably will be lol)
     }
 
-    finish() {
+    finish(){
         return this.#queuePromise(() => {
             this.#done = true;
             // this.#cleanupcleanupeverybodyeverywherecleanupcleanupeverybodydoyourshare();
         });
     }
 
-    rule(obj) {
+    rule(obj){
         // TODO: prevent rule interference across ani instances
         // ignore obj mode
-        if (this.#mode == "obj") {
+        if(this.#mode == "obj"){
             return this;
         }
-        if (this.#done) {
+        if(this.#done){
             console.error("Animation already finished");
             return this;
         }
@@ -653,16 +653,16 @@ class Ani{
         let idx = 0;
         let keys = [];
         
-        while (idx < Math.min(this.#querycnt, elements.length)) {
+        while(idx < Math.min(this.#querycnt, elements.length)){
             keys.push(this.#increment());
             idx++;
         }
         idx = 0;
-        for (const prop in from) {
+        for(const prop in from){
             this.#changedproperties.add(prop);
         }
         
-        for (const prop in to) {
+        for(const prop in to){
             this.#changedproperties.add(prop);
         }
         
@@ -670,18 +670,18 @@ class Ani{
 
 
         return this.#queuePromise(() => {
-            if (this.#done) {
+            if(this.#done){
                 console.error("Animation already finished");
                 return this;
             }
-            for (const el of elements) {
-                if (idx >= this.#querycnt) {
+            for(const el of elements){
+                if (idx >= this.#querycnt){
                     break;
                 }
                 idx++;
 
                 const key = keys.shift();
-                if (!otherignore && el.dataset.ani) {
+                if(!otherignore && el.dataset.ani){
                     if(key < el.dataset.ani)
                         continue;
                     Ani.rmvani(el.dataset.ani);
@@ -690,14 +690,14 @@ class Ani{
                 if(!otherignore)
                     el.dataset.ani = key;
                 const frames = [{}, {}];
-                for (const prop in from) {
+                for(const prop in from){
                     const val = from[prop];
                     frames[0][prop] = additive[0]
                         ? this.#addunit(getComputedStyle(el)[prop], parseFloat(val))
                         : val;
                 }
 
-                for (const prop in to) {
+                for (const prop in to){
                 const val = to[prop];
                     frames[1][prop] = additive[1]
                         ? this.#addunit(getComputedStyle(el)[prop], parseFloat(val))
