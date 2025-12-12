@@ -10,6 +10,10 @@ const strokeidxs = [0]; // indices of stroke ENDS
 const pointsize = 2;
 const pointhalf = pointsize / 2;
 const pointcolor = "white";
+const precision = 5;
+fftp.oninput = (e) => {
+    precision = pint(e.target.value);
+}
 
 let cutoffidx = 0; // basic undo/redo functionality
 
@@ -84,6 +88,8 @@ const clr = () => {
 const undo = () => {
     cutoffidx = max(0, cutoffidx - 1);
 }
+
+
 
 // fft stuff
 class Complex{
@@ -162,11 +168,11 @@ step: step size
 
 
 const calcfft = (v, k, start, end, step = 1) => {
-    const N = (end - start + step - 1) / step;
+    const N = floor((end - start) / step);
 
     if(N <= 0) return Complex.zero;
-    if(N & (N - 1)) {
-        terr("not power of 2");
+    if(N & (N - 1)){
+        // terr("not power of 2", N, end, start, step);
     }
     if(N === 1){
         return new Complex(strokes[start][v], 0);
@@ -178,10 +184,33 @@ const calcfft = (v, k, start, end, step = 1) => {
     const expterm = new Complex(0, -2 * Math.PI * k / N).exp();
 
     return even.plus(expterm.times(odd));
-
 }
 
+// resetting fft
+const fftcoeffs = {x: [], y: []};
+const resetfft = () => {
+    const power = ceil(log2(precision));
+    const bins = 1 << power;
+    const norm = 1 / sqrt(bins);
+    
+    if(fftcoeffs.x.length < bins){
+        fftcoeffs.x.length = bins;
+        fftcoeffs.y.length = bins;
+    }
+    for(let i = 0; i < bins; i++){
+        try{
 
+        fftcoeffs.x[i] = calcfft(0, i, 0, bins).mag * norm;
+        fftcoeffs.y[i] = calcfft(1, i, 0, bins).mag * norm;
+        }
+        catch(e){
+            terr("FFT calculation error:", e, bins);
+        }
+    }
+        attachdebug(performance.now(), fftcoeffs.x.join(", "), fftcoeffs.y.join(", "));
+
+
+}
 
 
 // drawing
@@ -199,7 +228,7 @@ function draw(){
         const p = strokes[idx];
         drawpoint(p[0], p[1], ctx);
     }
-    attachdebug(performance.now(), cutoffidx, strokes.length, strokeidxs[cutoffidx]);
+    // attachdebug(performance.now(), fftcoeffs.x.join(", "), fftcoeffs.y.join(", "));
     requestAnimationFrame(draw);
 }
 draw();

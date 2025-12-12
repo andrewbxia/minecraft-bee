@@ -67,13 +67,13 @@
             <label for="fft-p">
                 fft precision:
                 <input id="fft-p" type="range" 
-                    min="1" max="20" value="5" step="1" oninput="calcfft()">
+                    min="1" max="20" value="5" step="1" oninput="resetfft()">
             </label>
         </div>
         <div id="right-container" class="container">
             <div id="top-menu">
                 tm
-                <button id="fft-start" onclick="startfftseq()">
+                <button id="fft-start" onclick="resetfft()">
                     let 'er rip
                 </button>
                 <button id="clear" onclick="clr()">
