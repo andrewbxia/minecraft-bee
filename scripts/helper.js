@@ -65,6 +65,12 @@ const warn = (...message) => console.warn(...message);
 const darn = (...message) => {if(debug) warn(...message)}; // lmao im keeping darn no dwarn here
 const err = (...message) => console.error(...message);
 const derr = (...message) => {if(debug) err(...message)};
+const terr = (...message) => {
+    attachdebug("error", ...message);
+    throw new Error(message.join(" "));
+}; // throw error
+
+// math nerd omg haha
 const abs = (num) => Math.abs(num);
 const pow = (num, exp) => Math.pow(num, exp);
 const pi = Math.PI
@@ -73,6 +79,22 @@ const rad2deg = 180 / pi;
 const sin = (rads) => Math.sin(rads);
 const cos = (rads) => Math.cos(rads);
 const tan = (rads) => Math.tan(rads);
+const sqrt = (a) => Math.sqrt(a);
+const log2 = (a) => Math.log2(a);
+const log10 = (a) => Math.log10(a);
+const logn = (a, base) => log2(a) / log2(base);
+const atana = (ratio) => pi/4 - ratio * (abs(ratio) - 1) * (.2447 + .0663 * abs(ratio));
+const atan2a = (x, y) => {
+    const approx = atana(y / x);
+    if(x < 0){
+        if(y < 0) return approx - pi;
+        return approx + pi;
+    }
+    return approx;
+}
+
+const round = (a) => floor(a + 0.5);
+
 const isnan = isNaN;
 const assert = (condition, msg) => {if(!condition) throw new Error(msg);};
 const assertnotreached = (msg = "unreachable thingy reached") => assert(false, msg);
@@ -86,37 +108,35 @@ const zerofunc = () => 0;
 
 function max(...args){
     if(args.length === 0) return null;
-    let max = args[0];
+    let maxn = args[0];
     args[1] = args[1] || 0;
     for(let i = 1; i < args.length; i++){
-        if(typeof max !== typeof args[i]) console.warn("types not same");
-        max = max > args[i] ? max : args[i];
+        if(typeof maxn !== typeof args[i]) console.warn("types not same");
+        maxn = maxn > args[i] ? maxn : args[i];
     }
-    return max;
+    return maxn;
 }
 function min(...args){
     if(args.length === 0) return null;
-    let min = args[0];
+    let minn = args[0];
     args[1] = args[1] || 0;
     for(let i = 1; i < args.length; i++){
-        if(typeof min !== typeof args[i]) console.warn("types not same");
-        min = min < args[i] ? min : args[i];
+        if(typeof minn !== typeof args[i]) console.warn("types not same");
+        minn = minn < args[i] ? minn : args[i];
     }
-    return min;
+    return minn;
 }
 const clamp = (val, mini = val, maxi = val) => min(max(val, mini), maxi);
 const floor = (a) => Math.floor(a);
 const ceil = (a) => Math.ceil(a);
-const sqrt = (a) => Math.sqrt(a);
-const round = (a) => floor(a + 0.5);
 const rand = (mult = 1, add = 0) => Math.random() * mult + add;
 const randint = (mult = 1, add = 0) => Math.floor(Math.random() * (mult + 1)) + add;
 const randarridx = arr => Math.floor(Math.random() * arr.length);
 const randarrchoose = arr => arr[randarridx(arr)];
-function extrrand(max) { // prefer extremes of distribution
+function extrrand(mult) { // prefer extremes of distribution
     const random = rand();
     const bias = random < 0.5 ? pow(random, 2) : 1 - pow(1 - random, 2);
-    return bias * max;
+    return bias * mult;
 }
 const chance = (onein = 2) => Math.random() < 1 / onein;
 const fix2str = (num, places = 2) => num.toFixed(places);
@@ -126,7 +146,7 @@ const fix2num = (num, places = 2) => {
 }
 const frand = (mult = 1, add = 0, places = 2) => fix2num(rand(mult, add), places);
 const benchmark = (func = nofunc, paramfunc = zerofunc, ...params) => {
-    const iter = 10000000;
+    const iter = 1000000;
     const start = performance.now();
     for(let i = 0; i < iter; i++){
         func(paramfunc(...params));

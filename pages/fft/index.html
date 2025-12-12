@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>suck teeth</title>
+    <script src="/scripts/helper.js"></script>
+    <script src="/scripts/helper-classes.js"></script>
+    
+    <link rel="stylesheet" href="/styles/theme.css">
+    <link rel="stylesheet" href="./fft.css">
+
+    <script defer src="./fft.js"></script>
+    <style>
+        body, html{
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        div{
+            outline: 2px dashed red;
+        }
+        #main{
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            >*{
+                height: 100%;
+            }
+
+        }
+        #left-menu{
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            >*{
+                width: 100%;
+            }
+
+        }
+        #right-container{
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            >*{
+                width: 100%;
+            }
+        }
+        #top-menu{
+            height: 150px;
+        }
+        canvas#fft{
+            flex-grow: 1;
+            image-rendering: pixelate;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="debug" style="pointer-events:none;position:fixed;bottom:0;left:0;color:white"></div>
+    <div id="main">
+        <div id="left-menu">
+            <label for="fft-p">
+                fft precision:
+                <input id="fft-p" type="range" 
+                    min="1" max="20" value="5" step="1" oninput="calcfft()">
+            </label>
+        </div>
+        <div id="right-container" class="container">
+            <div id="top-menu">
+                tm
+                <button id="fft-start" onclick="calcfft()">
+                    let 'er rip
+                </button>
+                <button id="clear" onclick="clr()">
+                    clear
+                </button>
+                <button id="undo" onclick="undo()">
+                    undo
+                </button>
+                <button id="redo" onclick="redo()">
+                    redo (basic functionality)
+                </button>
+            </div>
+            <canvas id="fft" width="800" height="400">
+                canvas element whoops
+            </canvas>
+            <script>
+            window.addEventListener("resize", () => {
+                const cvs = eid("fft");
+                cvs.width = eid("fft").clientWidth;
+                cvs.height = eid("fft").clientHeight;
+                attachdebug("ldkfj", cvs.width, cvs.height);
+            });
+            window.dispatchEvent(new Event("resize"));
+            </script>
+        </div>
+
+    </div>
+</body>
+
+</html>
