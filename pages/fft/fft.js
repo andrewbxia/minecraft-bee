@@ -125,6 +125,17 @@ class Complex{
         }
         return new Complex(nre, nim);
     }
+    norm(self = false){
+        const mag = this.mag;
+        const nre = this.re / mag;
+        const nim = this.im / mag;
+        if(self){
+            this.re = nre;
+            this.im = nim;
+            return this;
+        }
+        return new Complex(nre, nim);
+    }
     get mag(){
         return sqrt(this.re * this.re + this.im * this.im);
     }
@@ -136,7 +147,7 @@ class Complex{
         return new Complex(r * Math.cos(this.im), r * Math.sin(this.im));
     }
     toString(){
-        return `[${this.re} + ${this.im}i]`;
+        return `${this.re} + ${this.im}i`;
     }
 }
 
@@ -158,25 +169,17 @@ const calcfft = (v, k, start, end, step = 1) => {
         terr("not power of 2");
     }
     if(N === 1){
-        return new Complex(strokes[idx][v], 0);
+        return new Complex(strokes[start][v], 0);
     }
     
     const even = calcfft(v, k, start, end, step * 2);
     const odd = calcfft(v, k, start + step, end, step * 2);
 
-    const expterm = new Complex(0, -2 * Math.PI * k / N).exp().times(odd);
+    const expterm = new Complex(0, -2 * Math.PI * k / N).exp();
 
-    return even.plus(expterm);
+    return even.plus(expterm.times(odd));
 
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -194,7 +197,7 @@ function draw(){
     ctx.fillStyle = pointcolor;
     for(let idx = 0; idx < strokeidxs[cutoffidx]; idx++){
         const p = strokes[idx];
-        drawpoint(p.x, p.y, ctx);
+        drawpoint(p[0], p[1], ctx);
     }
     attachdebug(performance.now(), cutoffidx, strokes.length, strokeidxs[cutoffidx]);
     requestAnimationFrame(draw);

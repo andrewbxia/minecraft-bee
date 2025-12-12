@@ -83,8 +83,12 @@ const sqrt = (a) => Math.sqrt(a);
 const log2 = (a) => Math.log2(a);
 const log10 = (a) => Math.log10(a);
 const logn = (a, base) => log2(a) / log2(base);
-const atana = (ratio) => pi/4 - ratio * (abs(ratio) - 1) * (.2447 + .0663 * abs(ratio));
+const atana = (ratio) => {
+    ratio = clamp(ratio, -1, 1);
+    pi*ratio/4 - ratio * (abs(ratio) - 1) * (.2447 + .0663 * abs(ratio))
+};
 const atan2a = (x, y) => {
+    // return Math.atan2(y, x);
     const approx = atana(y / x);
     if(x < 0){
         if(y < 0) return approx - pi;

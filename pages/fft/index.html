@@ -55,7 +55,7 @@
         }
         canvas#fft{
             flex-grow: 1;
-            image-rendering: pixelate;
+            image-rendering: pixelated;
         }
     </style>
 
@@ -73,7 +73,7 @@
         <div id="right-container" class="container">
             <div id="top-menu">
                 tm
-                <button id="fft-start" onclick="calcfft()">
+                <button id="fft-start" onclick="startfftseq()">
                     let 'er rip
                 </button>
                 <button id="clear" onclick="clr()">
