@@ -81,6 +81,7 @@ document.onmousemove = (e) => {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     addpoint(x, y);
+    resetfft();
 }
 document.onmouseup = (e) => {
     if(!movedsince){
@@ -269,8 +270,8 @@ const resetfft = () => {
     }
 
     // total path
-    const dt = 0.002;
-    const iter = floor(1 / dt);
+    const dt = 0.02;
+    const iter = ceil(1 / dt);
     totalpath.length = iter + 1;
     for(let i = 0; i <= iter; i++){
         const t = i * dt;
@@ -338,7 +339,7 @@ function draw(){
     ctx.stroke();
 
     // epicenters
-    for(let k = 1; k < N; k++){
+    for(let k = 1; k <= N; k++){
         // if(k > precision) break;
         let kidx = floor(k / 2);
         if(k % 2 === 0) kidx = N - kidx;
