@@ -67,7 +67,7 @@
             <label for="fft-p">
                 fft precision:
                 <input id="fft-p" type="range" 
-                    min="1" max="20" value="5" step="1" oninput="resetfft()">
+                    min="2" max="10" value="5" step="1" oninput="setprec()">
             </label>
         </div>
         <div id="right-container" class="container">
@@ -86,17 +86,10 @@
                     redo (basic functionality)
                 </button>
             </div>
-            <canvas id="fft" width="800" height="400">
+            <canvas id="fft">
                 canvas element whoops
             </canvas>
             <script>
-            window.addEventListener("resize", () => {
-                const cvs = eid("fft");
-                cvs.width = eid("fft").clientWidth;
-                cvs.height = eid("fft").clientHeight;
-                attachdebug("ldkfj", cvs.width, cvs.height);
-            });
-            window.dispatchEvent(new Event("resize"));
             </script>
         </div>
 
