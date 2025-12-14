@@ -270,8 +270,8 @@ const resetfft = () => {
     }
 
     // total path
-    const dt = 0.02;
-    const iter = ceil(1 / dt);
+    const dt = 0.005;
+    const iter = floor(1 / dt);
     totalpath.length = iter + 1;
     for(let i = 0; i <= iter; i++){
         const t = i * dt;
@@ -318,7 +318,7 @@ function draw(){
 
     const t = (performance.now() - start);
     // 30 points / sec
-    const speed = 1000 / 30 * strokeidxs[cutoffidx];
+    const speed = 1000 / 15 * strokeidxs[cutoffidx];
 
     // start epicycle at center
     let prev = [center[0], center[1]];
@@ -327,7 +327,7 @@ function draw(){
     ctx.lineWidth = 1;
 
     // total path
-    ctx.strokeStyle = "lime";
+    ctx.strokeStyle = "magenta";
     ctx.moveTo(center[0], center[1]);
     ctx.beginPath();
     for(let i = 1; i < totalpath.length; i++){
@@ -374,7 +374,7 @@ function draw(){
         
 
     ctx.fillStyle = "lime";
-    drawpoint(prev[0] - center[0], prev[1] - center[1], ctx, 5);
+    drawpoint(prev[0] - center[0], prev[1] - center[1], ctx, 10);
 
     requestAnimationFrame(draw);
 }
