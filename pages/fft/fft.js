@@ -326,6 +326,7 @@ const resetfft = () => {
         }
         totalpath[i] = [sum.re, sum.im];
     }
+    totalpath.push(totalpath[0]); // close loop
 
 
     // start = performance.now();
@@ -360,23 +361,60 @@ function draw(){
     // points per second
     const speed = 1000 / ptps * strokeidxs[cutoffidx];
 
-    // start epicycle at center
-    let prev = [center[0], center[1]];
+    // start total path at first point
+    let prev = [totalpath[0][0] + center[0], totalpath[0][1] + center[1]];
 
     // drawing styles
     ctx.lineWidth = 1;
 
     // total path
-    ctx.strokeStyle = "magenta";
     ctx.moveTo(center[0], center[1]);
+    ctx.strokeStyle = "magenta";
     ctx.beginPath();
+    let xdiff = 0;
+    let ydiff = 0;
     for(let i = 0; i < totalpath.length; i++){
-        const p = totalpath[i];
-        const x = p[0] + center[0];
-        const y = p[1] + center[1];
-        ctx.lineTo(x, y);
+        const p0 = totalpath[i - 1] ?? totalpath[totalpath.length - 1];
+        const p1 = totalpath[i];
+        const p2 = totalpath[i + 1] ?? totalpath[0];
+        const p3 = totalpath[i + 2] ?? totalpath[1];
+
+        const cp1 = [
+            p1[0] + (p2[0] - p0[0]) / 6,
+            p1[1] + (p2[1] - p0[1]) / 6
+        ];
+
+        const cp2 = [
+            p2[0] - (p3[0] - p1[0]) / 6,
+            p2[1] - (p3[1] - p1[1]) / 6
+        ];
+
+        cp1[0] += center[0];
+        cp1[1] += center[1];
+        cp2[0] += center[0];
+        cp2[1] += center[1];
+
+        ctx.bezierCurveTo(
+            cp1[0], cp1[1],
+            cp2[0], cp2[1],
+            p2[0] + center[0], p2[1] + center[1]
+        );
+
+        if (debug) {
+            // ctx.fillStyle = "blue";
+            // drawpoint(cp1[0] - center[0], cp1[1] - center[1], ctx, 2);
+
+            // ctx.fillStyle = "green";
+            // drawpoint(cp2[0] - center[0], cp2[1] - center[1], ctx, 2);
+
+            // ctx.fillStyle = "red";
+            // drawpoint(p2[0], p2[1], ctx, 4);
+        }
     }
     ctx.stroke();
+
+    // start epicycle at center
+    prev = [center[0], center[1]];
 
     // epicenters
     for(let k = 1; k <= N; k++){
