@@ -1,5 +1,7 @@
 const fft = eid("fft");
 const fftp = eid("fft-p"); // fft precision slider
+const fftptps = eid("fft-ptps"); // points per second slider
+const fftlerp = eid("fft-lerp"); // linear interpolation checkbox
 const fftstart = eid("fft-start"); // let er rip
 
 const bgcolor = "black";
@@ -10,13 +12,24 @@ const strokeidxs = [0]; // indices of stroke ENDS
 const pointsize = 2;
 const pointhalf = pointsize / 2;
 const pointcolor = "white";
-let precision = 5;
+let precision = 1<<5;
 const center = [0, 0];
 fftp.oninput = (e) => {
     // precision = pint(e.target.value);
     precision = 1 << parseInt(e.target.value);
     resetfft();
 }
+
+let ptps = 25;
+fftptps.oninput = (e) => {
+    ptps = parseInt(e.target.value);
+}
+let literp = false;
+fftlerp.onchange = (e) => {
+    literp = e.target.checked;
+    resetfft();
+}
+
 
 window.addEventListener("resize", () => {
     fft.width = fft.clientWidth;
@@ -94,15 +107,40 @@ document.onmouseup = (e) => {
     mode = "none";
 }
 
+// touch handling
+fft.addEventListener("touchstart", (e) => {
+    // e.preventDefault();
+    e.clientX = e.touches[0].clientX;
+    e.clientY = e.touches[0].clientY;
+    fft.onmousedown(e);
+});
+
+document.addEventListener("touchmove", (e) => {
+    e.preventDefault();
+    e.clientX = e.touches[0].clientX;
+    e.clientY = e.touches[0].clientY;
+    document.onmousemove(e);
+
+}, {passive: false});
+
+
+document.addEventListener("touchend", (e) => {
+    // e.preventDefault();
+    document.onmouseup(e);
+}, {passive: false});
+
 const redo = () => {
     cutoffidx = min(strokeidxs.length - 1, cutoffidx + 1);
+    resetfft();
 }
 const clr = () => {
     cutoffidx = 0;
+    resetfft();
 }
 
 const undo = () => {
     cutoffidx = max(0, cutoffidx - 1);
+    resetfft();
 }
 
 
@@ -257,12 +295,15 @@ const resetfft = () => {
         fftcoeffs.length = 0;
         return;
     }
+    if(literp){
+        lininterp(N - M);
+    }
+
     for(let i = 0; i < K; i++){
-        const midx = mapidx(i, K, M);
+        const midx = mapidx(i, K, literp ? N : M);
         z.push(getstroke(midx));
     }
-    // lininterp();
-
+    
     const C = calcfft(z);
     fftcoeffs.length = K;
     for(let k = 0; k < K; k++){
@@ -291,7 +332,6 @@ const resetfft = () => {
 };
 resetfft();
 
-
 function draw(){
     const ctx = fft.getContext("2d");
     const w = fft.width;
@@ -317,8 +357,8 @@ function draw(){
     }
 
     const t = (performance.now() - start);
-    // 30 points / sec
-    const speed = 1000 / 15 * strokeidxs[cutoffidx];
+    // points per second
+    const speed = 1000 / ptps * strokeidxs[cutoffidx];
 
     // start epicycle at center
     let prev = [center[0], center[1]];
@@ -330,7 +370,7 @@ function draw(){
     ctx.strokeStyle = "magenta";
     ctx.moveTo(center[0], center[1]);
     ctx.beginPath();
-    for(let i = 1; i < totalpath.length; i++){
+    for(let i = 0; i < totalpath.length; i++){
         const p = totalpath[i];
         const x = p[0] + center[0];
         const y = p[1] + center[1];
@@ -375,7 +415,7 @@ function draw(){
 
     ctx.fillStyle = "lime";
     drawpoint(prev[0] - center[0], prev[1] - center[1], ctx, 10);
-
+    attachdebug(mode);
     requestAnimationFrame(draw);
 }
 
