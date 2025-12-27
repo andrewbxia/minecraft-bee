@@ -192,7 +192,7 @@ function displayblog(change = "none", delay = 0){
     else if(viewingmode === "page" && change !== "none")
         window.location.href = "#blog";
 
-    setTimeout(() => {
+    // setTimeout(() => {
         (viewingmode === "post" ? getpost(postid) : getpage(pageidx)).then(data => {
             posts.push(...data);
             dispposts();
@@ -228,7 +228,7 @@ function displayblog(change = "none", delay = 0){
                 editorinit = true;
             }
         });
-    }, delay);
+    // }, delay);
 }
 
 
@@ -521,4 +521,4 @@ function dispblogyay(){
 
 
 
-displayblog("none", blogimglifetime * 3);
+displayblog("none", rand(blogimglifetime * 3));

@@ -590,14 +590,14 @@ class BGBars{
     static #maxpxl = () => min(1080 * 5, pxlheight * 3.75);
     static #maxscroll = () => window.innerHeight / pxlheight * BGBars.#maxpxl();
     static #maxdepth = 4;
-    static #depths = [...Array(BGBars.#maxdepth).keys()].map(i => i + 1);
+    static #depths;
     static #bardepthpower = 1.5;
-    static #depthpows = BGBars.#depths.map(depth => pow(depth, BGBars.#bardepthpower));
-    static #invdepthpows = BGBars.#depths.map(depth => pow(max(.5, BGBars.#depths.length - depth), BGBars.#bardepthpower));
+    static #depthpows;
+    static #invdepthpows;
     static #bgbar = null;
     static #numbars = 0;
     static #panstrength = 0.1;
-    static #basecolor = tohsl(docprop("--theme-light"), true);
+    static #basecolor;
     static #barspawninterval = 300;
     static #initialized = false;
     static #barsfired = 0;
@@ -625,22 +625,31 @@ class BGBars{
         BGBars.#maxpxl = options.maxpxl !== undefined ? () => options.maxpxl : BGBars.#maxpxl;
         BGBars.#maxscroll = options.maxscroll !== undefined ? () => options.maxscroll : BGBars.#maxscroll;
         BGBars.#maxdepth = options.maxdepth || BGBars.#maxdepth;
-        BGBars.#depths = [...Array(BGBars.#maxdepth).keys()].map(i => i + 1);
         BGBars.#bardepthpower = options.bardepthpower || BGBars.#bardepthpower;
-        BGBars.#depthpows = BGBars.#depths.map(depth => pow(depth, BGBars.#bardepthpower));
-        BGBars.#invdepthpows = BGBars.#depths.map(depth => pow(max(.5, BGBars.#depths.length - depth), BGBars.#bardepthpower));
+
+        BGBars.#depths = [];
+        BGBars.#depthpows = [];
+        BGBars.#invdepthpows = [];
+        BGBars.#invdepths = [];
+
+        for(let d = 1; d <= BGBars.#maxdepth; d++){
+            BGBars.#depths.push(d);
+            BGBars.#depthpows.push(pow(d, BGBars.#bardepthpower));
+            BGBars.#invdepthpows.push(pow(max(.5, BGBars.#maxdepth - d), BGBars.#bardepthpower));
+            BGBars.#invdepths.push(max(.5, BGBars.#maxdepth - d));
+        }
+        log(BGBars.#invdepthpows);
         BGBars.#barspawninterval = options.barspawninterval || BGBars.#barspawninterval;
         // BGBars.#containerlimiterid = options.containerlimiterid || BGBars.#containerlimiterid;
 
         BGBars.#panstrength = options.panstrength || BGBars.#panstrength;
         BGBars.#basecolor = tohsl(docprop("--theme-light"), true);
-        BGBars.#invdepths = BGBars.#depths.map(depth => max(.5, BGBars.#depths.length - depth));
 
         if(!eid("bg-bars"))
             appdoc(mk("div", {id: "bg-bars"}));
         BGBars.#bgbar = eid("bg-bars");
         styling(`
-            @keyframes passdown{
+@keyframes passdown{
     from{
         transform: translateY(-100vh) translateX(-50%);
     }
@@ -693,52 +702,34 @@ class BGBars{
     >div{
         position: relative;
         /* overflow-y: hidden; */
-    }
-}
-.bg-bar{
-    position: absolute;
-    width: 156.25vw; /*calc(2500vw/16);, also not using larger value since it lags like potato chips*/
-    left: 50%;
-    transform: translateX(-50%);
-    transform-origin: 0% 50%;
-    filter: opacity(0.5);
-    animation-timing-function: 
-    /* ease-in-out; */
-    var(--ease-morein-out);
-
-}
-.bg-a-1{
-    animation-name: passdown;
-}
-.bg-a-2{
-    animation-name: passup;
-}
-.bg-a-3{
-    animation-name: passright;
-}
-.bg-a-4{
-    animation-name: passleft;
-}
-.bg-a-5{
-    animation-name: expand;
-}
-.bg-a-e{
-    animation-name: expand;
-    /* transform: translateX(-50%); */
-        }`);
-
-        BGBars.#depths.forEach(depth => {
-            app(eid("bg-bars"), mk("div",{class: `c-${depth}` }));
-        });
-        styling(BGBars.#depths.map(depth => `.c-${depth}{ 
-            z-index: -${depth};
-            transition: transform ${depth * 0.6}s var(--ease-lessout);
-
-            >div{
-                filter: blur(${min(7.5, BGBars.#depthpows[depth - 1])}px);
-            }
+        >.bg-bar{
+            position: absolute;
+            width: 156.25vw; /*calc(2500vw/16);, also not using larger value since it lags like potato chips*/
+            left: 50%;
+            transform: translateX(-50%);
+            transform-origin: 0% 50%;
+            filter: opacity(0.5);
+            animation-timing-function: 
+            /* ease-in-out; */
+            var(--ease-morein-out);
         }
-        `).join("\n"));
+    }
+}`);
+        
+        let bgbarscss = "#bg-bars{";
+        for(let d = 1; d <= BGBars.#maxdepth; d++){
+            app(BGBars.#bgbar, mk("div", {class: `c-${d}`}));
+            bgbarscss += `
+.c-${d}{ 
+    z-index: -${d};
+    transition: transform ${d * 0.6}s var(--ease-lessout);
+
+    >div{
+        filter: blur(${min(7.5, BGBars.#depthpows[d - 1])}px);
+    }
+}`;
+        }
+        styling(bgbarscss + "}");
 
         BGBars.#scrollfunc = options.scrollfunc || (() => ({Y: window.innerHeight + window.scrollY, X: 0}));
         BGBars.#limiter = options.limiter || 100;
@@ -755,12 +746,13 @@ class BGBars{
                 return;
             }
             // log(window.scrollY + window.innerHeight, eid("container").offsetHeight);
-            for(let depth of BGBars.#depths){
+            for(let depth = 1; depth <= BGBars.#maxdepth; depth++){
                 const stopmult = FpsMeter.maxfps / 10;
                 if(FpsMeter.currfps + stopmult <= FpsMeter.maxfps - BGBars.#invdepths[depth - 1] * stopmult) return;
                 eq("#bg-bars .c-" + depth).style.transform = `translateY(${(scrollY * -BGBars.#panstrength * 
-                    BGBars.#invdepthpows[depth - 1]) % BGBars.#maxscroll()}px)
-                    translateX(${(scrollX * -BGBars.#panstrength * pow(BGBars.#invdepthpows[depth - 1],2)) % BGBars.#maxscroll()}px)
+                    BGBars.#invdepthpows[depth - 1]) % (BGBars.#maxscroll())}px)
+                    translateX(${(scrollX * -BGBars.#panstrength * pow(BGBars.#invdepths[depth - 1], 2)) 
+                        % BGBars.#maxscroll()}px)
                     `;
 
             }
@@ -782,32 +774,33 @@ class BGBars{
             BGBars.#currpxl += BGBars.#step;
             const currpxl = BGBars.#currpxl; // get curr value (timeout stuff)
 
-            for (let depth of BGBars.#depths){
+            for (let depth = 1; depth <= BGBars.#maxdepth; depth++){
                 const delay = rand((depth - 2) * BGBars.#barspawninterval);
                 setTimeout(() => {
                     const invdepth = BGBars.#invdepths[depth - 1];
                     const bgcolor = `hsl(${BGBars.#basecolor.h}, ${BGBars.#basecolor.s}%, 
                         ${frand( BGBars.#basecolor.l*invdepth / 4, BGBars.#basecolor.l * .75)}%)`;
                     const bgbar = eq("#bg-bars .c-" + depth);
+
                     for (let cnt = 0; cnt <= depth / 3; cnt++){
                         BGBars.#numbars++;
                         BGBars.#barsfired++;
                         const bar = mk("div", {class: `bg-bar`});
                         bar.style.animationName = randarrchoose(BGBars.#barkeyframes);
-                        if(chance(1.5)) bar.style.animationName += ", expand";
+                        if(chance(1)) bar.style.animationName += ", expand";
 
-                        bar.style.height = `${(depth) * (frand(depth) + 4)}vh`;
-                        bar.style.rotate = `${frand(40, -20)*depth}deg`;
+                        bar.style.height = `${frand(depth, 4) * depth}vh`;
+                        bar.style.rotate = `${frand(40, -20) * depth}deg`;
                         bar.style.left = `${frand(50, -25)}%`;
                         bar.style.backgroundColor = bgcolor;
-                        bar.style.top = `${currpxl - frand(BGBars.#step, 0)}px`;
-                        bar.style.opacity = (invdepth) * frand(.35 * invdepth, .45);
+                        bar.style.top = `${currpxl - frand(BGBars.#step)}px`;
+                        bar.style.opacity = invdepth * frand(.35 * invdepth, .45);
                         // bar.style.boxShadow = `0 0 ${pow((depth - 1), 2) * 10}px ${bgcolor}`; cool but laggy
                         bar.style.animationDuration = `${frand(1.5,.5)}s`;
-                        app(bgbar, bar);
 
                         setTimeout(() => {
-                        }, rand(BGBars.#barspawninterval/10));
+                            app(bgbar, bar);
+                        }, rand(BGBars.#barspawninterval<<invdepth));
                     }
                 }, delay);
                 

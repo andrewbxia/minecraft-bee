@@ -522,13 +522,15 @@ a{
     &.editing{
         display: none;
     }
+    position: absolute;
     transform-style: preserve-3d;
-    animation: track-spin-1 var(--spin-speed) linear infinite;
+    animation: var(--spin-speed) linear infinite;
     background-color: transparent;
     
+    animation-name: track-spin-1;
     &.track-2{
         --spin-speed: 113.14159s;
-        animation: track-spin-2 var(--spin-speed) linear infinite;
+        animation-name: track-spin-2;
         
     }
     &.track-3{
@@ -549,7 +551,6 @@ a{
         transition: color 0.75s var(--ease-more-in);
     }
     
-    position: absolute;
     --size: 300px; /* height */
     right: calc(var(--size) * -1);
     top: 0;
@@ -719,14 +720,14 @@ a{
         transform: translateY(100px) translateZ(110px);
     }
 }
-
+/* todo: find way to make this more visible in lower resolution */
 @keyframes track-spin-1{
     0%{
-        transform: translateY(450px) rotateX(5deg) rotateZ(15deg) translateX(50px) 
+        transform: translateY(450px) rotateX(5deg) rotateZ(15deg) translateX(calc(8vw - 100px)) 
         rotateY(0deg);
     }
     100%{
-        transform: translateY(450px) rotateX(5deg) rotateZ(15deg) translateX(50px) 
+        transform: translateY(450px) rotateX(5deg) rotateZ(15deg) translateX(calc(8vw - 100px)) 
         rotateY(720deg);
     }
 }
@@ -740,12 +741,12 @@ also extra 5 deg x rotate so it doesnt interfere with other one
 */
 @keyframes track-spin-2{
     0%{
-        transform: translateY(249.17px) translateZ(-18.19px) translateX(104.01px) rotateX(10deg) rotateZ(15deg)
+        transform: translateY(249.17px) translateZ(-18.19px) translateX(calc(8vw - 35.99px)) rotateX(10deg) rotateZ(15deg)
         rotateY(900deg);
     }
     
     100%{
-        transform: translateY(249.17px) translateZ(-18.19px) translateX(104.01px) rotateX(10deg) rotateZ(15deg)
+        transform: translateY(249.17px) translateZ(-18.19px) translateX(calc(8vw - 35.99px)) rotateX(10deg) rotateZ(15deg)
         rotateY(180deg);
     }
 }
@@ -767,69 +768,3 @@ also extra 5 deg x rotate so it doesnt interfere with other one
     /* font-size: 2em; */
     margin: 0 auto;
 }
-
-.globe {
-
-    transform-style: preserve-3d;
-    perspective: 2400px;
-    position: relative;
-    --speed: 60s;
-    width: 410px;
-    height: 410px;
-    mask-image: radial-gradient(#fff 50%, #fffa, #fff 70%);
-}
-
-.globe > * {
-    top: 5px;
-    left: 5px;
-    position: absolute;
-    width: 400px;
-    height: 400px;
-    border-radius: 400px;
-    border: 2px solid white;
-    background: radial-gradient(#fff5, #fff0);
-}
-
-.globe .x1 {
-    animation: globespin1 var(--length) infinite ease-out;
-}
-
-.globe .x2 {
-    animation: globespin2 var(--length) infinite ease-out;
-}
-
-.globe .x3 {
-    display: none;
-    animation: globespin3 var(--length) infinite ease-out;
-}
-
-@keyframes globespin1 {
-    0% {
-        transform: rotate3d(1, 0, 0, 0deg);
-    }
-
-    100% {
-        transform: rotate3d(1, 0, 0, 360deg);
-    }
-}
-
-@keyframes globespin2 {
-    0% {
-        transform: rotate3d(0, 1, 1, 0deg);
-    }
-
-    100% {
-        transform: rotate3d(0, 1, 1, 360deg);
-    }
-}
-
-@keyframes globespin3 {
-    0% {
-        transform: rotate3d(0, 0, 1, 0deg);
-    }
-
-    100% {
-        transform: rotate3d(0, 0, 1, 360deg);
-    }
-}
-
