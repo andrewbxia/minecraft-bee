@@ -14,6 +14,8 @@ const pointhalf = pointsize / 2;
 const pointcolor = "white";
 let precision = 1<<5;
 const center = [0, 0];
+let phase = 0;
+
 fftp.oninput = (e) => {
     // precision = pint(e.target.value);
     precision = 1 << parseInt(e.target.value);
@@ -22,7 +24,7 @@ fftp.oninput = (e) => {
 
 let ptps = 25;
 fftptps.oninput = (e) => {
-    ptps = parseInt(e.target.value);
+    ptps = sqrt(poat(e.target.value));
 }
 let literp = false;
 fftlerp.onchange = (e) => {
@@ -333,6 +335,7 @@ const resetfft = () => {
 };
 resetfft();
 
+let prevt = performance.now();
 function draw(){
     const ctx = fft.getContext("2d");
     const w = fft.width;
@@ -357,9 +360,11 @@ function draw(){
         return;
     }
 
-    const t = (performance.now() - start);
+    const t = (performance.now() - prevt);
+    prevt = performance.now();
     // points per second
     const speed = 1000 / ptps * strokeidxs[cutoffidx];
+    phase += t * 2 * pi / speed;
 
     // start total path at first point
     let prev = [totalpath[0][0] + center[0], totalpath[0][1] + center[1]];
@@ -425,7 +430,7 @@ function draw(){
         const coeff = fftcoeffs[kidx];
         const freq = kidx < N / 2 ? kidx : kidx - N;
         const r = coeff.mag;
-        const angle = t * freq * 2 * pi / speed;
+        const angle = phase * freq;
 
         const vec = coeff.times(new Complex(0, angle).exp());
         
