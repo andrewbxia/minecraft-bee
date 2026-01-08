@@ -6,6 +6,7 @@ const fftptps = eid("fft-ptps"); // points per second slider
 const fftlerp = eid("fft-lerp"); // linear interpolation checkbox
 const fftstart = eid("fft-start"); // let er rip
 
+
 const bgcolor = "black";
 let mode = "none";
 let start = -1;
@@ -17,6 +18,8 @@ const pointcolor = "white";
 let precision = 1<<5;
 const center = [0, 0];
 let phase = 0;
+let redrawpaths = true;
+
 
 fftp.oninput = (e) => {
     // precision = pint(e.target.value);
@@ -24,15 +27,18 @@ fftp.oninput = (e) => {
     resetfft();
 }
 
+
 let ptps = 25;
 fftptps.oninput = (e) => {
     ptps = sqrt(poat(e.target.value));
 }
 let literp = false;
-fftlerp.onchange = (e) => {
-    literp = e.target.checked;
+const setlininterp = () => {
+    literp = fftlerp.checked;
     resetfft();
 }
+
+
 
 
 window.addEventListener("resize", () => {
@@ -50,7 +56,10 @@ window.addEventListener("resize", () => {
 window.dispatchEvent(new Event("resize"));
 
 
+
+
 let cutoffidx = 0; // basic undo/redo functionality
+
 
 const prunestrokes = () => {
     while(strokeidxs[cutoffidx] < strokes.length){
@@ -63,10 +72,11 @@ const addpoint = (x, y, t = performance.now()) => {
     strokes.push([x - center[0], y - center[1], t]);
 }
 const pushstroke = () => {
-    
+   
 }
-const drawpoint = (x, y, ctx, size = pointsize) => 
+const drawpoint = (x, y, ctx, size = pointsize) =>
     ctx.fillRect(x - size/2, y - size/2, size, size);
+
 
 // drawing handling
 const lastclick = {x: 0, y: 0};
@@ -75,7 +85,9 @@ let movedsince = true;
 input methods: hold + drag to draw -> stop hold
 click + move to draw -> click
 
+
 */
+
 
 fft.onmousedown = (e) => {
     lastclick.x = e.clientX;
@@ -91,13 +103,15 @@ fft.onmousedown = (e) => {
     movedsince = false;
 }
 fft.onmouseup = (e) => {
-    
+   
 }
+
 
 document.onmousemove = (e) => {
     if(mode === "none") return;
     // if(e.target !== fft) return; allow drawing outside
     movedsince = true;
+
 
     const rect = brect(fft);
     const x = e.clientX - rect.left;
@@ -116,6 +130,7 @@ document.onmouseup = (e) => {
     mode = "none";
 }
 
+
 // touch handling
 fft.addEventListener("touchstart", (e) => {
     // e.preventDefault();
@@ -124,19 +139,24 @@ fft.addEventListener("touchstart", (e) => {
     fft.onmousedown(e);
 });
 
+
 document.addEventListener("touchmove", (e) => {
     e.preventDefault();
     e.clientX = e.touches[0].clientX;
     e.clientY = e.touches[0].clientY;
     document.onmousemove(e);
 
+
 }, {passive: false});
+
+
 
 
 document.addEventListener("touchend", (e) => {
     // e.preventDefault();
     document.onmouseup(e);
 }, {passive: false});
+
 
 const redo = () => {
     cutoffidx = min(strokeidxs.length - 1, cutoffidx + 1);
@@ -146,6 +166,7 @@ const clr = () => {
     cutoffidx = 0;
     resetfft();
 }
+
 
 const undo = () => {
     cutoffidx = max(0, cutoffidx - 1);
@@ -162,22 +183,22 @@ const map2trace = () => {
         const t = i / N;
         const segIdx = floor(t * totalpath.length);
         const segT = (t * totalpath.length) % 1;
-        
+       
         const p0 = totalpath[arridx(segIdx - 1, totalpath.length)];
         const p1 = totalpath[segIdx];
         const p2 = totalpath[arridx(segIdx + 1, totalpath.length)];
         const p3 = totalpath[arridx(segIdx + 2, totalpath.length)];
-        
+       
         const splinepts = spline(p0, p1, p2, p3);
         const cp1 = splinepts[0];
         const cp2 = splinepts[1];
-        
+       
         const mt = 1 - segT;
         const mt2 = mt * mt;
         const mt3 = mt2 * mt;
         const t2 = segT * segT;
         const t3 = t2 * segT;
-        
+       
         const px = mt3 * p1[0] + 3 * mt2 * segT * cp1[0] + 3 * mt * t2 * cp2[0] + t3 * p2[0];
         const py = mt3 * p1[1] + 3 * mt2 * segT * cp1[1] + 3 * mt * t2 * cp2[1] + t3 * p2[1];
         strokes[i] = [px, py];
@@ -195,12 +216,16 @@ const fartx = (typ = 0) => {
         const y = typ === 0 ? -val / fft.width * fft.height : val;
 
 
+
+
         strokes[i] = [x, y];
+
 
     }
     resetfft();
 }
 const farty = () => fartx(1);
+
 
 // fft stuff
 class Complex{
@@ -218,6 +243,7 @@ class Complex{
             ore = oth[0] ?? 0;
             oim = oth[1] ?? 0;
         }
+
 
         if(self){
             this.re += ore;
@@ -276,25 +302,31 @@ class Complex{
     }
 }
 
+
 const lerpstrokes = [];
 
+
 function getstroke(idx){
-    if(idx >= strokes.length){
-        return lerpstrokes[idx - strokes.length];
+    if(idx > strokeidxs[cutoffidx]){
+        return lerpstrokes[idx - strokeidxs[cutoffidx]];
     }
     return strokes[idx];
 }
 
+
 function nextpow2(n){
     return 1 << ceil(log2(max(1, n)));
 }
+
 
 // helper func to have specific # of bins
 function mapidx(idx, fromlen, tolen){
     return floor(idx * tolen / fromlen);
 }
 
+
 const fftcoeffs = [];
+
 
 function calcfft(arr){
     const N = arr.length;
@@ -302,7 +334,8 @@ function calcfft(arr){
         // even  0, return 0 point
     if((N & (N - 1)) !== 0) terr("N not power of 2");
 
-    
+
+   
     const evens = new Array(N / 2); // splitting
     const odds  = new Array(N / 2);
     for(let i = 0; i < N / 2; i++){
@@ -310,8 +343,10 @@ function calcfft(arr){
         odds[i]  = arr[2*i + 1];
     }
 
+
     const ffte = calcfft(evens);
     const ffto = calcfft(odds);
+
 
     const out = new Array(N);
     for(let k = 0; k < N / 2; k++){
@@ -324,11 +359,14 @@ function calcfft(arr){
 }
 
 
+
+
 function lininterp(iter){ // extends signal to 2^n
     const from = strokes[strokeidxs[cutoffidx] - 1];
     const to = strokes[0];
     const dx = to[0] - from[0];
     const dy = to[1] - from[1];
+
 
     let n = 0;
     lerpstrokes.length = iter;
@@ -340,6 +378,7 @@ function lininterp(iter){ // extends signal to 2^n
         ];
     }
 }
+
 
 function spline(p0, p1, p2, p3){
     const cp1 = [
@@ -358,10 +397,11 @@ function arridx(idx, len){
     return idx;
 }
 
+
 const totalpath = [];
 const rpath = [];
 const ipath = [];
-let redrawpaths = true;
+
 
 const resetfft = () => {
     const M = strokeidxs[cutoffidx]; // # of sampels
@@ -380,17 +420,19 @@ const resetfft = () => {
         lininterp(N - M);
     }
 
+
     for(let i = 0; i < K; i++){
         const midx = mapidx(i, K, literp ? N : M);
         z.push(getstroke(midx));
     }
-    
+   
     const C = calcfft(z);
     fftcoeffs.length = K;
     for(let k = 0; k < K; k++){
         fftcoeffs[k] = C[k].scale(1 / K);
     }
-    
+   
+
 
     // total path
     const dt = 0.005;
@@ -415,19 +457,25 @@ const resetfft = () => {
     }
 
 
+
+
 };
 resetfft();
+
+
 
 
 let ctximg = null;
 let ctxrimg = null;
 let ctxiimg = null;
 
+
 let prevt = performance.now();
 function draw(){
     const ctx = fft.getContext("2d", {willReadFrequently: true});
     const ctxr = fftr.getContext("2d", {willReadFrequently: true});
     const ctxi = ffti.getContext("2d", {willReadFrequently: true});
+
 
     const w = fft.width;
     const h = fft.height;
@@ -443,14 +491,16 @@ function draw(){
     ctx.fillRect(0, 0, w, h);
     ctxr.fillRect(0, 0, rw, rh);
 
+
     if(redrawpaths){
         // draw points
         ctx.fillStyle = pointcolor;
         ctxr.fillStyle = pointcolor;
         ctxi.fillStyle = pointcolor;
-        
+       
         const rmult = rh / w, imult = ih / h;
         const rnorm = rw / totalpath.length, inorm = iw / totalpath.length;
+
 
         const M = strokeidxs[cutoffidx];
         const N = nextpow2(M);
@@ -458,9 +508,9 @@ function draw(){
         for(let idx = 0; idx < totpts; idx++){
             const p = getstroke(idx);
             drawpoint(p[0] + center[0], p[1] + center[1], ctx);
-            drawpoint(idx * rw / totpts, 
+            drawpoint(idx * rw / totpts,
                 -(p[0] * rmult) + rh / 2, ctxr);
-            drawpoint(idx * iw / totpts, 
+            drawpoint(idx * iw / totpts,
                 (p[1] * imult) + ih / 2, ctxi);
         }
         // draw center
@@ -468,24 +518,28 @@ function draw(){
         drawpoint(center[0], center[1], ctx, 5);
         // start total path at first point
 
+
         // drawing styles
         ctx.lineWidth = 1;
+
 
         // total path
         ctx.moveTo(center[0], center[1]);
         ctx.strokeStyle = "magenta";
         ctxr.strokeStyle = "magenta";
         ctxi.strokeStyle = "magenta";
-        
+       
         ctx.beginPath();
         ctxr.beginPath();
         ctxi.beginPath();
+
 
         for(let i = 0; i < totalpath.length; i++){
             const p0 = totalpath[arridx(i - 1, totalpath.length)];
             const p1 = totalpath[i];
             const p2 = totalpath[arridx(i + 1, totalpath.length)];
             const p3 = totalpath[arridx(i + 2, totalpath.length)];
+
 
             const splinepts = spline(p0, p1, p2, p3);
             const rsplinepts = spline(
@@ -504,7 +558,8 @@ function draw(){
                 [(i + 1) * inorm, (p2[1] * imult) + ih / 2],
                 [(i + 2) * inorm, (p3[1] * imult) + ih / 2]
                 );
-            
+           
+
 
             ctx.bezierCurveTo(
                 splinepts[0][0] + center[0], splinepts[0][1] + center[1],
@@ -524,12 +579,15 @@ function draw(){
                 (p2[1] * imult) + ih / 2
             );
 
+
             if (debug) {
                 // ctx.fillStyle = "blue";
                 // drawpoint(cp1[0] - center[0], cp1[1] - center[1], ctx, 2);
 
+
                 // ctx.fillStyle = "green";
                 // drawpoint(cp2[0] - center[0], cp2[1] - center[1], ctx, 2);
+
 
                 // ctx.fillStyle = "red";
                 // drawpoint(p2[0], p2[1], ctx, 4);
@@ -538,6 +596,7 @@ function draw(){
         ctx.stroke();
         ctxr.stroke();
         ctxi.stroke();
+
 
         redrawpaths = false;
         attachdebug(performance.now())
@@ -552,12 +611,14 @@ function draw(){
         ctxi.putImageData(ctxiimg, 0, 0);
     }
 
-    
+
+   
     const N = fftcoeffs.length;
     if(N === 0){
         requestAnimationFrame(draw);
         return;
     }
+
 
     const t = (performance.now() - prevt);
     prevt = performance.now();
@@ -565,9 +626,11 @@ function draw(){
     const speed = 1000 / ptps * strokeidxs[cutoffidx];
     phase += t * 2 * pi / speed;
 
+
     // start epicycle at center
     let prev = [totalpath[0][0] + center[0], totalpath[0][1] + center[1]];
     prev = [center[0], center[1]];
+
 
     // epicenters
     for(let k = 1; k <= N; k++){
@@ -575,51 +638,76 @@ function draw(){
         let kidx = floor(k / 2);
         if(k % 2 === 0) kidx = N - kidx;
 
+
         const coeff = fftcoeffs[kidx];
         const freq = kidx < N / 2 ? kidx : kidx - N;
         const r = coeff.mag;
         const angle = phase * freq;
 
+
         const vec = coeff.times(new Complex(0, angle).exp());
-        
+       
         // draw circle
         ctx.strokeStyle = "blue";
         ctx.beginPath();
         ctx.arc(prev[0], prev[1], r, 0, 2 * pi);
         ctx.stroke();
 
+
         // draw radius line
         ctx.strokeStyle = "white";
         ctx.beginPath();
         ctx.moveTo(prev[0], prev[1]);
 
-        
+
+       
         const nx = prev[0] + vec.re;
         const ny = prev[1] + vec.im;
         ctx.lineTo(nx, ny);
         ctx.stroke();
 
+
         prev = [nx, ny];
     }
-    
+   
     const partphase = phase % (2 * pi) * rw / (2 * pi);
+    const component = [
+        -(prev[0] - center[0]) * (rh / 2) / h + rh / 2,
+        (prev[1] - center[1]) * rh / h + rh / 2
+    ];
+
+
+    ctxr.fillStyle = "rgba(125, 125, 125, 0.5)";
+    ctxi.fillStyle = "rgba(125, 125, 125, 0.5)";
+    ctxr.fillRect(partphase - 2, 0, 4, rh);
+    ctxi.fillRect(partphase - 2, 0, 4, ih);
+
+
+    ctxr.fillRect(0, component[0] - 2, rw, 4);
+    ctxi.fillRect(0, component[1] - 2, iw, 4);
+
 
     ctx.fillStyle = "lime";
     ctxr.fillStyle = "lime";
     ctxi.fillStyle = "lime";
     drawpoint(prev[0], prev[1], ctx, 10);
-    drawpoint(partphase, -(prev[0] - center[0]) * (rh / 2) / h + rh / 2, ctxr, 10);
-    drawpoint(partphase, (prev[1] - center[1]) * rh / h + rh / 2, ctxi, 10);
+    drawpoint(partphase, component[0], ctxr, 10);
+    drawpoint(partphase, component[1], ctxi, 10);
+
 
     // attachdebug(mode);
     requestAnimationFrame(draw);
 }
 
+
 draw();
 /*
 ideas
 
+
 hook up fft to audio context, sine audio data matches points drawn
 like that painting video, have colors preemptivley come in or somehig
 
+
 */
+
