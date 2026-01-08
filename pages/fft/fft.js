@@ -191,8 +191,12 @@ const map2trace = () => {
 const fartx = (typ = 0) => {
     for(let i = 0; i < strokes.length; i++){
         const val = strokes[i][typ];
-        strokes[i] = [i / strokes.length * fft.width - center[0],
-            -(val / fft.width * fft.height) ]
+        const x = i / strokes.length * fft.width - center[0];
+        const y = typ === 0 ? -val / fft.width * fft.height : val;
+
+
+        strokes[i] = [x, y];
+
     }
     resetfft();
 }
