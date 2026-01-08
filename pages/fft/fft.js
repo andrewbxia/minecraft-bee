@@ -1,4 +1,6 @@
 const fft = eid("fft");
+const fftr = eid("fft-r"); // fft real fit
+const ffti = eid("fft-i"); // fft imag fit
 const fftp = eid("fft-p"); // fft precision slider
 const fftptps = eid("fft-ptps"); // points per second slider
 const fftlerp = eid("fft-lerp"); // linear interpolation checkbox
@@ -35,7 +37,11 @@ fftlerp.onchange = (e) => {
 
 window.addEventListener("resize", () => {
     fft.width = fft.clientWidth;
-    fft.height = fft.clientHeight;
+    fft.height = (window.innerHeight - eid("top-menu").clientHeight);  
+    fftr.width = fftr.clientWidth;
+    fftr.height = fftr.clientHeight;
+    ffti.width = ffti.clientWidth;
+    ffti.height = ffti.clientHeight;
     center[0] = fft.width / 2;
     center[1] = fft.height / 2;
     // resetfft();
@@ -59,7 +65,7 @@ const pushstroke = () => {
     
 }
 const drawpoint = (x, y, ctx, size = pointsize) => 
-    ctx.fillRect(x - pointsize/2 + center[0], y - pointsize/2 + center[1], size, size);
+    ctx.fillRect(x - pointsize/2, y - pointsize/2, size, size);
 
 // drawing handling
 const lastclick = {x: 0, y: 0};
@@ -286,7 +292,27 @@ function lininterp(iter){ // extends signal to 2^n
     }
 }
 
+function spline(p0, p1, p2, p3){
+    const cp1 = [
+        p1[0] + (p2[0] - p0[0]) / 6,
+        p1[1] + (p2[1] - p0[1]) / 6
+    ];
+    const cp2 = [
+        p2[0] - (p3[0] - p1[0]) / 6,
+        p2[1] - (p3[1] - p1[1]) / 6
+    ];
+    return [cp1, cp2];
+}
+function arridx(idx, len){
+    if(idx < 0) return len + idx;
+    if(idx >= len) return idx - len;
+    return idx;
+}
+
 const totalpath = [];
+const rpath = [];
+const ipath = [];
+let redrawpaths = true;
 
 const resetfft = () => {
     const M = strokeidxs[cutoffidx]; // # of sampels
@@ -315,8 +341,10 @@ const resetfft = () => {
     // total path
     const dt = 0.005;
     const iter = floor(1 / dt);
-    totalpath.length = iter + 1;
-    for(let i = 0; i <= iter; i++){
+    totalpath.length = iter;
+    rpath.length = iter;
+    ipath.length = iter;
+    for(let i = 0; i < totalpath.length; i++){
         const t = i * dt;
         let sum = Complex.zero;
         for(let k = 0; k < K; k++){
@@ -326,34 +354,151 @@ const resetfft = () => {
             const vec = coeff.times(new Complex(0, angle).exp());
             sum = sum.plus(vec);
         }
+        // tot path
         totalpath[i] = [sum.re, sum.im];
+        rpath[i] = sum.re;
+        ipath[i] = sum.im;
     }
-    totalpath.push(totalpath[0]); // close loop
 
+    redrawpaths = true;
 
-    // start = performance.now();
 };
 resetfft();
 
+
+let ctximg = null;
+let ctxrimg = null;
+let ctxiimg = null;
+
 let prevt = performance.now();
 function draw(){
-    const ctx = fft.getContext("2d");
+    const ctx = fft.getContext("2d", {willReadFrequently: true});
+    const ctxr = fftr.getContext("2d", {willReadFrequently: true});
+    const ctxi = ffti.getContext("2d", {willReadFrequently: true});
+
     const w = fft.width;
     const h = fft.height;
+    const rw = fftr.width;
+    const rh = fftr.height;
+    const iw = ffti.width;
+    const ih = ffti.height;
     // clear
     ctx.fillStyle = bgcolor;
+    ctxr.fillStyle = bgcolor;
+    ctxi.fillStyle = bgcolor;
+    ctxi.fillRect(0, 0, iw, ih);
     ctx.fillRect(0, 0, w, h);
+    ctxr.fillRect(0, 0, rw, rh);
 
-    // draw points
-    ctx.fillStyle = pointcolor;
-    for(let idx = 0; idx < strokeidxs[cutoffidx]; idx++){
-        const p = strokes[idx];
-        drawpoint(p[0], p[1], ctx);
+    if(redrawpaths){
+        // draw points
+        ctx.fillStyle = pointcolor;
+        ctxr.fillStyle = pointcolor;
+        ctxi.fillStyle = pointcolor;
+        
+        const rmult = rh / w, imult = ih / h;
+        const rnorm = rw / totalpath.length, inorm = iw / totalpath.length;
+
+        const M = strokeidxs[cutoffidx];
+        const N = nextpow2(M);
+        const totpts = literp ? N : M;
+        for(let idx = 0; idx < totpts; idx++){
+            const p = getstroke(idx);
+            drawpoint(p[0] + center[0], p[1] + center[1], ctx);
+            drawpoint(idx * rw / totpts, 
+                -(p[0] * rmult) + rh / 2, ctxr);
+            drawpoint(idx * iw / totpts, 
+                (p[1] * imult) + ih / 2, ctxi);
+        }
+        // draw center
+        ctx.fillStyle = "red";
+        drawpoint(center[0], center[1], ctx, 5);
+        // start total path at first point
+
+        // drawing styles
+        ctx.lineWidth = 1;
+
+        // total path
+        ctx.moveTo(center[0], center[1]);
+        ctx.strokeStyle = "magenta";
+        ctxr.strokeStyle = "magenta";
+        ctxi.strokeStyle = "magenta";
+        
+        ctx.beginPath();
+        ctxr.beginPath();
+        ctxi.beginPath();
+
+        for(let i = 0; i < totalpath.length; i++){
+            const p0 = totalpath[arridx(i - 1, totalpath.length)];
+            const p1 = totalpath[i];
+            const p2 = totalpath[arridx(i + 1, totalpath.length)];
+            const p3 = totalpath[arridx(i + 2, totalpath.length)];
+
+            const splinepts = spline(p0, p1, p2, p3);
+            const rsplinepts = spline(
+                [i * rnorm, -(p0[0] * rmult) + rh / 2],
+                [i * rnorm,
+                    -(p1[0] * rmult) + rh / 2],
+                [(i + 1) * rnorm,
+                    -(p2[0] * rmult) + rh / 2],
+                [(i + 2) * rnorm,
+                    -(p3[0] * rmult) + rh / 2]
+                );
+            const ipplinepts = spline(
+                [i * inorm, (p0[1] * imult) + ih / 2],
+                [i * inorm,
+                    (p1[1] * imult) + ih / 2],
+                [(i + 1) * inorm, (p2[1] * imult) + ih / 2],
+                [(i + 2) * inorm, (p3[1] * imult) + ih / 2]
+                );
+            
+
+            ctx.bezierCurveTo(
+                splinepts[0][0] + center[0], splinepts[0][1] + center[1],
+                splinepts[1][0] + center[0], splinepts[1][1] + center[1],
+                p2[0] + center[0], p2[1] + center[1]
+            );
+            ctxr.bezierCurveTo(
+                rsplinepts[0][0], rsplinepts[0][1],
+                rsplinepts[1][0], rsplinepts[1][1],
+                (i + 1) * rnorm,
+                -(p2[0] * rmult) + rh / 2
+            );
+            ctxi.bezierCurveTo(
+                ipplinepts[0][0], ipplinepts[0][1],
+                ipplinepts[1][0], ipplinepts[1][1],
+                (i + 1) * inorm,
+                (p2[1] * imult) + ih / 2
+            );
+
+            if (debug) {
+                // ctx.fillStyle = "blue";
+                // drawpoint(cp1[0] - center[0], cp1[1] - center[1], ctx, 2);
+
+                // ctx.fillStyle = "green";
+                // drawpoint(cp2[0] - center[0], cp2[1] - center[1], ctx, 2);
+
+                // ctx.fillStyle = "red";
+                // drawpoint(p2[0], p2[1], ctx, 4);
+            }
+        }
+        ctx.stroke();
+        ctxr.stroke();
+        ctxi.stroke();
+
+        redrawpaths = false;
+        log("redrew paths");
+        ctximg = ctx.getImageData(0, 0, w, h);
+        ctxrimg = ctxr.getImageData(0, 0, rw, rh);
+        ctxiimg = ctxi.getImageData(0, 0, iw, ih);
     }
-    // draw center
-    ctx.fillStyle = "red";
-    drawpoint(0, 0, ctx, 5);
+    else{
+        ctx.putImageData(ctximg, 0, 0);
+        ctxr.putImageData(ctxrimg, 0, 0);
+        ctxi.putImageData(ctxiimg, 0, 0);
+    }
 
+    
     const N = fftcoeffs.length;
     if(N === 0){
         requestAnimationFrame(draw);
@@ -366,59 +511,8 @@ function draw(){
     const speed = 1000 / ptps * strokeidxs[cutoffidx];
     phase += t * 2 * pi / speed;
 
-    // start total path at first point
-    let prev = [totalpath[0][0] + center[0], totalpath[0][1] + center[1]];
-
-    // drawing styles
-    ctx.lineWidth = 1;
-
-    // total path
-    ctx.moveTo(center[0], center[1]);
-    ctx.strokeStyle = "magenta";
-    ctx.beginPath();
-    let xdiff = 0;
-    let ydiff = 0;
-    for(let i = 0; i < totalpath.length; i++){
-        const p0 = totalpath[i - 1] ?? totalpath[totalpath.length - 1];
-        const p1 = totalpath[i];
-        const p2 = totalpath[i + 1] ?? totalpath[0];
-        const p3 = totalpath[i + 2] ?? totalpath[1];
-
-        const cp1 = [
-            p1[0] + (p2[0] - p0[0]) / 6,
-            p1[1] + (p2[1] - p0[1]) / 6
-        ];
-
-        const cp2 = [
-            p2[0] - (p3[0] - p1[0]) / 6,
-            p2[1] - (p3[1] - p1[1]) / 6
-        ];
-
-        cp1[0] += center[0];
-        cp1[1] += center[1];
-        cp2[0] += center[0];
-        cp2[1] += center[1];
-
-        ctx.bezierCurveTo(
-            cp1[0], cp1[1],
-            cp2[0], cp2[1],
-            p2[0] + center[0], p2[1] + center[1]
-        );
-
-        if (debug) {
-            // ctx.fillStyle = "blue";
-            // drawpoint(cp1[0] - center[0], cp1[1] - center[1], ctx, 2);
-
-            // ctx.fillStyle = "green";
-            // drawpoint(cp2[0] - center[0], cp2[1] - center[1], ctx, 2);
-
-            // ctx.fillStyle = "red";
-            // drawpoint(p2[0], p2[1], ctx, 4);
-        }
-    }
-    ctx.stroke();
-
     // start epicycle at center
+    let prev = [totalpath[0][0] + center[0], totalpath[0][1] + center[1]];
     prev = [center[0], center[1]];
 
     // epicenters
@@ -457,7 +551,7 @@ function draw(){
         
 
     ctx.fillStyle = "lime";
-    drawpoint(prev[0] - center[0], prev[1] - center[1], ctx, 10);
+    drawpoint(prev[0], prev[1], ctx, 10);
     attachdebug(mode);
     requestAnimationFrame(draw);
 }
