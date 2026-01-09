@@ -5,7 +5,7 @@ const fftp = eid("fft-p"); // fft precision slider
 const fftptps = eid("fft-ptps"); // points per second slider
 const fftlerp = eid("fft-lerp"); // linear interpolation checkbox
 const fftstart = eid("fft-start"); // let er rip
-
+FpsMeter.init();
 
 const bgcolor = "black";
 let mode = "none";
@@ -23,7 +23,7 @@ let redrawpaths = true;
 
 fftp.oninput = (e) => {
     // precision = pint(e.target.value);
-    precision = 1 << parseInt(e.target.value);
+    precision = 1 << pint(e.target.value);
     resetfft();
 }
 
@@ -67,9 +67,9 @@ const prunestrokes = () => {
     }
     strokeidxs.length = cutoffidx + 1;
 }
-const addpoint = (x, y, t = performance.now()) => {
+const addpoint = (x, y) => {
     strokeidxs[cutoffidx] = strokes.length;
-    strokes.push([x - center[0], y - center[1], t]);
+    strokes.push([x - center[0], y - center[1]]);
 }
 const pushstroke = () => {
    
@@ -139,18 +139,12 @@ fft.addEventListener("touchstart", (e) => {
     fft.onmousedown(e);
 });
 
-
 document.addEventListener("touchmove", (e) => {
     e.preventDefault();
     e.clientX = e.touches[0].clientX;
     e.clientY = e.touches[0].clientY;
     document.onmousemove(e);
-
-
 }, {passive: false});
-
-
-
 
 document.addEventListener("touchend", (e) => {
     // e.preventDefault();
@@ -399,8 +393,6 @@ function arridx(idx, len){
 
 
 const totalpath = [];
-const rpath = [];
-const ipath = [];
 
 
 const resetfft = () => {
@@ -412,8 +404,6 @@ const resetfft = () => {
     if(M === 0){
         fftcoeffs.length = 0;
         totalpath.length = 0;
-        rpath.length = 0;
-        ipath.length = 0;
         return;
     }
     if(literp){
@@ -438,8 +428,6 @@ const resetfft = () => {
     const dt = 0.005;
     const iter = floor(1 / dt);
     totalpath.length = iter;
-    rpath.length = iter;
-    ipath.length = iter;
     for(let i = 0; i < totalpath.length; i++){
         const t = i * dt;
         let sum = Complex.zero;
@@ -452,11 +440,26 @@ const resetfft = () => {
         }
         // tot path
         totalpath[i] = [sum.re, sum.im];
-        rpath[i] = sum.re;
-        ipath[i] = sum.im;
     }
-
-
+    // inefficient, improve laters
+    const diffs = new Complex(0, 0);
+    for(let i = 0; i < M; i++){
+        const t = i / M;
+        const p = strokes[i];
+        let sum = Complex.zero;
+        for(let k = 0; k < K; k++){
+            const coeff = fftcoeffs[k];
+            const freq = k < K / 2 ? k : k - K;
+            const angle = t * freq * 2 * pi;
+            const vec = coeff.times(new Complex(0, angle).exp());
+            sum = sum.plus(vec);
+        }
+        diffs.plus([abs(p[0] - sum.re), abs(p[1] - sum.im)], true);
+    }
+    diffs.scale(1 / pow(M, 2), true);
+    const acc = 2 * (diffs.mag + 1) / (pow(diffs.mag + 1, 2) + 1);
+    attachdebug(acc, diffs.toString(), diffs.mag)
+    eid("fit").innerText = `fit: ${(100 * acc).toFixed(2)}%`;
 
 
 };
@@ -599,7 +602,6 @@ function draw(){
 
 
         redrawpaths = false;
-        attachdebug(performance.now())
         ctximg = ctx.getImageData(0, 0, w, h);
         ctxrimg = ctxr.getImageData(0, 0, rw, rh);
         ctxiimg = ctxi.getImageData(0, 0, iw, ih);

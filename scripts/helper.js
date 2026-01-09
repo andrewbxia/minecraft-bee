@@ -72,7 +72,7 @@ const terr = (...message) => {
 
 // math nerd omg haha
 const abs = (num) => Math.abs(num);
-const pow = (num, exp) => Math.pow(num, exp);
+const pow = (num, exp = 2) => Math.pow(num, exp);
 const pi = Math.PI
 const deg2rad = pi / 180;
 const rad2deg = 180 / pi;
