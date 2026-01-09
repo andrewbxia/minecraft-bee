@@ -395,6 +395,7 @@ function arridx(idx, len){
 
 
 const totalpath = [];
+const fittedpath = [];
 
 
 const resetfft = () => {
@@ -443,24 +444,33 @@ const resetfft = () => {
         // tot path
         totalpath[i] = [sum.re, sum.im];
     }
-    // inefficient, improve laters
-    const diffs = new Complex(0, 0);
-    for(let i = 0; i < M; i++){
-        const t = i / M;
-        const p = strokes[i];
-        let sum = Complex.zero;
-        for(let k = 0; k < K; k++){
-            const coeff = fftcoeffs[k];
-            const freq = k < K / 2 ? k : k - K;
-            const angle = t * freq * 2 * pi;
-            const vec = coeff.times(new Complex(0, angle).exp());
-            sum = sum.plus(vec);
-        }
-        diffs.plus([pow((p[0] - sum.re), 2), pow((p[1] - sum.im), 2)], true);
+
+
+    const conj = [];
+    for(let k = 0; k < K; k++){
+        const coeff = fftcoeffs[k];
+        conj.push([coeff.re, -coeff.im]);
     }
-    diffs.scale(1 / pow(M, 2), true);
+    const ifft = calcfft(conj);
+    fittedpath.length = K;
+    for(let i = 0; i < K; i++){
+        const c = ifft[i].scale(1);
+        fittedpath[i] = [c.re, -c.im];
+    }
+
+
+
+
+    const diffs = new Complex(0, 0);
+    for(let k = 0; k < K; k++){
+        const og = getstroke(mapidx(k, K, literp ? N : M));
+        const fit = fittedpath[k];
+        diffs.plus([pow((og[0] - fit[0]), 2), pow((og[1] - fit[1]), 2)], true);
+        log(og, fit);
+    }
+    diffs.scale(1 / K, true);
     const acc = 2 * (diffs.mag + 1) / (pow(diffs.mag + 1, 2) + 1);
-    attachdebug(acc, diffs.toString(), diffs.mag)
+    attachdebug(acc, diffs.toString(), diffs.mag, K)
     eid("fit").innerText = `fit: ${(100 * acc).toFixed(2)}%`;
 
 
