@@ -352,7 +352,9 @@ function calcfft(arr){
     return out;
 }
 
-
+function calcifft(arr){
+    
+}
 
 
 function lininterp(iter){ // extends signal to 2^n
@@ -425,7 +427,7 @@ const resetfft = () => {
 
 
     // total path
-    const dt = 0.005;
+    const dt = 0.0005;
     const iter = floor(1 / dt);
     totalpath.length = iter;
     for(let i = 0; i < totalpath.length; i++){
@@ -454,7 +456,7 @@ const resetfft = () => {
             const vec = coeff.times(new Complex(0, angle).exp());
             sum = sum.plus(vec);
         }
-        diffs.plus([abs(p[0] - sum.re), abs(p[1] - sum.im)], true);
+        diffs.plus([pow((p[0] - sum.re), 2), pow((p[1] - sum.im), 2)], true);
     }
     diffs.scale(1 / pow(M, 2), true);
     const acc = 2 * (diffs.mag + 1) / (pow(diffs.mag + 1, 2) + 1);
