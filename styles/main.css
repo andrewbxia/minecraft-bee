@@ -52,6 +52,16 @@ a{
         }
         #main{
             /* width: 100%; */
+            #abt-me{
+                #i-say{
+                    margin-top: 3em;
+                    --width: 325px;
+                    font-size: 0.8em;
+                    >.speech-bubble{
+                        /* --bubble-h: 5em; */
+                    }
+                }
+            }
             --bg-opacity: 0.5;
             width: calc(var(--main-width) - 100px);
             margin: 0 auto;
@@ -407,17 +417,21 @@ a{
         line-height: var(--line-height);
         margin-bottom: 1em;
     }
+}
+
+#abt-me{
     #i-say{
         /* z-index: 1; */
         position: relative;
         width: 100%;
-        --height: 275px;
+        --ratio: calc(275 / 525);
         --width: 525px;
+        --height: calc(var(--width) * var(--ratio));
         height: var(--height);
-        perspective: 25em;
+        perspective: 200px;
         --offset: calc(0.08 * var(--width));
-        --bubble-w: 20em;
-        --bubble-h: 4em;
+        --bubble-w: 17em;
+        --bubble-h: 4.5em;    
         /* modified ver. of https://codepen.io/thebabydino/pen/DmVqBM */
         >.speech-bubble{
             transform-origin: 0% 500px;
@@ -433,8 +447,8 @@ a{
 
             >div{
                 position: absolute;
-                top: 1em;
-                left: 13em;
+                bottom: calc(-0.7 * var(--height));
+                left: calc(0.5 * var(--width));
                 padding: 1em;
                 width: var(--bubble-w);
                 height: var(--bubble-h);
@@ -450,7 +464,7 @@ a{
                     width: var(--width);
                     height: var(--height);
                     bottom: calc(-0.33 * var(--height));
-                    right: calc(-0.5 * var(--width));
+                    right: calc(-0.4 * var(--width));
                     background-color: rgba(var(--theme-dark-vals), 0.5);
                 }
             }
@@ -462,19 +476,21 @@ a{
                     /* z-index: -1; */
                     content: '';
                 }
-                &::before {
+
+            }
+            >.bubble, >.bubble-shade{
+                &::before{
                     /* spiky part */
+                    z-index: -1;
                     border: solid 0 transparent;
-                    border-left: solid 3.5em var(--theme-light-other);
-                    border-top: solid .55em transparent;
-                    top: 2.25em; left: -2em;
-                    width: 1em; height: 1em;
-                    transform: rotate(-35deg) skewX(70deg);
-                }
-                &::after{
+                    border-left: solid 5.5em var(--theme-light-other); /* vertical size */
+                    border-top: solid .75em transparent; /* horiz size */
+                    top: 2.25em; left: calc(-0.1 * var(--width));
+                    width: 2em; height: 1em;
+                    transform: rotate(-35deg) /* direction */
+                        skewX(70deg); /* sharpness */
 
                 }
-
             }
             >.bubble-shade{
                 &::before, &::after {
@@ -489,13 +505,8 @@ a{
                 }
                 &::before {
                     /* spiky part */
-                    z-index: 1;
-                    border: solid 0 transparent;
-                    border-left: solid 3.5em var(--theme-dark-other);
-                    border-top: solid .55em var(--theme-dark-other);
-                    top: 2.25em; left: -2em;
-                    width: 1em; height: 1em;
-                    transform: rotate(-35deg) skewX(70deg);
+                    border-left: solid 4em var(--theme-dark-other);
+                    border-top-color: var(--theme-dark-other);
                 }
             }
         }
@@ -523,6 +534,8 @@ a{
             animation-duration: 4s;
         }
         >.excl>img{
+            /* z-index: 1; */
+            --offset: calc(2 * 0.08 * var(--width));
             transform-origin: 100% 100%;
             animation: infinite ease-in-out alternate;
             animation-name: excl-anim-rot ,excl-anim-pop;
@@ -561,10 +574,10 @@ a{
 }
 @keyframes excl-anim-rot{
     0%{
-        rotate: -0.5deg;
+        rotate: 7deg;
     }
     100%{
-        rotate: 2deg;
+        rotate: 4.5deg;
     }
 }
 @keyframes excl-anim-pop{
