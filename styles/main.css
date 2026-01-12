@@ -411,9 +411,11 @@ a{
         /* z-index: 1; */
         position: relative;
         width: 100%;
-        height: 275px;
+        --height: 275px;
+        --width: 525px;
+        height: var(--height);
         perspective: 25em;
-        --offset: calc(0.08 * 525px);
+        --offset: calc(0.08 * var(--width));
         --bubble-w: 20em;
         --bubble-h: 4em;
         /* modified ver. of https://codepen.io/thebabydino/pen/DmVqBM */
@@ -504,13 +506,13 @@ a{
                 position: absolute;
                 left: calc(-1 * var(--offset));
                 bottom: 0;
-                width: 525px;
+                width: var(--width);
                 &.postit{
                     filter: drop-shadow(0 0 2px rgba(var(--theme-dark-vals), 0.5))
                 }
                 &.svg{
-                    left: calc(0.08 * 525px - var(--offset));
-                    width: calc(0.875 * 525px);
+                    left: calc(0.08 * var(--width) - var(--offset));
+                    width: calc(0.875 * var(--width));
                 }
             }
         }
