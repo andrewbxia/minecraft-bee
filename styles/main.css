@@ -420,7 +420,7 @@ a{
         >.speech-bubble{
             transform-origin: 0% 500px;
             perspective: 16em;
-            --speed: 4s;
+            --speed: 5.75s;
             animation: sb-rot var(--speed) ease-in-out infinite alternate;
             &.delay-shade{
                 animation-delay: calc(-2 * var(--speed) + 1.75s);
@@ -535,7 +535,7 @@ a{
         rotate: 1deg;
     }
     100%{
-        rotate: -1deg;
+        rotate: -2deg;
     }
 }
 @keyframes sb-pop{
