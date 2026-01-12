@@ -416,6 +416,7 @@ a{
         --offset: calc(0.08 * 525px);
         --bubble-w: 20em;
         --bubble-h: 4em;
+        /* modified ver. of https://codepen.io/thebabydino/pen/DmVqBM */
         >.speech-bubble{
             transform-origin: 0% 500px;
             perspective: 16em;
