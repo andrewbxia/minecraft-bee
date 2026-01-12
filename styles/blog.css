@@ -55,6 +55,16 @@
     }
 }
 
+#blog::before{
+    /* content: "~~∫~~"; */
+    content: "~~∫";
+    position: absolute;
+    top: calc(-1em - var(--border-width));
+    right: 1ch;
+    text-align: right;
+    /* font-size: 2em; */
+    margin: 0 auto;
+}
 
 #blog{
     position: relative;
