@@ -421,10 +421,10 @@ a{
             --speed: 5s;
             animation: sb-rot var(--speed) ease-in-out infinite alternate;
             &.delay-shade{
-                animation-delay: calc(-2 * var(--speed)+ 0.75s);
+                animation-delay: calc(-2 * var(--speed) + 1.5s);
             }
             &.delay-cover{
-                animation-delay: calc(-2 * var(--speed) + 1.5s);
+                animation-delay: calc(-2 * var(--speed) + .65s);
             }
 
             >div{
