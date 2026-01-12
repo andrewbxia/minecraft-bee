@@ -428,7 +428,7 @@ a{
         --width: 525px;
         --height: calc(var(--width) * var(--ratio));
         height: var(--height);
-        perspective: 200px;
+        perspective: 25em;
         --offset: calc(0.08 * var(--width));
         --bubble-w: 17em;
         --bubble-h: 4.5em;    
@@ -437,7 +437,9 @@ a{
             transform-origin: 0% 500px;
             perspective: 16em;
             --speed: 5.75s;
-            animation: sb-rot var(--speed) ease-in-out infinite alternate;
+            animation: ease-in-out infinite alternate;
+            animation-name: sb-rot, sb-pop;
+            animation-duration: var(--speed), calc(var(--speed) * 2.1416);
             &.delay-shade{
                 animation-delay: calc(-2 * var(--speed) + 1.75s);
             }
@@ -554,14 +556,11 @@ a{
     }
 }
 @keyframes sb-pop{
-    0%{
-        transform: scale(1);
+    0%, 100%{
+        perspective: 16em;
     }
     50%{
-        transform: scale(1.05);
-    }
-    100%{
-        transform: scale(1);
+        perspective: 12em;
     }
 }
 @keyframes base-anim-rot {
