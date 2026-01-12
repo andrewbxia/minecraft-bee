@@ -538,7 +538,7 @@ a{
             --offset: calc(2 * 0.08 * var(--width));
             transform-origin: 100% 100%;
             animation: infinite ease-in-out alternate;
-            animation-name: excl-anim-rot ,excl-anim-pop;
+            animation-name: excl-anim-rot, excl-anim-pop;
             animation-duration: 2.5s, 1s;
             animation-timing-function: ease-in-out, steps(1);
         }
