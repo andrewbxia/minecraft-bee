@@ -428,7 +428,7 @@ const resetfft = () => {
 
 
     // total path
-    const dt = 0.0005;
+    const dt = 0.005;
     const iter = floor(1 / dt);
     totalpath.length = iter;
     for(let i = 0; i < totalpath.length; i++){
@@ -445,7 +445,6 @@ const resetfft = () => {
         totalpath[i] = [sum.re, sum.im];
     }
 
-
     const conj = [];
     for(let k = 0; k < K; k++){
         const coeff = fftcoeffs[k];
@@ -460,13 +459,12 @@ const resetfft = () => {
 
 
 
-
     const diffs = new Complex(0, 0);
     for(let k = 0; k < K; k++){
         const og = getstroke(mapidx(k, K, literp ? N : M));
         const fit = fittedpath[k];
         diffs.plus([pow((og[0] - fit[0]), 2), pow((og[1] - fit[1]), 2)], true);
-        log(og, fit);
+        // log(og, fit);
     }
     diffs.scale(1 / K, true);
     const acc = 2 * (diffs.mag + 1) / (pow(diffs.mag + 1, 2) + 1);
