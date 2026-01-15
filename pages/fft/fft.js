@@ -393,10 +393,28 @@ function arridx(idx, len){
     return idx;
 }
 
+function calcfit(startidx, iter){
+    iter = min(iter, strokeidxs[cutoffidx] - startidx);
+    for(let i = 0; i < iter; i++){
+        const idx = startidx + i;
+        const t = idx / (strokeidxs[cutoffidx]);
+        const stroke = getstroke(idx);
+        const sum = new Complex(0, 0);
+        for(let k = 0; k < fftcoeffs.length; k++){
+            const coeff = fftcoeffs[k];
+            const freq = k < fftcoeffs.length / 2 ? k : k - fftcoeffs.length;
+            const angle = t * freq * 2 * pi;
+            const vec = coeff.times(new Complex(0, angle).exp());
+            sum.plus(vec, true);
+        }  
+        diffs.plus([pow((stroke[0] - sum.re), 2), pow((stroke[1] - sum.im), 2)], true);
+    }
+}
 
 const totalpath = [];
 const fittedpath = [];
-
+let calcfitidx = 0;
+const diffs = new Complex(0, 0);
 
 const resetfft = () => {
     const M = strokeidxs[cutoffidx]; // # of sampels
@@ -444,34 +462,34 @@ const resetfft = () => {
         // tot path
         totalpath[i] = [sum.re, sum.im];
     }
+    calcfitidx = 0;
+    diffs.re = 0;
+    diffs.im = 0;
 
-    const conj = [];
-    for(let k = 0; k < K; k++){
-        const coeff = fftcoeffs[k];
-        conj.push([coeff.re, -coeff.im]);
-    }
-    const ifft = calcfft(conj);
-    fittedpath.length = K;
-    for(let i = 0; i < K; i++){
-        const c = ifft[i].scale(1);
-        fittedpath[i] = [c.re, -c.im];
-    }
+    // const conj = [];
+    // for(let k = 0; k < K; k++){
+    //     const coeff = fftcoeffs[k];
+    //     conj.push([coeff.re, -coeff.im]);
+    // }
+    // const ifft = calcfft(conj);
+    // fittedpath.length = K;
+    // for(let i = 0; i < K; i++){
+    //     const c = ifft[i].scale(1);
+    //     fittedpath[i] = [c.re, -c.im];
+    // }
+    
 
-
-
-    const diffs = new Complex(0, 0);
-    for(let k = 0; k < K; k++){
-        const og = getstroke(mapidx(k, K, literp ? N : M));
-        const fit = fittedpath[k];
-        diffs.plus([pow((og[0] - fit[0]), 2), pow((og[1] - fit[1]), 2)], true);
-        // log(og, fit);
-    }
-    diffs.scale(1 / K, true);
-    const acc = 2 * (diffs.mag + 1) / (pow(diffs.mag + 1, 2) + 1);
-    attachdebug(acc, diffs.toString(), diffs.mag, K)
-    eid("fit").innerText = `fit: ${(100 * acc).toFixed(2)}%`;
-
-
+    // const diffs = new Complex(0, 0);
+    // for(let k = 0; k < K; k++){
+    //     const og = getstroke(mapidx(k, K, literp ? N : M));
+    //     const fit = fittedpath[k];
+    //     diffs.plus([pow((og[0] - fit[0]), 2), pow((og[1] - fit[1]), 2)], true);
+    //     // log(og, fit);
+    // }
+    // diffs.scale(1 / K, true);
+    // const acc = 2 * (diffs.mag + 1) / (pow(diffs.mag + 1, 2) + 1);
+    // attachdebug(acc, diffs.toString(), diffs.mag, K)
+    // eid("fit").innerText = `fit: ${(100 * acc).toFixed(2)}%`;
 };
 resetfft();
 
@@ -706,6 +724,16 @@ function draw(){
     drawpoint(partphase, component[0], ctxr, 10);
     drawpoint(partphase, component[1], ctxi, 10);
 
+    // fit
+    const iter = log2(fftcoeffs.length);
+    
+    calcfit(calcfitidx, iter);
+    calcfitidx = min(calcfitidx + iter, strokeidxs[cutoffidx]);
+    const diff = diffs.scale(1 / calcfitidx * calcfitidx);
+    const acc = 2 * (diff.mag + 1) / (pow(diff.mag + 1, 2) + 1);
+    // attachdebug(acc, diffs.toString(), diffs.mag, K)
+    eid("fit").innerText = `fit: ${(100 * acc).toFixed(2)}%`;
+    eid("fit-progress").innerText = `${calcfitidx} / ${strokeidxs[cutoffidx]}`;
 
     // attachdebug(mode);
     requestAnimationFrame(draw);
