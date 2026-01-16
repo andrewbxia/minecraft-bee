@@ -263,7 +263,7 @@ class Complex{
         return new Complex(nre, nim);
     }
     norm(self = false){
-        const mag = this.mag;
+        const mag = max(this.mag, 1e-5);
         const nre = this.re / mag;
         const nim = this.im / mag;
         if(self){
@@ -400,10 +400,10 @@ function calcfit(startidx, iter){
     const K = fftcoeffs.length;
     const totpts = literp ? N : M;
 
-    iter = min(iter, M - startidx);
+    iter = min(iter, totpts - startidx, startidx + iter);
     for(let i = 0; i < iter; i++){
         const idx = startidx + i;
-        const t = idx / M;
+        const t = idx / totpts;
 
         const stroke = getstroke(idx);
         const sum = new Complex(0, 0);
@@ -416,6 +416,9 @@ function calcfit(startidx, iter){
         }  
         diffs.plus([pow((stroke[0] - sum.re), 2), pow((stroke[1] - sum.im), 2)], true);
     }
+}
+function calcacc(mag){
+    return 2 * (mag + 1) / (pow(mag + 1, 2) + 1);
 }
 
 const totalpath = [];
@@ -469,7 +472,7 @@ const resetfft = () => {
         // tot path
         totalpath[i] = [sum.re, sum.im];
     }
-    calcfitidx = 0;
+    calcfitidx = -log2(K); // dont fit until after a cycle
     diffs.re = 0;
     diffs.im = 0;
 
@@ -712,7 +715,11 @@ function draw(){
         -(prev[0] - center[0]) * (rh / 2) / h + rh / 2,
         (prev[1] - center[1]) * rh / h + rh / 2
     ];
-
+    if(calcfitidx < totpts){
+        ctxr.fillStyle = ctxi.fillStyle = "rgba(120, 255, 163, 0.2)";
+        ctxr.fillRect(0, 0, rw * (calcfitidx / totpts), rh);
+        ctxi.fillRect(0, 0, iw * (calcfitidx / totpts), ih);
+    }
 
     ctxr.fillStyle = "rgba(125, 125, 125, 0.5)";
     ctxi.fillStyle = "rgba(125, 125, 125, 0.5)";
@@ -733,13 +740,20 @@ function draw(){
 
     // fit
     const iter = log2(fftcoeffs.length);
+    // const iter = fftcoeffs.length;
     
     calcfit(calcfitidx, iter);
     calcfitidx = min(calcfitidx + iter, totpts);
-    const diff = diffs.scale(1 / (calcfitidx * calcfitidx));
-    const acc = 2 * (diff.mag + 1) / (pow(diff.mag + 1, 2) + 1);
+    const diff = diffs.scale(1 / max(1, calcfitidx * calcfitidx));
     // attachdebug(acc, diffs.toString(), diffs.mag, K)
-    eid("fit").innerText = `fit: ${(100 * acc).toFixed(2)}%`;
+    eid("fit").innerText = `fit: ${(100 * calcacc(diff.mag)).toFixed(2)}%`;
+    
+    eid("r-fit").innerText = `xfit: ${(100 * calcacc(diff.re)).toFixed(2)}%`;
+    eid("i-fit").innerText = `yfit: ${(100 * calcacc(diff.im)).toFixed(2)}%`;
+    eid("fit-error").innerText = `err: ${fix2num(diff.re)}, ${fix2num(diff.im)}`;
+    // eid("r-diff").innerText = `rdiff: ${diff.re.toFixed(2)}`; --- IGNORE ---
+    // eid("i-diff").innerText = `idiff: ${diff.im.toFixed(2)}`; --- IGNORE ---
+
     eid("fit-progress").innerText = `${calcfitidx} / ${totpts}`;
 
     // attachdebug(mode);
@@ -751,7 +765,7 @@ draw();
 /*
 ideas
 
-
+have spline interpolation
 hook up fft to audio context, sine audio data matches points drawn
 like that painting video, have colors preemptivley come in or somehig
 
