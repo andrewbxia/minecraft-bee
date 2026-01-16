@@ -756,7 +756,7 @@ function draw(){
     accs[1][accidx] = sqrt(iacc / 100) * ih;
 
 
-    if(calcfitidx < totpts){
+    if(calcfitidx < totpts || true){
         ctxr.fillStyle = ctxi.fillStyle = "rgba(120, 255, 163, 0.2)";
         for(let x = 0; x < accs[0].length; x++){
             ctxr.fillRect(x, rh, round(iter * rw / totpts), -accs[0][x]);
