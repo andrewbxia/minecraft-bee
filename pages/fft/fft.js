@@ -413,8 +413,10 @@ function calcfit(startidx, iter){
             const angle = t * freq * 2 * pi;
             const vec = coeff.times(new Complex(0, angle).exp());
             sum.plus(vec, true);
-        }  
-        diffs.plus([pow((stroke[0] - sum.re), 2), pow((stroke[1] - sum.im), 2)], true);
+        }
+        const diffx = abs(stroke[0] - sum.re);
+        const diffy = abs(stroke[1] - sum.im);
+        diffs.plus([pow(diffx, 2), pow(diffy, 2)], true);
     }
 }
 function calcacc(mag){
@@ -423,6 +425,7 @@ function calcacc(mag){
 
 const totalpath = [];
 const fittedpath = [];
+const accs = [[], []]; // real, imag
 let calcfitidx = 0;
 const diffs = new Complex(0, 0);
 
@@ -475,6 +478,8 @@ const resetfft = () => {
     calcfitidx = -log2(K); // dont fit until after a cycle
     diffs.re = 0;
     diffs.im = 0;
+    accs[0].length = 0;
+    accs[1].length = 0;
 
     // const conj = [];
     // for(let k = 0; k < K; k++){
@@ -715,11 +720,6 @@ function draw(){
         -(prev[0] - center[0]) * (rh / 2) / h + rh / 2,
         (prev[1] - center[1]) * rh / h + rh / 2
     ];
-    if(calcfitidx < totpts){
-        ctxr.fillStyle = ctxi.fillStyle = "rgba(120, 255, 163, 0.2)";
-        ctxr.fillRect(0, 0, rw * (calcfitidx / totpts), rh);
-        ctxi.fillRect(0, 0, iw * (calcfitidx / totpts), ih);
-    }
 
     ctxr.fillStyle = "rgba(125, 125, 125, 0.5)";
     ctxi.fillStyle = "rgba(125, 125, 125, 0.5)";
@@ -745,11 +745,30 @@ function draw(){
     calcfit(calcfitidx, iter);
     calcfitidx = min(calcfitidx + iter, totpts);
     const diff = diffs.scale(1 / max(1, calcfitidx * calcfitidx));
-    // attachdebug(acc, diffs.toString(), diffs.mag, K)
-    eid("fit").innerText = `fit: ${(100 * calcacc(diff.mag)).toFixed(2)}%`;
     
-    eid("r-fit").innerText = `xfit: ${(100 * calcacc(diff.re)).toFixed(2)}%`;
-    eid("i-fit").innerText = `yfit: ${(100 * calcacc(diff.im)).toFixed(2)}%`;
+
+    const acc = 100 * calcacc(diff.mag);
+    const racc = 100 * calcacc(diff.re);
+    const iacc = 100 * calcacc(diff.im);
+
+    const accidx = mapidx(calcfitidx, totpts, rw);
+    accs[0][accidx] = sqrt(racc / 100) * rh;
+    accs[1][accidx] = sqrt(iacc / 100) * ih;
+
+
+    if(calcfitidx < totpts){
+        ctxr.fillStyle = ctxi.fillStyle = "rgba(120, 255, 163, 0.2)";
+        for(let x = 0; x < accs[0].length; x++){
+            ctxr.fillRect(x, rh, round(iter * rw / totpts), -accs[0][x]);
+            ctxi.fillRect(x, ih, round(iter * rw / totpts), -accs[1][x]);
+        }
+    }
+
+    // attachdebug(acc, diffs.toString(), diffs.mag, K)
+    eid("fit").innerText = `fit: ${acc.toFixed(2)}%`;
+    
+    eid("r-fit").innerText = `xfit: ${racc.toFixed(2)}%`;
+    eid("i-fit").innerText = `yfit: ${iacc.toFixed(2)}%`;
     eid("fit-error").innerText = `err: ${fix2num(diff.re)}, ${fix2num(diff.im)}`;
     // eid("r-diff").innerText = `rdiff: ${diff.re.toFixed(2)}`; --- IGNORE ---
     // eid("i-diff").innerText = `idiff: ${diff.im.toFixed(2)}`; --- IGNORE ---
