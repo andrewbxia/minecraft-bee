@@ -41,20 +41,6 @@ const setlininterp = () => {
 
 
 
-window.addEventListener("resize", () => {
-    fft.width = fft.clientWidth;
-    fft.height = (window.innerHeight - eid("top-menu").clientHeight);  
-    fftr.width = fftr.clientWidth;
-    fftr.height = fftr.clientHeight;
-    ffti.width = ffti.clientWidth;
-    ffti.height = ffti.clientHeight;
-    center[0] = fft.width / 2;
-    center[1] = fft.height / 2;
-    // resetfft();
-    redrawpaths = true;
-});
-window.dispatchEvent(new Event("resize"));
-
 
 
 
@@ -429,6 +415,15 @@ const accs = [[], []]; // real, imag
 let calcfitidx = 0;
 const diffs = new Complex(0, 0);
 
+const resetfitcalc = () => {
+    const K = fftcoeffs.length;
+    calcfitidx = -log2(K); // dont fit until after a cycle
+    diffs.re = 0;
+    diffs.im = 0;
+    accs[0].length = 0;
+    accs[1].length = 0;
+}
+
 const resetfft = () => {
     const M = strokeidxs[cutoffidx]; // # of sampels
     const z = [];
@@ -475,12 +470,7 @@ const resetfft = () => {
         // tot path
         totalpath[i] = [sum.re, sum.im];
     }
-    calcfitidx = -log2(K); // dont fit until after a cycle
-    diffs.re = 0;
-    diffs.im = 0;
-    accs[0].length = 0;
-    accs[1].length = 0;
-
+    resetfitcalc();
     // const conj = [];
     // for(let k = 0; k < K; k++){
     //     const coeff = fftcoeffs[k];
@@ -780,6 +770,21 @@ function draw(){
 }
 
 
+
+window.addEventListener("resize", () => {
+    fft.width = fft.clientWidth;
+    fft.height = (window.innerHeight - eid("top-menu").clientHeight);  
+    fftr.width = fftr.clientWidth;
+    fftr.height = fftr.clientHeight;
+    ffti.width = ffti.clientWidth;
+    ffti.height = ffti.clientHeight;
+    center[0] = fft.width / 2;
+    center[1] = fft.height / 2;
+    // resetfft();
+    resetfitcalc();
+    redrawpaths = true;
+});
+window.dispatchEvent(new Event("resize"));
 draw();
 /*
 ideas
