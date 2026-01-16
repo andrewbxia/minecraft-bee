@@ -394,15 +394,22 @@ function arridx(idx, len){
 }
 
 function calcfit(startidx, iter){
-    iter = min(iter, strokeidxs[cutoffidx] - startidx);
+    
+    const M = strokeidxs[cutoffidx];
+    const N = nextpow2(M);
+    const K = fftcoeffs.length;
+    const totpts = literp ? N : M;
+
+    iter = min(iter, M - startidx);
     for(let i = 0; i < iter; i++){
         const idx = startidx + i;
-        const t = idx / (strokeidxs[cutoffidx]);
+        const t = idx / M;
+
         const stroke = getstroke(idx);
         const sum = new Complex(0, 0);
-        for(let k = 0; k < fftcoeffs.length; k++){
+        for(let k = 0; k < K; k++){
             const coeff = fftcoeffs[k];
-            const freq = k < fftcoeffs.length / 2 ? k : k - fftcoeffs.length;
+            const freq = k < K / 2 ? k : k - K;
             const angle = t * freq * 2 * pi;
             const vec = coeff.times(new Complex(0, angle).exp());
             sum.plus(vec, true);
@@ -522,6 +529,9 @@ function draw(){
     ctx.fillRect(0, 0, w, h);
     ctxr.fillRect(0, 0, rw, rh);
 
+    const M = strokeidxs[cutoffidx];
+    const N = nextpow2(M);
+    const totpts = literp ? N : M;
 
     if(redrawpaths){
         // draw points
@@ -533,9 +543,6 @@ function draw(){
         const rnorm = rw / totalpath.length, inorm = iw / totalpath.length;
 
 
-        const M = strokeidxs[cutoffidx];
-        const N = nextpow2(M);
-        const totpts = literp ? N : M;
         for(let idx = 0; idx < totpts; idx++){
             const p = getstroke(idx);
             drawpoint(p[0] + center[0], p[1] + center[1], ctx);
@@ -643,8 +650,8 @@ function draw(){
 
 
    
-    const N = fftcoeffs.length;
-    if(N === 0){
+    const K = fftcoeffs.length;
+    if(K === 0){
         requestAnimationFrame(draw);
         return;
     }
@@ -663,14 +670,14 @@ function draw(){
 
 
     // epicenters
-    for(let k = 1; k <= N; k++){
+    for(let k = 1; k <= K; k++){
         // if(k > precision) break;
         let kidx = floor(k / 2);
-        if(k % 2 === 0) kidx = N - kidx;
+        if(k % 2 === 0) kidx = K - kidx;
 
 
         const coeff = fftcoeffs[kidx];
-        const freq = kidx < N / 2 ? kidx : kidx - N;
+        const freq = kidx < K / 2 ? kidx : kidx - K;
         const r = coeff.mag;
         const angle = phase * freq;
 
@@ -728,12 +735,12 @@ function draw(){
     const iter = log2(fftcoeffs.length);
     
     calcfit(calcfitidx, iter);
-    calcfitidx = min(calcfitidx + iter, strokeidxs[cutoffidx]);
-    const diff = diffs.scale(1 / calcfitidx * calcfitidx);
+    calcfitidx = min(calcfitidx + iter, totpts);
+    const diff = diffs.scale(1 / (calcfitidx * calcfitidx));
     const acc = 2 * (diff.mag + 1) / (pow(diff.mag + 1, 2) + 1);
     // attachdebug(acc, diffs.toString(), diffs.mag, K)
     eid("fit").innerText = `fit: ${(100 * acc).toFixed(2)}%`;
-    eid("fit-progress").innerText = `${calcfitidx} / ${strokeidxs[cutoffidx]}`;
+    eid("fit-progress").innerText = `${calcfitidx} / ${totpts}`;
 
     // attachdebug(mode);
     requestAnimationFrame(draw);
