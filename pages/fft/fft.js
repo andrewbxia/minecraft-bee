@@ -210,11 +210,24 @@ const farty = () => fartx(1);
 
 
 const costerms = [];
-costerms.length = maxprec;
+costerms.length = maxprec + 1;
 for(let k = 0; k < costerms.length; k++){
-    costerms[k] = cos(pi / 2 * k / maxprec);
+    costerms[k] = cos(pi / 2 * k / maxprec); // values from 0 to pi/2, maxprec steps
 }
-j
+function getcos(theta){
+    theta = theta % (2 * pi); // bring within range
+    if(theta < 0) theta += 2 * pi; // get + theta
+    if(theta > pi) theta = 2 * pi - theta; // bring within pi
+    let idx = floor((theta / (pi / 2)) * maxprec); // get idx from 0 to pi /2
+
+    const neg = theta > pi / 2;
+    if(neg) idx = 2 * maxprec - idx; // mirror idx if negative cos
+
+    return costerms[idx] * (neg ? -1 : 1);
+}
+function getsin(theta){
+    return getcos(theta - pi / 2);
+}
 
 // fft stuff
 class Complex{
@@ -284,7 +297,7 @@ class Complex{
     }
     exp(){
         const r = Math.exp(this.re);
-        return new Complex(r * cos(this.im), r * sin(this.im));
+        return new Complex(r * getcos(this.im), r * getsin(this.im));
     }
     toString(){
         return `${this.re} + ${this.im}i`;
@@ -344,7 +357,8 @@ function calcfft(arr){
 
     const out = new Array(N);
     for(let k = 0; k < N / 2; k++){
-        const expterm = new Complex(0, -2 * pi * k / N).exp();
+        // const expterm = new Complex(0, -2 * pi * k / N).exp();
+        const expterm = expterms[k * (maxprec / N)];
         const t = expterm.times(ffto[k]); // ffto[k] * expterm
         out[k] = t.plus(ffte[k]);         // ffte[k] + t
         out[k + N/2] = t.times([-1, 0]).plus(ffte[k]); // ffte[k] - t
@@ -440,6 +454,7 @@ const resetfitcalc = () => {
 }
 
 const resetfft = () => {
+    const then = performance.now();
     const M = strokeidxs[cutoffidx]; // # of sampels
     const z = [];
     const N = nextpow2(M);
@@ -510,6 +525,7 @@ const resetfft = () => {
     // const acc = 2 * (diffs.mag + 1) / (pow(diffs.mag + 1, 2) + 1);
     // attachdebug(acc, diffs.toString(), diffs.mag, K)
     // eid("fit").innerText = `fit: ${(100 * acc).toFixed(2)}%`;
+    attachdebug(`FFT calc time: ${((performance.now() - then)).toFixed(2)} ms`);
 };
 resetfft();
 
