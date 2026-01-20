@@ -16,7 +16,9 @@ const pointsize = 2;
 const pointhalf = pointsize / 2;
 const pointcolor = "white";
 let precision = 1<<5;
+const maxprec = 1 << pint(fftp.max);
 const center = [0, 0];
+const totalpathdt = 0.005;
 let phase = 0;
 let redrawpaths = true;
 
@@ -207,6 +209,13 @@ const fartx = (typ = 0) => {
 const farty = () => fartx(1);
 
 
+const costerms = [];
+costerms.length = maxprec;
+for(let k = 0; k < costerms.length; k++){
+    costerms[k] = cos(pi / 2 * k / maxprec);
+}
+j
+
 // fft stuff
 class Complex{
     re = 0;
@@ -305,8 +314,13 @@ function mapidx(idx, fromlen, tolen){
 }
 
 
-const fftcoeffs = [];
+const expterms = [];
+expterms.length = maxprec;
+for(let k = 0; k < expterms.length; k++){
+    expterms[k] = new Complex(0, -2 * pi * k / maxprec).exp();
+}
 
+const fftcoeffs = [];
 
 function calcfft(arr){
     const N = arr.length;
@@ -397,7 +411,8 @@ function calcfit(startidx, iter){
             const coeff = fftcoeffs[k];
             const freq = k < K / 2 ? k : k - K;
             const angle = t * freq * 2 * pi;
-            const vec = coeff.times(new Complex(0, angle).exp());
+            const vec = coeff.times(new Complex(0, angle).exp()); // have to use exp
+            // const vec = coeff.times(expterms[freq * (maxprec / totpts)]); 
             sum.plus(vec, true);
         }
         const diffx = abs(stroke[0] - sum.re);
@@ -454,17 +469,17 @@ const resetfft = () => {
 
 
     // total path
-    const dt = 0.005;
-    const iter = floor(1 / dt);
+    const iter = floor(1 / totalpathdt);
     totalpath.length = iter;
     for(let i = 0; i < totalpath.length; i++){
-        const t = i * dt;
+        const t = i * totalpathdt;
         let sum = Complex.zero;
         for(let k = 0; k < K; k++){
             const coeff = fftcoeffs[k];
             const freq = k < K / 2 ? k : k - K;
             const angle = t * freq * 2 * pi;
             const vec = coeff.times(new Complex(0, angle).exp());
+            // const vec = coeff.times(expfitterms[freq * i]);
             sum = sum.plus(vec);
         }
         // tot path
@@ -749,8 +764,8 @@ function draw(){
     if(calcfitidx < totpts || true){
         ctxr.fillStyle = ctxi.fillStyle = "rgba(120, 255, 163, 0.2)";
         for(let x = 0; x < accs[0].length; x++){
-            ctxr.fillRect(x, rh, round(iter * rw / totpts), -accs[0][x]);
-            ctxi.fillRect(x, ih, round(iter * rw / totpts), -accs[1][x]);
+            ctxr.fillRect(x, rh, ceil(iter * rw / totpts), -accs[0][x]);
+            ctxi.fillRect(x, ih, ceil(iter * rw / totpts), -accs[1][x]);
         }
     }
 
