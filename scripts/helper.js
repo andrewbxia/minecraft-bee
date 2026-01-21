@@ -19,6 +19,34 @@ class ls{
         localStorage.removeItem(key);
     }
 }
+class perf{
+    static defname = "chich";
+    static mark(name = perf.defname){
+        performance.mark(name);
+    }
+    static now(){
+        return performance.now();
+    }
+    static meas(startmark, endmark, measurename = "poop"){ // measure
+        const m = performance.measure(measurename, startmark, endmark);
+        attachdebug(`${measurename}: ${m.duration}ms`);
+        return m.duration;
+    }
+    static diff(markname = perf.defname, markidx = -1){
+        const mark = performance.getEntriesByName(markname);
+        if(markidx < 0) markidx += mark.length; // wrap to last idx
+        markidx = max(markidx, mark.length - 1);
+        if(mark.length > 0){
+            return perf.now() - mark[markidx].startTime;
+        }
+        return 0;
+    }
+    static bump(markname = perf.defname){
+        const diff = perf.diff(markname);
+        perf.mark(markname);
+        return diff;
+    }
+}
 
 // some accessibility stuffies
 
@@ -44,7 +72,7 @@ const updatems = (action = "none", reload = false) => {
     if(reload) window.location.reload();
 };
 
-    if(ls.get("ms")) motionsickness = ls.get("ms") === "1";
+if(ls.get("ms")) motionsickness = ls.get("ms") === "1";
 else updatems();
 
 
@@ -59,7 +87,7 @@ const brect = (el) => el.getBoundingClientRect();
 const pint = (el, rad = 10) => parseInt(el, rad);
 const poat = (el) => parseFloat(el);
 const log = (...message) => console.log(...message);
-const dlog = (...message) => {if(debug) console.trace(performance.now(), ...message)}; // debug log
+const dlog = (...message) => {if(debug) console.trace(perf.now(), ...message)}; // debug log
 const dlert = (...message) => {if(debug) alert(...message)};
 const warn = (...message) => console.warn(...message);
 const darn = (...message) => {if(debug) warn(...message)}; // lmao im keeping darn no dwarn here
@@ -151,11 +179,11 @@ const fix2num = (num, places = 2) => {
 const frand = (mult = 1, add = 0, places = 2) => fix2num(rand(mult, add), places);
 const benchmark = (func = nofunc, paramfunc = zerofunc, ...params) => {
     const iter = 1000000;
-    const start = performance.now();
+    const start = perf.now();
     for(let i = 0; i < iter; i++){
         func(paramfunc(...params));
     }
-    const end = performance.now();
+    const end = perf.now();
     return (end - start) / 1000;
 }
 
